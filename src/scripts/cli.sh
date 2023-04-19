@@ -3,7 +3,6 @@ sudo dnf install \
 bat \
 curl \
 exa \
-flatpak \
 fzf \
 openvpn \
 thunderbird \
