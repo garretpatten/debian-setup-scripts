@@ -6,21 +6,12 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="avit"
 # ZSH_THEME="cloud"
 # ZSH_THEME="gozilla"
 # ZSH_THEME="rixius"
 ZSH_THEME="robbyrussell"
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -68,13 +59,6 @@ COMPLETION_WAITING_DOTS="true"
 # see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(zsh-autosuggestions zsh-syntax-highlighting)
 
@@ -104,11 +88,12 @@ alias killServer="sudo fuser -k 4200/tcp"
 #
 # Linux
 # alias cat="bat -p"
-# alias ls="exa"
+alias home="clear && echo '' && neofetch && task list"
+alias ls="exa"
+alias neo="neofetch"
 alias scan="sudo freshclam && sudo clamscan -i -r"
 alias update="sudo dnf upgrade && sudo dnf update && sudo flatpak update && sudo dnf autoremove"
-alias status="clear && task calendar && task list && nordvpn status"
-# alias z="cd"
+alias status="clear && neofetch && task calendar && task list && protonvpn-cli status"
 #
 # Taskwarrior
 alias tw="clear && task calendar && task list"
@@ -116,6 +101,3 @@ alias tw="clear && task calendar && task list"
 # Zsh
 alias ohmyzsh="nano ~/.oh-my-zsh"
 alias zshconfig="nano ~/.zshrc"
-
-# Load Angular CLI autocompletion.
-source <(ng completion script)
