@@ -1,5 +1,4 @@
-name: Semgrep
-
+name: Semgrep Scan
 permissions:
   actions: none
   checks: none
@@ -27,6 +26,6 @@ jobs:
 
     if: (github.actor != 'dependabot[bot]')
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
 
       - run: semgrep scan --sarif --output=semgrep.sarif --config=policy

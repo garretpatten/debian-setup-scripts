@@ -24,12 +24,12 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
         with:
           fetch-depth: 0
 
       - name: Trufflehog
-        uses: trufflesecurity/trufflehog@v3.20.0
+        uses: trufflesecurity/trufflehog@58222610ff8ff7a3069d2422276bf28ad52a743f
         with:
           path: ./
           base: ${{ github.event.repository.default_branch }}
