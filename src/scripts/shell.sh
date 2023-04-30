@@ -5,8 +5,8 @@ sudo dnf install terminator -y
 sudo dnf install zsh -y
 
 # Change User Shells to Zsh
-chsh -s ($which zsh)
-sudo chsh -s ($which zsh)
+chsh -s $(which zsh)
+sudo chsh -s $(which zsh)
 
 # Install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
