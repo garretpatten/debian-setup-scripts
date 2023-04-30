@@ -26,7 +26,7 @@ sh ./dev.sh
 sh ./addTasks.sh
 
 # End: System Updates
-sudo dnf upgrade && sudo dnf update && sudo dnf autoremove
+sudo dnf upgrade-y && sudo dnf update-y && sudo dnf autoremove
 
 # Create a break in output
 echo ''
