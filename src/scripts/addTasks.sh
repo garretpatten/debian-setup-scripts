@@ -9,5 +9,4 @@ task add Install and sync Brave project:setup priority:M
 # Low Priority Tasks
 task add Install Burp Suite project:setup priority:L
 task add Download files from Proton Drive project:setup priority:L
-task add Install Thunderbird project:setup priority:L
 task add Install VLC project:setup priority:L
