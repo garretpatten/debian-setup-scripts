@@ -1,8 +1,6 @@
 # Begin: System Updates
 sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove
 
-sudo chmod +x ./
-
 # Security: YubiKeys, Firewall, VPN, Anti-Virus
 sh ./security.sh
 
@@ -24,7 +22,7 @@ sh ./web.sh
 # Development Setup
 sh ./dev.sh
 
-# Other
+# Other: Thunderbird
 sh ./misc.sh
 
 # Add Taskwarrior tasks
