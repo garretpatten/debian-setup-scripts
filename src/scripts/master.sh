@@ -10,9 +10,6 @@ sh ./cli.sh
 # Flatpak Apps
 sh ./flatpak.sh
 
-# Shell: Terminator, zsh, oh-my-zsh
-sh ./shell.sh
-
 # Productivity: Taskwarrior, Todoist
 sh ./productivity.sh
 
@@ -21,6 +18,9 @@ sh ./web.sh
 
 # Development Setup
 sh ./dev.sh
+
+# Shell: Terminator, zsh, oh-my-zsh
+sh ./shell.sh
 
 # Other: Thunderbird
 sh ./misc.sh
