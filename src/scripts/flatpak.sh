@@ -13,4 +13,4 @@ flatpak install flathub org.signal.Signal -y
 flatpak install flathub com.simplenote.Simplenote -y
 
 # Install Spotify
-flatpak install flathub com.spotify.client -y
+flatpak install flathub com.spotify.Client -y
