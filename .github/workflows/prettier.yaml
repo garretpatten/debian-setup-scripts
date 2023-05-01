@@ -1,19 +1,7 @@
 name: Continuous Integration
 
 permissions:
-  actions: none
-  checks: none
-  contents: read
-  deployments: none
-  id-token: none
-  issues: none
-  discussions: none
-  packages: none
-  pages: none
-  pull-requests: write
-  repository-projects: none
-  security-events: none
-  statuses: none
+  contents: write
 
 on: [pull_request, push]
 
@@ -28,6 +16,5 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      # TODO: Pin action at full length commit SHA
       - name: Prettify code
-        uses: creyD/prettier_action@v4.3
+        uses: creyD/prettier_action@31355f8eef017f8aeba2e0bc09d8502b13dbbad1

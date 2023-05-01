@@ -2,34 +2,34 @@
 sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove -y
 
 # Organize Directories
-sh ./organizeHome.sh
+sh "$(pwd)/src/scripts/organizeHome.sh"
 
 # Security: YubiKeys, Firewall, VPN, Anti-Virus
-sh ./security.sh
+sh "$(pwd)/src/scripts/security.sh"
 
 # CLI Tooling
-sh ./cli.sh
+sh "$(pwd)/src/scripts/cli.sh"
 
 # Flatpak Apps
-sh ./flatpak.sh
+sh "$(pwd)/src/scripts/flatpak.sh"
 
 # Productivity: Taskwarrior, Todoist
-sh ./productivity.sh
+sh "$(pwd)/src/scripts/productivity.sh"
 
 # Web Apps
-sh ./web.sh
+sh "$(pwd)/src/scripts/web.sh"
 
 # Development Setup
-sh ./dev.sh
+sh "$(pwd)/src/scripts/dev.sh"
 
 # Shell: Terminator, zsh, oh-my-zsh
-sh ./shell.sh
+sh "$(pwd)/src/scripts/shell.sh"
 
 # Other: Thunderbird
-sh ./misc.sh
+sh "$(pwd)/src/scripts/misc.sh"
 
 # Add Taskwarrior tasks
-sh ./addTasks.sh
+sh "$(pwd)/src/scripts/addTasks.sh"
 
 # End: System Updates
 sudo dnf upgrade-y && sudo dnf update-y && flatpak update && sudo dnf autoremove -y

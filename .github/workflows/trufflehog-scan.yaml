@@ -1,19 +1,7 @@
 name: Trufflehog Scan
 
 permissions:
-  actions: none
-  checks: none
   contents: read
-  deployments: none
-  id-token: none
-  issues: none
-  discussions: none
-  packages: none
-  pages: none
-  pull-requests: read
-  repository-projects: none
-  security-events: none
-  statuses: none
 
 on: [pull_request, push]
 
