@@ -2,7 +2,7 @@
 sudo dnf install task -y
 
 # Update config file
-cat ../artifacts/taskwarrior/taskrcUpdates.txt >> ~/.taskrc
+cat "$(pwd)/src/artifacts/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
 
 # TODO: Run python script to set dark blue theme
 
@@ -11,7 +11,7 @@ mkdir ~/.task/themes/
 
 ### TODO: Update this from copying an artifact to pulling themes from GitHub ###
 # Add custom themes to directory
-cp ../artifacts/taskwarrior/themes/ ~/.task/themes/
+cp "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 
 # Install Todoist
-flatpak install flathub com.todoist.Todoist
+flatpak install flathub com.todoist.Todoist -y

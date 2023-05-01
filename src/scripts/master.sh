@@ -1,5 +1,8 @@
 # Begin: System Updates
-sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove
+sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove -y
+
+# Organize Directories
+sh ./organizeHome.sh
 
 # Security: YubiKeys, Firewall, VPN, Anti-Virus
 sh ./security.sh
@@ -29,7 +32,7 @@ sh ./misc.sh
 sh ./addTasks.sh
 
 # End: System Updates
-sudo dnf upgrade-y && sudo dnf update-y && sudo dnf autoremove
+sudo dnf upgrade-y && sudo dnf update-y && flatpak update && sudo dnf autoremove -y
 
 # Create a break in output
 echo ''

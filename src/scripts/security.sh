@@ -1,5 +1,5 @@
 # Install packages for YubiKeys
-sudo dnf install pam pam-u2f pamu2fcfg
+sudo dnf install pam pam-u2f pamu2fcfg -y
 
 # Create local directory for key registration
 mkdir -p ~/.config/yubico
@@ -56,5 +56,8 @@ sudo dnf install python3-pip -y
 sudo dnf install --user 'dnspython>=1.16.0' -y
 
 # Install Clam AV
-sudo dnf upgrade --refresh
+sudo dnf upgrade --refresh -y
 sudo dnf install clamav clamd clamav-update -y
+
+# Install nmap
+sudo dnf install nmap -y

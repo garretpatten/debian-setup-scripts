@@ -1,10 +1,11 @@
-# Install CLI Tools
-sudo dnf install gh git -y
+# Install GitHub CLI
+sudo dnf install gh -y
 
 # Git config
 git config --global credential.helper cache
 git config --global user.email "garret.patten@proton.me"
 git config --global user.name "Garret Patten"
+# TODO: cache username
 git config pull.rebase false
 
 # Install VS Code
@@ -14,4 +15,4 @@ sudo dnf check-update
 sudo dnf install code
 
 # Install Postman
-flatpak install flathub org.getpostman.Postman
+flatpak install flathub org.getpostman.Postman -y
