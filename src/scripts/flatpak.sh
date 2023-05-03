@@ -11,7 +11,7 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 # TODO: Add FlatHub remote
 
 # Install Signal Messenger, Simplenote, Spotify
-flatpakApps=("org.signal.Signal" "com.simplenote.Simplenote" "com.spotify.Client")
+flatpakApps=("org.signal.Signal" "com.spotify.Client")
 for flatpakApp in ${flatpakApps[@]}; do
 	# TODO: Path to flatpak apps is either /var/lib/flatpak or ~/.local/share/flatpak
 	if [[ -d "path/to/$flatpakApp" ]]; then
