@@ -21,13 +21,28 @@ sh src/scripts/master.sh
 # Installations
 
 ## CLI Tools
-- TODO
+- bat, clamac, clamd, clamav-update, curl, exa, flatpak, gh, git, https, htop, neofetch, nmap, openvpn, pam, pam-u2f, pamu2fcfg, semgrep, src-cli, task (Taskwarrior), ufw, wget
 
 ## Applications
-- TODO
+- 1Password
+- Brave
+- Postman
+- Proton VPN
+- Signl
+- Simplenote
+- Spotify
+- Thunderbird
+- Todoist
+- VLC
+- VS Code
 
-# configurations
-- TODO
+# Configurations
+- Firewall
+- Git Credential Helper
+- Home Directory
+- TaskWarrior
+- Vim
+- Zsh (oh-my-zsh)
 
 ---
 
