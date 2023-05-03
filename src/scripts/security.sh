@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install packages for YubiKeys
 sudo dnf install pam pam-u2f pamu2fcfg -y
 
