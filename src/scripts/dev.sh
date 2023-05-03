@@ -10,7 +10,7 @@ git config pull.rebase false
 cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
 
 # Install GitHub CLI && Sourcegraph CLI
-apps=("gh" "src-cli")
+apps=("gh" "semgrep" "src-cli")
 for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
