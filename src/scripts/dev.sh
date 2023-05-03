@@ -1,12 +1,23 @@
-# Install GitHub CLI
-sudo dnf install gh -y
+#!/bin/bash
 
 # Git config
 git config --global credential.helper cache
 git config --global user.email "garret.patten@proton.me"
 git config --global user.name "Garret Patten"
-# TODO: cache username
 git config pull.rebase false
+
+# Vim config
+cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
+
+# Install GitHub CLI && Sourcegraph CLI
+apps=("gh" "src-cli")
+for app in ${apps[@]}; do
+	if [[ -f "/usr/local/bin/$app" ]]; then
+		echo "$app is already installed."
+	else
+		dnf install "$app" -y
+	fi
+done
 
 # Install VS Code
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
