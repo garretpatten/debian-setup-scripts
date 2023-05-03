@@ -21,7 +21,28 @@ sh src/scripts/master.sh
 # Installations
 
 ## CLI Tools
-- bat, clamac, clamd, clamav-update, curl, exa, flatpak, gh, git, https, htop, neofetch, nmap, openvpn, pam, pam-u2f, pamu2fcfg, semgrep, src-cli, task (Taskwarrior), ufw, wget
+- bat
+- clamav
+- clamd
+- clamav-update
+- curl
+- exa
+- flatpak
+- gh
+- git
+- https
+- htop
+- neofetch
+- nmap
+- openvpn
+- pam
+- pam-u2f
+- pamu2fcfg
+- semgrep
+- src-cli
+- task (Taskwarrior)
+- ufw
+- wget
 
 ## Applications
 - 1Password
