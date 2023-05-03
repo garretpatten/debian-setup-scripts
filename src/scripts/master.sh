@@ -1,6 +1,8 @@
 # Begin: System Updates
 sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove -y
 
+# TODO: cd to the root of the project
+
 # Organize Directories
 sh "$(pwd)/src/scripts/organizeHome.sh"
 
