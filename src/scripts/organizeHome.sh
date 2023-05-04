@@ -1,15 +1,12 @@
 #!/bin/bash
 
-# Checkout home directory
-cd
-
 # Remove unneeded directories
 directoriesToRemove=("Desktop" "Music" "Public" "Templates" "Videos")
 for directoryToRemove in ${directoriesToRemove[@]}; do
 	if [[ -d "~/$directoryToRemove/" ]]; then
-		rmdir "$directoryToRemove"
+		rmdir "~/$directoryToRemove"
 	else
-		echo "$directoryToRemove is already removed."
+		echo "~/$directoryToRemove is already removed."
 	fi
 done
 
@@ -18,8 +15,8 @@ done
 directoriesToCreate=("repos")
 for directoryToCreate in ${directoriesToCreate[@]}; do
 	if [[ -d "~/$directoryToCreate/" ]]; then
-		echo "$directoryToCreate is already created."
+		echo "~/$directoryToCreate is already created."
 	else
-		mkdir "$directoryToCreate"
+		mkdir "~/$directoryToCreate"
 	fi
 done

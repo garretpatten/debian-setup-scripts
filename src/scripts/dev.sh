@@ -10,7 +10,7 @@ git config pull.rebase false
 cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
 
 # Install GitHub CLI && Sourcegraph CLI
-apps=("gh" "semgrep" "src-cli")
+apps=("gh" "src-cli")
 for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
@@ -19,11 +19,20 @@ for app in ${apps[@]}; do
 	fi
 done
 
+if [[ -f "~/.local/bin/semgrep" ]]; then
+	echo "Semgrep is already installed."
+else
+	python3 -m pip install semgrep
+
 # Install VS Code
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-sudo dnf check-update
-sudo dnf install code
+if [[ -f "/usr/bin/code" ]]; then
+	echo "VS Code is already installed."
+else		
+	sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+	sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+	sudo dnf check-update
+	sudo dnf install code
+fi
 
 # Install Postman
 flatpak install flathub org.getpostman.Postman -y

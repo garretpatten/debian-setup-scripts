@@ -1,5 +1,5 @@
 # Install Flatpak
-if [[ -f "/usr/local/bin/flatpak" ]]; then
+if [[ -f "/usr/bin/flatpak" ]]; then
 	echo "flatpak is already installed."
 else
 	sudo dnf install flatpak -y
@@ -13,8 +13,9 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 # Install Signal Messenger, Simplenote, Spotify
 flatpakApps=("org.signal.Signal" "com.spotify.Client")
 for flatpakApp in ${flatpakApps[@]}; do
-	# TODO: Path to flatpak apps is either /var/lib/flatpak or ~/.local/share/flatpak
-	if [[ -d "path/to/$flatpakApp" ]]; then
+	if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
+		echo "$flatpak is already installed."
+	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp"]]; then
 		echo "$flatpak is already installed."
 	else
 		flatpak install flathub "$flatpak" -y

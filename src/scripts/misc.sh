@@ -1,5 +1,5 @@
 # Thunderbird
-if [[ -f "/usr/local/bin/thunderbird" ]]; then
+if [[ -f "/usr/bin/thunderbird" ]]; then
  	echo "Thunderbird is already installed."
  else
 	sudo dnf install thunderbird -y
