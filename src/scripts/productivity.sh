@@ -26,7 +26,7 @@ flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
 for flatpakApp in ${flatpakApps[@]}; do
 	if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
 		echo "$flatpak is already installed."
-	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp"]]; then
+	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp" ]]; then
 		echo "$flatpak is already installed."
 	else
 		sudo dnf install "$flatpakApp" -y
