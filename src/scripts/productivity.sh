@@ -17,7 +17,7 @@ fi
 
 ### TODO: Update this from copying an artifact to pulling themes from GitHub ###
 # Add custom themes to directory
-cp "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
+cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 
 # TODO: Set dark blue theme
 
