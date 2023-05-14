@@ -17,7 +17,7 @@ fi
 
 ### TODO: Update this from copying an artifact to pulling themes from GitHub ###
 # Add custom themes to directory
-cp "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
+cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 
 # TODO: Set dark blue theme
 
@@ -26,7 +26,7 @@ flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
 for flatpakApp in ${flatpakApps[@]}; do
 	if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
 		echo "$flatpak is already installed."
-	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp"]]; then
+	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp" ]]; then
 		echo "$flatpak is already installed."
 	else
 		sudo dnf install "$flatpakApp" -y

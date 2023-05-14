@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add non-automated tasks to Taskwarrior
-if [[ -f "/usr/local/cellar/task/"]]; then
+if [[ -f "/usr/local/cellar/task/" ]]; then
 	# High Priority Tasks
 	task add Install Timeshift project:setup priority:H
 	task add Take a snapshot of system project:setup priority:H

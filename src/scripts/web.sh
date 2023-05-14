@@ -1,5 +1,5 @@
 # Install Brave
-if [[ =f "/usr/bin/brave-browser" ]]; then
+if [[ -f "/usr/bin/brave-browser" ]]; then
     echo "Braver browser is already installed."
 else
     sudo dnf install dnf-plugins-core -y
