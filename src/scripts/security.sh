@@ -78,7 +78,7 @@ else
 fi
 
 # Install nmap
-if [[ -f "/usr/bin/clamscan" ]]; then
+if [[ -f "/usr/bin/nmap" ]]; then
     echo "nmap is already installed."
 else
     sudo dnf install nmap -y
