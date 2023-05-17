@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install basic CLI tools
 cliTools=("bat" "curl" "exa" "git" "https" "htop" "neofetch" "openvpn" "python3" "wget")
 for cliTool in ${cliTools[@]}; do

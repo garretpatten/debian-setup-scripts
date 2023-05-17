@@ -1,5 +1,7 @@
+#!/bin/bash
+
 # Begin: System Updates
-yay && yay -Yc
+sudo pacman -Syu && yay -Yc
 
 # TODO: cd to the root of the project
 
@@ -31,7 +33,7 @@ sh "$(pwd)/src/scripts/misc.sh"
 sh "$(pwd)/src/scripts/addTasks.sh"
 
 # End: System Updates
-yay && yay -Yc
+sudo pacman -Syu && yay -Yc
 
 # Create a break in output
 echo ''

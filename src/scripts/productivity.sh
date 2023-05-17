@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install taskwarrior
 if [[ -f "/usr/bin/task" ]]; then
 	echo "Taskwarrior is already installed."
@@ -32,7 +34,7 @@ else
 	mkdir ~/.task/themes/
 fi
 
-### TODO: Update this from copying an artifact to pulling themes from GitHub ###
+# TODO: Update this from copying an artifact to pulling themes from GitHub ###
 # Add custom themes to directory
 cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 

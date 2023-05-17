@@ -48,7 +48,7 @@ else
 fi
 sudo ufw enable
 
-## Install 1Password
+# Install 1Password
 if [[ -f "/usr/bin/1password" ]]; then
     echo "1Password is already installed."
 else
@@ -71,7 +71,7 @@ fi
 
 # TODO: Install Proton VPN Client, CLI tool, and System Tray Icon
 yay -S protonvpn
-## TODO: Automate 2 Enter keypresses & y parameter & 8 Y parameters
+# TODO: Automate 2 Enter keypresses & y parameter & 8 Y parameters
 echo y | sudo pacman -S libappindicator-gtk3 gnome-shell-extension-appindicator
 
 # Install Clam AV

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
  	echo "Thunderbird is already installed."
