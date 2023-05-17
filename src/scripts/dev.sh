@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Git config
-git config --global credential.helper cache
-git config --global user.email "garret.patten@proton.me"
-git config --global user.name "Garret Patten"
-git config pull.rebase false
+# # Git config
+# git config --global credential.helper cache
+# git config --global user.email "garret.patten@proton.me"
+# git config --global user.name "Garret Patten"
+# git config pull.rebase false
 
 # Vim config
 cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
@@ -15,7 +15,7 @@ for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
 	else
-		yay -S "$app"
+		echo y | yay -S "$app"
 	fi
 done
 

@@ -81,5 +81,5 @@ sudo ufw enable
 if [[ -f "/usr/bin/nmap" ]]; then
     echo "nmap is already installed."
 else
-    yay -S nmap
+    echo y | yay -S nmap
 fi

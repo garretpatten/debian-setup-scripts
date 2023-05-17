@@ -4,7 +4,7 @@ for terminalApp in ${terminalApps[@]}; do
     if [[ -f "/usr/bin/$terminalApp" ]]; then
         echo "$terminalApp is already installed."
     else
-        yay -Sy "$terminalApp"
+        echo y | yay -S "$terminalApp"
     fi
 done
 

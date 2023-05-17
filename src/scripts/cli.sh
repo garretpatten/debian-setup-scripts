@@ -6,6 +6,6 @@ for cliTool in ${cliTools[@]}; do
 	elif [[ -f "/usr/sbin/$cliTool" ]]; then
 		echo "$cliTool is already installed."
 	else
-		yay -S "$cliTool"
+		echo y | yay -S "$cliTool"
 	fi
 done
