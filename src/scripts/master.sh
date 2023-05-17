@@ -1,5 +1,5 @@
 # Begin: System Updates
-sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove -y
+yay && yay -Yc
 
 # TODO: cd to the root of the project
 
@@ -11,9 +11,6 @@ sh "$(pwd)/src/scripts/security.sh"
 
 # CLI Tooling
 sh "$(pwd)/src/scripts/cli.sh"
-
-# Flatpak Apps
-sh "$(pwd)/src/scripts/flatpak.sh"
 
 # Productivity: Taskwarrior, Todoist
 sh "$(pwd)/src/scripts/productivity.sh"
@@ -34,7 +31,7 @@ sh "$(pwd)/src/scripts/misc.sh"
 sh "$(pwd)/src/scripts/addTasks.sh"
 
 # End: System Updates
-sudo dnf upgrade-y && sudo dnf update-y && flatpak update && sudo dnf autoremove -y
+yay && yay -Yc
 
 # Create a break in output
 echo ''

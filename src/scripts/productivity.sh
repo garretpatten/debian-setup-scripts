@@ -2,7 +2,7 @@
 if [[ -f "/usr/bin/task" ]]; then
 	echo "Taskwarrior is already installed."
 else
-	sudo dnf install task -y
+	yay -S task
 fi
 
 # Taskwarrior config
@@ -21,14 +21,14 @@ cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 
 # TODO: Set dark blue theme
 
-# Install Simplenote and Todoist
-flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
-for flatpakApp in ${flatpakApps[@]}; do
-	if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-		echo "$flatpak is already installed."
-	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp" ]]; then
-		echo "$flatpak is already installed."
-	else
-		sudo dnf install "$flatpakApp" -y
-	fi
-done
+# # Install Simplenote and Todoist
+# flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
+# for flatpakApp in ${flatpakApps[@]}; do
+# 	if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
+# 		echo "$flatpak is already installed."
+# 	elif [[ -d "~/.local/share/flatpak/app/$flatpakApp" ]]; then
+# 		echo "$flatpak is already installed."
+# 	else
+# 		sudo dnf install "$flatpakApp" -y
+# 	fi
+# done

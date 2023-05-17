@@ -1,10 +1,10 @@
 # Install Terminator and zsh
 terminalApps=("terminator" "zsh")
 for terminalApp in ${terminalApps[@]}; do
-    if [[ -f "/usr/bin/$terminalApp"]]; then
+    if [[ -f "/usr/bin/$terminalApp" ]]; then
         echo "$terminalApp is already installed."
     else
-        sudo dnf install "$terminalApp" -y
+        yay -Sy "$terminalApp"
     fi
 done
 
@@ -21,7 +21,7 @@ else
     cd ~/.oh-my-zsh/custom/plugins
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
-
+install
     cat "$(pwd)/src/artifacts/zsh/zshrc.txt" > ~/.zshrc
 fi
 

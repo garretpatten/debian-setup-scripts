@@ -54,7 +54,7 @@ alias home="clear && echo '' && neofetch && task list"
 alias ls="exa"
 alias neo="neofetch"
 alias scan="sudo freshclam && sudo clamscan -i -r"
-alias update="sudo dnf upgrade -y && sudo dnf update -y && sudo flatpak update -y && sudo dnf autoremove -y"
+alias update="yay && yay -Yc"
 alias status="clear && neofetch && task calendar && task list && protonvpn-cli status"
 #
 # Taskwarrior
