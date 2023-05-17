@@ -1,7 +1,7 @@
 # Install Terminator and zsh
 terminalApps=("terminator" "zsh")
 for terminalApp in ${terminalApps[@]}; do
-    if [[ -f "/usr/bin/$terminalApp"]]; then
+    if [[ -f "/usr/bin/$terminalApp" ]]; then
         echo "$terminalApp is already installed."
     else
         sudo dnf install "$terminalApp" -y
