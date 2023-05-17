@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # # Git config
-# git config --global credential.helper cache
+# git config --global credential.helper store
 # git config --global user.email "garret.patten@proton.me"
 # git config --global user.name "Garret Patten"
 # git config pull.rebase false

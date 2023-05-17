@@ -44,42 +44,46 @@
 if [[ -f "/usr/sbin/ufw" ]]; then
     echo "Firewall is already installed."
 else
-    yay -S ufw 
+    echo y | sudo pacman -S ufw 
 fi
 sudo ufw enable
 
-# ## Install 1Password
-# if [[ -f "/usr/bin/1password" ]]; then
-#     echo "1Password is already installed."
-# else
-#     sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
-#     sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
-#     sudo dnf install 1password -y
-# fi
+## Install 1Password
+if [[ -f "/usr/bin/1password" ]]; then
+    echo "1Password is already installed."
+else
+    currentPath=$(pwd)
+    cd
 
-# TODO: Install Proton VPN
+    if [[ -d "~/Downloads" ]]; then
+        mkdir Downloads
+    fi
+    cd Downloads
 
-# # Download and Install RPM Package
-# # TODO: Download RPM Package from https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
-# sudo dnf install ~/Downloads/protonvpn-stable-release-1.0.1-1.noarch.rpm -y
-# sudo dnf update -y
-# sudo dnf install protonvpn-cli -y
+    curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
+    sudo tar -xf 1password-latest.tar.gz
+    sudo mkdir -p /opt/1Password
+    sudo mv 1password-*/* /opt/1Password
+    sudo /opt/1Password/after-install.sh
 
-# # Dependencies for Alternative Routing
-# sudo dnf install python3-pip -y
-# sudo dnf install --user 'dnspython>=1.16.0' -y
+    cd $currentPath
+fi
 
-# # Install Clam AV
-# if [[ -f "/usr/bin/clamscan" ]]; then
-#     echo "Clam Anti-Virus is already installed."
-# else  
-#     sudo dnf upgrade --refresh -y
-#     sudo dnf install clamav clamd clamav-update -y
-# fi
+# TODO: Install Proton VPN Client, CLI tool, and System Tray Icon
+yay -S protonvpn
+## TODO: Automate 2 Enter keypresses & y parameter & 8 Y parameters
+echo y | sudo pacman -S libappindicator-gtk3 gnome-shell-extension-appindicator
+
+# Install Clam AV
+if [[ -f "/usr/bin/clamscan" ]]; then
+    echo "Clam Anti-Virus is already installed."
+else  
+    echo y | sudo pacman -S clamav
+fi
 
 # Install nmap
 if [[ -f "/usr/bin/nmap" ]]; then
     echo "nmap is already installed."
 else
-    echo y | yay -S nmap
+    echo y | sudo pacman -S nmap
 fi

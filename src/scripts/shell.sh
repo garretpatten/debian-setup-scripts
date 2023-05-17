@@ -18,10 +18,11 @@ if [[ -d "~/.oh-my-zsh/" ]]; then
 else
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+    currentPath=$(pwd)
     cd ~/.oh-my-zsh/custom/plugins
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
-install
+    cd $currentPath
     cat "$(pwd)/src/artifacts/zsh/zshrc.txt" > ~/.zshrc
 fi
 

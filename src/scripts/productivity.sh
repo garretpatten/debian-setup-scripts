@@ -2,7 +2,24 @@
 if [[ -f "/usr/bin/task" ]]; then
 	echo "Taskwarrior is already installed."
 else
-	echo y | yay -S task
+	echo y | sudo pacman -S task
+
+	# TODO: Handle first Taskwarrior prompt
+	#
+	# Add non-automated setup tasks
+	# High Priority Tasks
+	task add Install Timeshift project:setup priority:H
+	task add Take a snapshot of system project:setup priority:H
+	task add Export GitHub PAT with 1Password project:dev priority:H
+
+	# Medium Priority Tasks
+	task add Sign into and sync Brave project:setup priority:M
+	task add Sign into Firefox project:setup priority:M
+	task add Look into Gnome tweaks project:setup priority:M
+
+	# Low Priority Tasks
+	task add Install Burp Suite project:setup priority:L
+	task add Download files from Proton Drive project:setup priority:L
 fi
 
 # Taskwarrior config
@@ -31,18 +48,9 @@ fi
 if [[ -f "/usr/bin/todoist" ]]; then
 	echo "Todoist is already installed."
 else
-	# TODO: Install Todoist via AppImage (https://todoist.com/help/articles/how-to-install-todoist-on-linux#install-todoist-using-appimage)
+	currentPath=$(pwd)
+	cd ~/AppImages
+	wget https://todoist.com/linux_app/appimage
+	sudo mv appimage /usr/bin/todoist
+	cd $currentPath
 fi
-
-
-
-apps=("simplenote-electron-bin" "todoist")
-for app in ${apps[@]}; do
-	if [[ -d "/usr/bin/$app" ]]; then
-		echo "$app is already installed."
-	elif [[ -d "~/.local/share/flatpak/app/$app" ]]; then
-		echo "$app is already installed."
-	else
-		yay -S "$app"
-	fi
-done
