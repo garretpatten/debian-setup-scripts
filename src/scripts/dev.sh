@@ -1,10 +1,14 @@
 #!/bin/bash
 
+packageManager=$1
+
 # Git config
-git config --global credential.helper cache
-git config --global user.email "garret.patten@proton.me"
-git config --global user.name "Garret Patten"
-git config pull.rebase false
+if ! [[ -f "~/.gitconfig" ]]; then
+	git config --global credential.helper store
+	git config --global user.email "garret.patten@proton.me"
+	git config --global user.name "Garret Patten"
+	git config pull.rebase false
+fi
 
 # Vim config
 cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
@@ -15,7 +19,11 @@ for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
 	else
-		dnf install "$app" -y
+		if [[ "$packageManager" = "pacman" ]]; then
+			echo y | sudo pacman -S "$cliTool"
+		else
+			sudo $packageManager install "$cliTool" -y
+		fi
 	fi
 done
 
@@ -27,12 +35,26 @@ else
 # Install VS Code
 if [[ -f "/usr/bin/code" ]]; then
 	echo "VS Code is already installed."
-else		
-	sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-	sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-	sudo dnf check-update
-	sudo dnf install code
+else
+	if [[ "$packageManager" = "pacman" ]]; then
+		echo y | sudo pacman -S code
+	else if [[ "$packageManager" = "dnf" ]]; then
+		sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+		sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+		sudo dnf check-update -y
+		sudo dnf install code -y
+	else
+		# TODO: Add support for apt and deb
+		echo "Support not yet added for apt and deb."
 fi
 
 # Install Postman
-flatpak install flathub org.getpostman.Postman -y
+if [[ "$packageManager" = "pacman" ]]; then
+	yay -S postman-bin
+	# TODO: Automate 2 Enter keypresses & Y parameter
+else if [[ "$packageManager" = "dnf" ]]; then
+	flatpak install flathub org.getpostman.Postman -y
+else
+	# TODO: Add support for apt and deb
+	echo "Support not yet added for apt and deb."
+fi

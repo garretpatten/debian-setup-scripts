@@ -32,31 +32,29 @@ fi
 sh "$(pwd)/src/scripts/organizeHome.sh"
 
 # Security: YubiKeys, Firewall, VPN, Anti-Virus
-sh "$(pwd)/src/scripts/security.sh"
+sh "$(pwd)/src/scripts/security.sh" $packageManager
 
 # CLI Tooling
-sh "$(pwd)/src/scripts/cli.sh"
+sh "$(pwd)/src/scripts/cli.sh" $packageManager
 
+# TODO: Rename and refactor to use AUR packages for Arch-based distros
 # Flatpak Apps
-sh "$(pwd)/src/scripts/flatpak.sh"
+sh "$(pwd)/src/scripts/flatpak.sh" $packageManager
 
 # Productivity: Taskwarrior, Todoist
-sh "$(pwd)/src/scripts/productivity.sh"
+sh "$(pwd)/src/scripts/productivity.sh" $packageManager
 
 # Web Apps
-sh "$(pwd)/src/scripts/web.sh"
+sh "$(pwd)/src/scripts/web.sh" $packageManager
 
 # Development Setup
-sh "$(pwd)/src/scripts/dev.sh"
+sh "$(pwd)/src/scripts/dev.sh" $packageManager
 
 # Shell: Terminator, zsh, oh-my-zsh
-sh "$(pwd)/src/scripts/shell.sh"
+sh "$(pwd)/src/scripts/shell.sh" $packageManager
 
 # Other: Thunderbird
-sh "$(pwd)/src/scripts/misc.sh"
-
-# Add Taskwarrior tasks
-sh "$(pwd)/src/scripts/addTasks.sh"
+sh "$(pwd)/src/scripts/misc.sh" $packageManager
 
 # End: System Updates
 if [[ "$packageManager" = "pacman" ]]; then
