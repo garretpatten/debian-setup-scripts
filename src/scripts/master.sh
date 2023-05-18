@@ -1,5 +1,30 @@
+#!/bin/bash
+
+if [[ -f "usr/bin/dnf" ]]; then
+    packageManager="dnf"
+else if [[ -f "usr/bin/pacman" ]]; then
+    packageManager="pacman"
+    if ! [[ -f "/usr/bin/yay" ]]; then
+        # TODO: Install yay
+    fi
+# TODO: Check if apt is binary or alias for apt-get
+else if [[ -f "/usr/bin/apt-get" ]]; then
+    packageManager="apt"
+else if [[ -f "/usr/bin/deb" ]]; then
+    packageManager="deb"
+else
+    echo "The package manager on this system is not supported."
+    echo "Currently, these setup scripts support the following package managers:"
+    echo "apt, deb, dnf, pacman"
+    exit 1
+fi
+
 # Begin: System Updates
-sudo dnf upgrade -y && sudo dnf update-y && sudo dnf autoremove -y
+if [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -Syu && yay -Yc
+else
+    sudo $packageManager upgrade -y && sudo $packageManager update -y && sudo $packageManager autoremove -y
+fi
 
 # TODO: cd to the root of the project
 
@@ -34,7 +59,11 @@ sh "$(pwd)/src/scripts/misc.sh"
 sh "$(pwd)/src/scripts/addTasks.sh"
 
 # End: System Updates
-sudo dnf upgrade-y && sudo dnf update-y && flatpak update && sudo dnf autoremove -y
+if [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -Syu && yay -Yc
+else
+    sudo $packageManager upgrade -y && sudo $packageManager update -y && flatpak update -y && sudo $packageManager autoremove -y
+fi
 
 # Create a break in output
 echo ''

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install taskwarrior
 if [[ -f "/usr/bin/task" ]]; then
 	echo "Taskwarrior is already installed."

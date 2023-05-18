@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install Flatpak
 if [[ -f "/usr/bin/flatpak" ]]; then
 	echo "flatpak is already installed."

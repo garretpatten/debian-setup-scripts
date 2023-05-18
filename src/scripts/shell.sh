@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install Terminator and zsh
 terminalApps=("terminator" "zsh")
 for terminalApp in ${terminalApps[@]}; do
