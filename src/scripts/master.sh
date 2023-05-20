@@ -10,8 +10,6 @@ else if [[ -f "usr/bin/pacman" ]]; then
 # TODO: Check if apt is binary or alias for apt-get
 else if [[ -f "/usr/bin/apt-get" ]]; then
     packageManager="apt"
-else if [[ -f "/usr/bin/deb" ]]; then
-    packageManager="deb"
 else
     echo "The package manager on this system is not supported."
     echo "Currently, these setup scripts support the following package managers:"
