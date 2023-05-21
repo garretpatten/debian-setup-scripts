@@ -3,7 +3,7 @@
 packageManager=$1
 
 # Install basic CLI tools
-cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "python3" "wget")
+cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "wget")
 for cliTool in ${cliTools[@]}; do
 	if [[ -d "/usr/bin/$cliTool" ]]; then
 		echo "$cliTool is already installed."
@@ -17,3 +17,5 @@ for cliTool in ${cliTools[@]}; do
 		fi
 	fi
 done
+
+# TODO: Install python and pip separately and handle differences

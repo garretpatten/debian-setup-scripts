@@ -71,10 +71,12 @@ else
         sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
         sudo dnf install 1password -y
     elif [[ "$packageManager" = "pacman" ]]; then
+        echo "yuy"
         # TODO: Add Arch stuff
         currentPath=$(pwd)
         cd ~/Downloads
 
+        echo "doing it"
         curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
         sudo tar -xf 1password-latest.tar.gz
         sudo mkdir -p /opt/1Password
@@ -82,6 +84,7 @@ else
         sudo /opt/1Password/after-install.sh
 
         cd $currentPath
+        echo "done"
     else
         # TODO: Add support for apt
         echo "Support not yet added for apt."
