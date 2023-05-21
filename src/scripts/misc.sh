@@ -55,17 +55,14 @@ if [[ "$packageManager" = "dnf" ]]; then
 		fi
 	done
 elif [[ "$packageManager" = "pacman" ]]; then
-	if [[ -f "/usr/bin/spotify" ]]; then
-		echo "spotify is already installed."
-	else
-		echo y | sudo pacman -Syu spotify-launcher
-	fi
-
-	if [[ -f "/usr/bin/signal-desktop" ]]; then
-		echo "signal-desktop is already installed."
-	else
-		echo y | sudo pacman -Syu signal-desktop
-	fi
+	apps=("signal-desktop" "spotify-launcher")
+	for app in ${apps[@]}; do
+		if [[ -d "/usr/bin/$app" ]]; then
+			echo "$app is already installed."
+		else
+			echo y | sudo pacman -Syu "$app"
+		fi
+	done
 elif [[ "$packageManager" = "apt" ]]; then
 	echo "Support not yet added for apt."
 else
