@@ -14,6 +14,33 @@ if [[ "$packageManager" = "dnf" ]]; then
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 fi
 
+# Install Signal Messenger & Spotify
+if [[ "$packageManager" = "dnf" ]]; then
+	flatpakApps=("org.signal.Signal" "com.spotify.Client")
+	for flatpakApp in ${flatpakApps[@]}; do
+		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
+			echo "$flatpak is already installed."
+		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
+			echo "$flatpak is already installed."
+		else
+			flatpak install flathub "$flatpak" -y
+		fi
+	done
+elif [[ "$packageManager" = "pacman" ]]; then
+	apps=("signal-desktop" "spotify-launcher")
+	for app in ${apps[@]}; do
+		if [[ -d "/usr/bin/$app" ]]; then
+			echo "$app is already installed."
+		else
+			echo y | sudo pacman -Syu "$app"
+		fi
+	done
+elif [[ "$packageManager" = "apt" ]]; then
+	echo "Support not yet added for apt."
+else
+	echo "Support for Signal and Spotify has only been added for dnf and pacman."
+fi
+
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
  	echo "Thunderbird is already installed."
@@ -40,31 +67,4 @@ if [[ -f "/usr/bin/vlc" ]]; then
 		# TODO: Add support for apt and
 		echo "Support not yet added for apt."
 	fi
-fi
-
-# Install Signal Messenger & Spotify
-if [[ "$packageManager" = "dnf" ]]; then
-	flatpakApps=("org.signal.Signal" "com.spotify.Client")
-	for flatpakApp in ${flatpakApps[@]}; do
-		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
-		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
-		else
-			flatpak install flathub "$flatpak" -y
-		fi
-	done
-elif [[ "$packageManager" = "pacman" ]]; then
-	apps=("signal-desktop" "spotify-launcher")
-	for app in ${apps[@]}; do
-		if [[ -d "/usr/bin/$app" ]]; then
-			echo "$app is already installed."
-		else
-			echo y | sudo pacman -Syu "$app"
-		fi
-	done
-elif [[ "$packageManager" = "apt" ]]; then
-	echo "Support not yet added for apt."
-else
-	echo "Support for Signal and Spotify has only been added for dnf and pacman."
 fi
