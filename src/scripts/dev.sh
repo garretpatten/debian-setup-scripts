@@ -45,8 +45,8 @@ else
 		sudo dnf check-update -y
 		sudo dnf install code -y
 	else
-		# TODO: Add support for apt and deb
-		echo "Support not yet added for apt and deb."
+		# TODO: Add support for apt
+		echo "Support not yet added for apt."
 	fi
 fi
 
@@ -57,6 +57,6 @@ if [[ "$packageManager" = "pacman" ]]; then
 elif [[ "$packageManager" = "dnf" ]]; then
 	flatpak install flathub com.getpostman.Postman -y
 else
-	# TODO: Add support for apt and deb
+	# TODO: Add support for apt
 	echo "Support not yet added for apt."
 fi

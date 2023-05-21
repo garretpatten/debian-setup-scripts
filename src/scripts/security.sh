@@ -83,8 +83,8 @@ else
 
         cd $currentPath
     else
-        # TODO: Add support for apt and deb
-        echo "Support not yet added for apt and deb."
+        # TODO: Add support for apt
+        echo "Support not yet added for apt."
     fi
 fi
 
@@ -108,8 +108,8 @@ else
         # TODO: Automate 2 Enter keypresses & y parameter & 8 Y parameters
         echo y | sudo pacman -S libappindicator-gtk3 gnome-shell-extension-appindicator
     else
-        # TODO: Add support for apt and deb
-        echo "Support not yet added for aprt and deb."
+        # TODO: Add support for apt
+        echo "Support not yet added for apt."
     fi
 fi
 
@@ -123,8 +123,8 @@ else
     elif [[ "$packageManager" = "pacman" ]]; then
         echo y | sudo pacman -S clamav
     else
-        # TODO: Add support for apt and deb
-        echo "Support not yet added for apt and deb."
+        # TODO: Add support for apt
+        echo "Support not yet added for apt."
     fi
 fi
 

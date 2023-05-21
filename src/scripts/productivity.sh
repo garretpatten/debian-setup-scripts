@@ -10,7 +10,7 @@ else
 	if [[ "$packageManager" = "pacman" ]]; then
 		echo y | sudo pacman -S $task
 	else
-		# TODO: Check if apt or deb uses "taskwarrior"
+		# TODO: Check if apt uses "taskwarrior"
 		sudo $packageManager install $task -y
 	fi
 

@@ -28,7 +28,7 @@ if [[ -f "/usr/bin/vlc" ]]; then
 		# TODO: Check if pacman install is possible
 		echo y | yay -S "$cliTool"
 	else
-		# TODO: Add support for apt and deb
-		echo "Support not yet added for apt and deb."
+		# TODO: Add support for apt and
+		echo "Support not yet added for apt."
 	fi
 fi

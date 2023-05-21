@@ -15,7 +15,7 @@ else
         yay -S brave-bin
         # TODO: Automate 2 Enter keypresses and Y parameter    else
     else
-        # TODO: Add support for apt and deb
-        echo "Support not yet added for apt and deb."
+        # TODO: Add support for apt
+        echo "Support not yet added for apt."
     fi
 fi
