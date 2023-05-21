@@ -1,14 +1,22 @@
 #!/bin/bash
 
-packageManager=''
+packageManager=""
 
 if [[ -f "/usr/bin/dnf" ]]; then
     packageManager="dnf"
 elif [[ -f "/usr/bin/pacman" ]]; then
     packageManager="pacman"
     if [[ ! -f "/usr/bin/yay" ]]; then
-        # TODO: Install yay
-        echo "TODO: Install yay"
+        echo y | sudo pacman -S base-devel
+        echo y | sudo pacman -S git
+
+        currentPath=$(pwd)
+        cd ~/Downloads
+        git clone https://aur.archlinux.org/yay.git
+        cd yay
+        makepkg -si
+ 
+        cd $currentPath
     fi
 # TODO: Check if apt is binary or alias for apt-get
 elif [[ -f "/usr/bin/apt-get" ]]; then
@@ -38,10 +46,6 @@ sh "$(pwd)/src/scripts/security.sh" $packageManager
 # CLI Tooling
 sh "$(pwd)/src/scripts/cli.sh" $packageManager
 
-# TODO: Rename and refactor to use AUR packages for Arch-based distros
-# Flatpak Apps
-sh "$(pwd)/src/scripts/flatpak.sh" $packageManager
-
 # Productivity: Taskwarrior, Todoist
 sh "$(pwd)/src/scripts/productivity.sh" $packageManager
 
@@ -65,7 +69,7 @@ else
 fi
 
 # Create a break in output
-echo ''
-echo ''
+echo ""
+echo ""
 
 echo "Cheers -- system setup is now complete!"

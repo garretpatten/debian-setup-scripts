@@ -18,4 +18,33 @@ for cliTool in ${cliTools[@]}; do
 	fi
 done
 
-# TODO: Install python and pip separately and handle differences
+# Install python and pip separately and handle differences
+if [[ -f "/usr/bin/python" ]]; then
+	echo "python3 is already installed."
+else
+	if [[ "$packageManager" = "dnf" ]]; then
+		sudo dnf install python3 -y
+	elif [[ "$packageManaer" = "pacman" ]]; then
+		echo y | sudo pacman -Syu python3
+	elif [[ "$packageManager" = "apt" ]]; then
+		sudo apt install python3.6 -y
+	else
+		echo "Support has only been added for apt, dnf, and pacman."
+	fi
+fi
+
+if [[ -f "/usr/bin/python-pip" ]]; then
+	echo "python-pip is already installed."
+else
+	if [[ "$packageManager" = "dnf" ]]; then
+        sudo dnf install python3-pip -y
+	elif [[ "$packageManaer" = "pacman" ]]; then
+		echo y | sudo pacman -Syu python-pip
+	elif [[ "$packageManager" = "apt" ]]; then
+		sudo apt install python3-pip -y
+	else
+		echo "Support has only been added for apt, dnf, and pacman."
+	fi
+fi
+
+

@@ -52,7 +52,7 @@ fi
 
 # Install Postman
 if [[ "$packageManager" = "pacman" ]]; then
-	yay -S postman-bin
+	echo y | yay -S postman-bin
 	# TODO: Automate 2 Enter keypresses & Y parameter
 elif [[ "$packageManager" = "dnf" ]]; then
 	flatpak install flathub com.getpostman.Postman -y
