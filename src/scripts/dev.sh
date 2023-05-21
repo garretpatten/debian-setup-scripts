@@ -13,7 +13,7 @@ fi
 # Vim config
 cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
 
-# Install GitHub CLI && Sourcegraph CLI
+# Install GitHub CLI & Sourcegraph CLI
 apps=("gh" "src-cli")
 for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
