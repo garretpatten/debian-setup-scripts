@@ -1,19 +1,22 @@
 #!/bin/bash
 
-if [[ -f "usr/bin/dnf" ]]; then
+packageManager=''
+
+if [[ -f "/usr/bin/dnf" ]]; then
     packageManager="dnf"
-else if [[ -f "usr/bin/pacman" ]]; then
+elif [[ -f "/usr/bin/pacman" ]]; then
     packageManager="pacman"
-    if ! [[ -f "/usr/bin/yay" ]]; then
+    if [[ ! -f "/usr/bin/yay" ]]; then
         # TODO: Install yay
+        echo "TODO: Install yay"
     fi
 # TODO: Check if apt is binary or alias for apt-get
-else if [[ -f "/usr/bin/apt-get" ]]; then
+elif [[ -f "/usr/bin/apt-get" ]]; then
     packageManager="apt"
 else
     echo "The package manager on this system is not supported."
     echo "Currently, these setup scripts support the following package managers:"
-    echo "apt, deb, dnf, pacman"
+    echo "apt, dnf, pacman"
     exit 1
 fi
 
@@ -49,7 +52,7 @@ sh "$(pwd)/src/scripts/web.sh" $packageManager
 sh "$(pwd)/src/scripts/dev.sh" $packageManager
 
 # Shell: Terminator, zsh, oh-my-zsh
-sh "$(pwd)/src/scripts/shell.sh" $packageManager
+zsh "$(pwd)/src/scripts/shell.sh" $packageManager
 
 # Other: Thunderbird
 sh "$(pwd)/src/scripts/misc.sh" $packageManager
@@ -62,7 +65,6 @@ else
 fi
 
 # Create a break in output
-echo ''
 echo ''
 echo ''
 

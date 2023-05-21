@@ -21,18 +21,19 @@ chsh -s $(which zsh)
 sudo chsh -s $(which zsh)
 
 # Install oh-my-zsh and configure shell
-if [[ -d "~/.oh-my-zsh/" ]]; then
+if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
     currentPath=$(pwd)
-    cd ~/.oh-my-zsh/custom/plugins
+    cd $HOME/.oh-my-zsh/custom/plugins
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
     cd $currentPath
     cat "$(pwd)/src/artifacts/zsh/zshrc.txt" > ~/.zshrc
+    echo "Fake install"
 fi
 
 # Reload config file

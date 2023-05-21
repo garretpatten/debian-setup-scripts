@@ -36,7 +36,7 @@ fi
 cat "$(pwd)/src/artifacts/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
 
 # Add directory for custom themes
-if [[ -d "~/.task/themes/" ]]; then
+if [[ -d "$HOME/.task/themes/" ]]; then
 	echo "Taskwarrior themes directory already exists."
 else
 	mkdir ~/.task/themes/
@@ -69,7 +69,7 @@ else
 	for flatpakApp in ${flatpakApps[@]}; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
 			echo "$flatpak is already installed."
-		elif [[ -d "~/.local/share/flatpak/app/$flatpakApp" ]]; then
+		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
 			echo "$flatpak is already installed."
 		else
 			sudo dnf install "$flatpakApp" -y

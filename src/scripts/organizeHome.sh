@@ -3,10 +3,10 @@
 # Remove unneeded directories
 directoriesToRemove=("Desktop" "Music" "Public" "Templates" "Videos")
 for directoryToRemove in ${directoriesToRemove[@]}; do
-	if [[ -d "~/$directoryToRemove/" ]]; then
-		rmdir "~/$directoryToRemove"
+	if [[ -d "$HOME/$directoryToRemove/" ]]; then
+		rmdir "$HOME/$directoryToRemove"
 	else
-		echo "~/$directoryToRemove is already removed."
+		echo "$HOME/$directoryToRemove is already removed."
 	fi
 done
 
@@ -14,9 +14,9 @@ done
 # TODO: Add directories that align with backups
 directoriesToCreate=("AppImages" "Repos")
 for directoryToCreate in ${directoriesToCreate[@]}; do
-	if [[ -d "~/$directoryToCreate/" ]]; then
-		echo "~/$directoryToCreate is already created."
+	if [[ -d "$HOME/$directoryToCreate/" ]]; then
+		echo "$HOME/$directoryToCreate is already created."
 	else
-		mkdir "~/$directoryToCreate"
+		mkdir "$HOME/$directoryToCreate"
 	fi
 done

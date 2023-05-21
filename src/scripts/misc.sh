@@ -24,7 +24,7 @@ if [[ -f "/usr/bin/vlc" ]]; then
 	if [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 		sudo dnf install vlc -y
-	else if [[ "$packageManager" = "pacman" ]]; then
+	elif [[ "$packageManager" = "pacman" ]]; then
 		# TODO: Check if pacman install is possible
 		echo y | yay -S "$cliTool"
 	else

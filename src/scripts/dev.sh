@@ -3,7 +3,7 @@
 packageManager=$1
 
 # Git config
-if ! [[ -f "~/.gitconfig" ]]; then
+if [[ ! -f "$HOME/.gitconfig" ]]; then
 	git config --global credential.helper store
 	git config --global user.email "garret.patten@proton.me"
 	git config --global user.name "Garret Patten"
@@ -27,10 +27,11 @@ for app in ${apps[@]}; do
 	fi
 done
 
-if [[ -f "~/.local/bin/semgrep" ]]; then
+if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
 	python3 -m pip install semgrep
+fi
 
 # Install VS Code
 if [[ -f "/usr/bin/code" ]]; then
@@ -38,7 +39,7 @@ if [[ -f "/usr/bin/code" ]]; then
 else
 	if [[ "$packageManager" = "pacman" ]]; then
 		echo y | sudo pacman -S code
-	else if [[ "$packageManager" = "dnf" ]]; then
+	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 		sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 		sudo dnf check-update -y
@@ -46,15 +47,16 @@ else
 	else
 		# TODO: Add support for apt and deb
 		echo "Support not yet added for apt and deb."
+	fi
 fi
 
 # Install Postman
 if [[ "$packageManager" = "pacman" ]]; then
 	yay -S postman-bin
 	# TODO: Automate 2 Enter keypresses & Y parameter
-else if [[ "$packageManager" = "dnf" ]]; then
-	flatpak install flathub org.getpostman.Postman -y
+elif [[ "$packageManager" = "dnf" ]]; then
+	flatpak install flathub com.getpostman.Postman -y
 else
 	# TODO: Add support for apt and deb
-	echo "Support not yet added for apt and deb."
+	echo "Support not yet added for apt."
 fi

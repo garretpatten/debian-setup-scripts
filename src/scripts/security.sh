@@ -10,40 +10,44 @@ if [[ "$packageManager" = "dnf" ]]; then
         sudo dnf install pam pam-u2f pamu2fcfg -y
     fi
 
-    # Create local directory for key registration
-    mkdir -p ~/.config/yubico
+    if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
+        # Create local directory for key registration
+        mkdir -p ~/.config/yubico
 
-    # Create a break in output
-    echo ''
-    echo ''
-    echo ''
+        # Create a break in output
+        echo ''
+        echo ''
+        echo ''
 
-    echo "Hardware Key Registration"
+        echo "Hardware Key Registration"
 
-    # Create a break in output
-    echo ''
-    echo ''
-    echo ''
+        # Create a break in output
+        echo ''
+        echo ''
+        echo ''
 
-    # Register primary key
-    pamu2fcfg >> ~/.config/yubico/u2f_keys
+        # Register primary key
+        pamu2fcfg >> ~/.config/yubico/u2f_keys
 
-    # Register backup key
-    pamu2fcfg >> ~/.config/yubico/u2f_keys
+        # Register backup key
+        pamu2fcfg >> ~/.config/yubico/u2f_keys
 
-    # Create directory in /etc/ for key registration
-    sudo mkdir -p /etc/yubico
+        # Create directory in /etc/ for key registration
+        sudo mkdir -p /etc/yubico
 
-    # Copy keys to directory
-    sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
+        # Copy keys to directory
+        sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
 
-    # Update keys file permissions to make it readable
-    sudo chmod 644 /etc/yubico/u2f_keys
+        # Update keys file permissions to make it readable
+        sudo chmod 644 /etc/yubico/u2f_keys
 
-    # Authentication Updates
-    # TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
+        # Authentication Updates
+        # TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
+    else
+        echo "YubiKey file already configured. To re-configure, delete the etc config file and re-run."
+    fi
 else
-    echo "Support not yet added for apt, deb, and pacman."
+    echo "Support not yet added for apt and pacman."
 fi
 
 # Install and Enable Firewall
@@ -66,7 +70,7 @@ else
         sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
         sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
         sudo dnf install 1password -y
-    else if [[ "$packageManager" = "pacman" ]]; then
+    elif [[ "$packageManager" = "pacman" ]]; then
         # TODO: Add Arch stuff
         currentPath=$(pwd)
         cd ~/Downloads
@@ -81,6 +85,7 @@ else
     else
         # TODO: Add support for apt and deb
         echo "Support not yet added for apt and deb."
+    fi
 fi
 
 # Install Proton VPN, Proton VPN CLI, and System Tray Icon
@@ -98,7 +103,7 @@ else
         # Dependencies for Alternative Routing
         sudo dnf install python3-pip -y
         sudo dnf install --user 'dnspython>=1.16.0' -y
-    else if [[ "$packageManager" = "pacman" ]]; then
+    elif [[ "$packageManager" = "pacman" ]]; then
         yay -S protonvpn
         # TODO: Automate 2 Enter keypresses & y parameter & 8 Y parameters
         echo y | sudo pacman -S libappindicator-gtk3 gnome-shell-extension-appindicator
@@ -115,7 +120,7 @@ else
     if [[ "$packageManager" = "dnf" ]]; then
         sudo dnf upgrade --refresh -y
         sudo dnf install clamav clamd clamav-update -y
-    else if [[ "$packageManager" = "pacman" ]]; then
+    elif [[ "$packageManager" = "pacman" ]]; then
         echo y | sudo pacman -S clamav
     else
         # TODO: Add support for apt and deb
