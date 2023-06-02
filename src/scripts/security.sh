@@ -13,15 +13,17 @@ if [[ "$packageManager" = "dnf" ]]; then
 	if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
 		mkdir -p ~/.config/yubico
 
-		echo ''
-		echo ''
-		echo ''
+		# Create a break in output
+		echo ""
+		echo ""
+		echo ""
 
 		echo "Hardware Key Registration"
 
-		echo ''
-		echo ''
-		echo ''
+		# Create a break in output
+		echo ""
+		echo ""
+		echo ""
 
 		# Register Primary Key
 		pamu2fcfg >> ~/.config/yubico/u2f_keys
@@ -63,7 +65,6 @@ else
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf install 1password -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		# TODO: Add Arch stuff
 		currentPath=$(pwd)
 		cd ~/Downloads
 
@@ -81,19 +82,19 @@ else
 fi
 
 # Proton VPN, Proton VPN CLI, and System Tray Icon
-# TODO: Check location of Proton VPN
 if [[ -f "/usr/bin/protonvpn" ]]; then
 	echo "Proton VPN is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
-		# Download and Install RPM Package
-		# TODO: Download RPM Package from https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
+		currentPath=$(pwd)
+		cd ~/Downloads
+
+		wget https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
 		sudo dnf install ~/Downloads/protonvpn-stable-release-1.0.1-1.noarch.rpm -y
 		sudo dnf update -y
 		sudo dnf install protonvpn-cli -y
 
 		# Dependencies for Alternative Routing
-		sudo dnf install python3-pip -y
 		sudo dnf install --user 'dnspython>=1.16.0' -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		yay -S protonvpn

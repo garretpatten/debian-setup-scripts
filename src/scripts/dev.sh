@@ -70,3 +70,14 @@ else
 		echo "VS Code installations are only support for apt, dnf, and pacman."
 	fi
 fi
+
+# Postman
+if [[ "$packageManager" = "pacman" ]]; then
+	echo y | yay -S postman-bin
+	# TODO: Automate 2 Enter keypresses & Y parameter
+elif [[ "$packageManager" = "dnf" ]]; then
+	flatpak install flathub com.getpostman.Postman -y
+else
+	# TODO: Add support for apt
+	echo "Support not yet added for apt."
+fi
