@@ -4,7 +4,7 @@ packageManager=$1
 
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
- 	echo "Thunderbird is already installed."
+	echo "Thunderbird is already installed."
  else
 	if [[ "$packageManager" = "pacman" ]]; then
 		# TODO: Check if pacman install is possible
@@ -19,8 +19,8 @@ fi
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 sudo dnf install vlc -y
 if [[ -f "/usr/bin/vlc" ]]; then
- 	echo "VLC Media Player is already installed."
- else
+	echo "VLC Media Player is already installed."
+else
 	if [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 		sudo dnf install vlc -y

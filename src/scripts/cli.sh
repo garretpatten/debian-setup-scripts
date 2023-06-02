@@ -2,7 +2,7 @@
 
 packageManager=$1
 
-# Install basic CLI tools
+# Base CLI tools
 cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "python3" "wget")
 for cliTool in ${cliTools[@]}; do
 	if [[ -d "/usr/bin/$cliTool" ]]; then

@@ -2,7 +2,7 @@
 
 packageManager=$1
 
-# Install taskwarrior
+# Taskwarrior
 if [[ -f "/usr/bin/task" ]]; then
 	echo "Taskwarrior is already installed."
 else
@@ -16,26 +16,23 @@ else
 
 	# TODO: Handle first Taskwarrior prompt
 
-	# Add non-automated setup tasks
-	# High Priority Tasks
+	# Add Manual Setup Tasks
 	task add Install Timeshift project:setup priority:H
 	task add Take a snapshot of system project:setup priority:H
 	task add Export GitHub PAT with 1Password project:dev priority:H
 
-	# Medium Priority Tasks
 	task add Sign into and sync Brave project:setup priority:M
 	task add Sign into Firefox project:setup priority:M
 	task add Look into Gnome tweaks project:setup priority:M
 
-	# Low Priority Tasks
 	task add Install Burp Suite project:setup priority:L
 	task add Download files from Proton Drive project:setup priority:L
 fi
 
-# Taskwarrior config
+# Taskwarrior Config
 cat "$(pwd)/src/artifacts/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
 
-# Add directory for custom themes
+# Add Custom Themes Directory
 if [[ -d "$HOME/.task/themes/" ]]; then
 	echo "Taskwarrior themes directory already exists."
 else
@@ -43,12 +40,10 @@ else
 fi
 
 # TODO: Update this from copying an artifact to pulling themes from GitHub ###
-# Add custom themes to directory
+# Add Custom Themes
 cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 
-# TODO: Set dark blue theme
-
-# Install Simplenote and Todoist
+# Simplenote and Todoist
 if [[ "$packageManager" = "pacman" ]]; then
 	if [[ -f "/usr/bin/simplenote" ]]; then
 		echo "Simplenote is already installed."

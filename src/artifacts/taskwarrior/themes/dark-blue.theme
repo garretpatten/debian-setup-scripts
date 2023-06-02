@@ -24,14 +24,14 @@ color.blocking=white on rgb002
 color.project.none=
 
 # Priority
-color.uda.priority.High=rgb520
-color.uda.priority.Low=rgb015
-color.uda.priority.Med=rgb035
+color.uda.priority.H=rgb035
+color.uda.priority.L=rgb015
+color.uda.priority.M=rgb025
 
 # Tags
 color.tag.next=rgb550
 color.tag.none=
-color.tagged=color246
+color.tagged=
 
 # Due
 color.due.today=color252
@@ -53,13 +53,13 @@ color.summary.background=on rgb001
 color.summary.bar=on rgb114
 
 # Command: calendar
-color.calendar.due.today=color0 on  rgb550
-color.calendar.due=rgb550
+color.calendar.due.today=color0 on color252
+color.calendar.due=color0 on color249
 color.calendar.holiday=color255 on rgb013
-color.calendar.overdue=red
-color.calendar.today=color0 on rgb520
-color.calendar.weekend=on rgb015
-color.calendar.weeknumber=rgb035
+color.calendar.overdue=color0 on color255
+color.calendar.today=color0 on rgb115
+color.calendar.weekend=on color235
+color.calendar.weeknumber=rgb015
 
 # Command: sync
 color.sync.added=gray4

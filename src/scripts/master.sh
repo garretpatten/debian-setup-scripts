@@ -64,7 +64,6 @@ else
     sudo $packageManager upgrade -y && sudo $packageManager update -y && flatpak update -y && sudo $packageManager autoremove -y
 fi
 
-# Create a break in output
 echo ''
 echo ''
 

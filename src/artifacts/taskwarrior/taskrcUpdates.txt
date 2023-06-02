@@ -1,4 +1,5 @@
 # Custom
+include ~/.task/themes/dark-blue.theme
 # include ~/.task/themes/garret.theme
 # include ~/.task/themes/ireland.theme
 

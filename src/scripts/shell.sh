@@ -2,7 +2,7 @@
 
 packageManager=$1
 
-# Install Terminator and zsh
+# Terminator and zsh
 terminalApps=("terminator" "zsh")
 for terminalApp in ${terminalApps[@]}; do
     if [[ -f "/usr/bin/$terminalApp" ]]; then
@@ -20,7 +20,7 @@ done
 chsh -s $(which zsh)
 sudo chsh -s $(which zsh)
 
-# Install oh-my-zsh and configure shell
+# Oh-my-zsh and Shell Configuration
 if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
