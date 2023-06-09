@@ -16,9 +16,12 @@ cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
 # Node.js
 if [[ "$packageManager" = "dnf" ]]; then
 	sudo dnf module install nodejs:18/common -y
+elif [[ "$packageManager" = "pacman" ]]; then
+	echo y | sudo pacman -S nodejs
+	echo y | sudo pacman -S npm
 else
 	# TODO: Add support for apt
-	echo "Support not yet added for apt or pacman."
+	echo "Support not yet added for apt."
 fi
 
 
