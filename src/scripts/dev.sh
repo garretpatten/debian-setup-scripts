@@ -24,6 +24,13 @@ else
 	echo "Support not yet added for apt."
 fi
 
+# Install Vue.js
+if [[ -f "/usr/local/bin/vue" ]]; then
+	echo "Vue is already installed."
+else
+	sudo npm install -g @vue/cli
+fi
+
 
 # GitHub CLI & Sourcegraph CLI
 apps=("gh" "src-cli")
