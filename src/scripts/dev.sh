@@ -13,6 +13,15 @@ fi
 # Vim Config
 cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
 
+# Node.js
+if [[ "$packageManager" = "dnf" ]]; then
+	sudo dnf module install nodejs:18/common -y
+else
+	# TODO: Add support for apt
+	echo "Support not yet added for apt or pacman."
+fi
+
+
 # GitHub CLI & Sourcegraph CLI
 apps=("gh" "src-cli")
 for app in ${apps[@]}; do
@@ -27,6 +36,7 @@ for app in ${apps[@]}; do
 	fi
 done
 
+# Semgrep
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
@@ -35,12 +45,13 @@ fi
 
 # Postman
 if [[ "$packageManager" = "pacman" ]]; then
-	yay -S postman-bin
+	echo y | yay -S postman-bin
 	# TODO: Automate 2 Enter keypresses & Y parameter
-elif [[ "$packageManager" = "apt" ]] || [[ "$packageManager" = "dnf" ]]; then
+elif [[ "$packageManager" = "dnf" ]]; then
 	flatpak install flathub com.getpostman.Postman -y
 else
-	echo "Postman installations are only support for apt, dnf, and pacman."
+	# TODO: Add support for apt
+	echo "Support not yet added for apt."
 fi
 
 # VS Code
@@ -69,15 +80,4 @@ else
 	else
 		echo "VS Code installations are only support for apt, dnf, and pacman."
 	fi
-fi
-
-# Postman
-if [[ "$packageManager" = "pacman" ]]; then
-	echo y | yay -S postman-bin
-	# TODO: Automate 2 Enter keypresses & Y parameter
-elif [[ "$packageManager" = "dnf" ]]; then
-	flatpak install flathub com.getpostman.Postman -y
-else
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
 fi
