@@ -1,10 +1,18 @@
-# Install Terminator and zsh
+#!/bin/bash
+
+packageManager=$1
+
+# Terminator and zsh
 terminalApps=("terminator" "zsh")
 for terminalApp in ${terminalApps[@]}; do
     if [[ -f "/usr/bin/$terminalApp" ]]; then
         echo "$terminalApp is already installed."
     else
-        sudo dnf install "$terminalApp" -y
+        if [[ "$packageManager" = "pacman" ]]; then
+            echo y | sudo pacman -S terminalApp
+        else
+            sudo $packageManager install "$cliTool" -y
+        fi
     fi
 done
 
@@ -12,17 +20,20 @@ done
 chsh -s $(which zsh)
 sudo chsh -s $(which zsh)
 
-# Install oh-my-zsh and configure shell
-if [[ -d "~/.oh-my-zsh/" ]]; then
+# Oh-my-zsh and Shell Configuration
+if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-    cd ~/.oh-my-zsh/custom/plugins
+    currentPath=$(pwd)
+    cd $HOME/.oh-my-zsh/custom/plugins
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
+    cd $currentPath
     cat "$(pwd)/src/artifacts/zsh/zshrc.txt" > ~/.zshrc
+    echo "Fake install"
 fi
 
 # Reload config file
