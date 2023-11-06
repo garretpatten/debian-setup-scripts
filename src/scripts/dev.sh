@@ -7,6 +7,7 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 	git config --global credential.helper store
 	git config --global user.email "garret.patten@proton.me"
 	git config --global user.name "Garret Patten"
+	# TODO: Does this need a --global flag?
 	git config pull.rebase false
 fi
 
@@ -50,13 +51,13 @@ done
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
+	# TODO: Fix for pacman
 	python3 -m pip install semgrep
 fi
 
 # Postman
 if [[ "$packageManager" = "pacman" ]]; then
-	echo y | yay -S postman-bin
-	# TODO: Automate 2 Enter keypresses & Y parameter
+	yay -S --noconfirm postman-bin
 elif [[ "$packageManager" = "dnf" ]]; then
 	flatpak install flathub com.getpostman.Postman -y
 else

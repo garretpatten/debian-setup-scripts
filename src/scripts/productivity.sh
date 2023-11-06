@@ -8,10 +8,10 @@ if [[ -f "/usr/bin/task" ]]; then
 else
 	task="task"
 	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S $task
+		echo y | sudo pacman -S "$task"
 	else
 		# TODO: Check if apt uses "taskwarrior"
-		sudo $packageManager install $task -y
+		sudo $packageManager install "$task" -y
 	fi
 
 	# TODO: Handle first Taskwarrior prompt
@@ -48,8 +48,7 @@ if [[ "$packageManager" = "pacman" ]]; then
 	if [[ -f "/usr/bin/simplenote" ]]; then
 		echo "Simplenote is already installed."
 	else
-		yay -S simplenote-electron-bin
-		# TODO: Automate 2 Enter keypresses and Y parameter
+		yay -S --noconfirm simplenote-electron-bin
 	fi
 	if [[ -f "/usr/bin/todoist" ]]; then
 		echo "Todoist is already installed."

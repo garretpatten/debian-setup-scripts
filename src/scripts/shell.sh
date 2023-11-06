@@ -9,9 +9,9 @@ for terminalApp in ${terminalApps[@]}; do
         echo "$terminalApp is already installed."
     else
         if [[ "$packageManager" = "pacman" ]]; then
-            echo y | sudo pacman -S terminalApp
+            echo y | sudo pacman -S "$terminalApp"
         else
-            sudo $packageManager install "$cliTool" -y
+            sudo $packageManager install "$terminalApp" -y
         fi
     fi
 done
@@ -27,13 +27,12 @@ else
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
     currentPath=$(pwd)
-    cd $HOME/.oh-my-zsh/custom/plugins
+    cd "$HOME/.oh-my-zsh/custom/plugins"
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
-    cd $currentPath
+    cd "$currentPath"
     cat "$(pwd)/src/artifacts/zsh/zshrc.txt" > ~/.zshrc
-    echo "Fake install"
 fi
 
 # Reload config file

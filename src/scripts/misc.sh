@@ -36,18 +36,19 @@ elif [[ "$packageManager" = "pacman" ]]; then
 		fi
 	done
 elif [[ "$packageManager" = "apt" ]]; then
+	# TODO: Add apt installs
 	echo "Support not yet added for apt."
 else
-	echo "Support for Signal and Spotify has only been added for dnf and pacman."
+	echo "Support for Signal and Spotify has only been added for apt, dnf, and pacman."
 fi
 
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
 	echo "Thunderbird is already installed."
  else
+	cliTool = "thunderbird"
 	if [[ "$packageManager" = "pacman" ]]; then
-		# TODO: Check if pacman install is possible
-		echo y | yay -S "$cliTool"
+		echo y | sudo pacman -S "$cliTool"
 	else
 		sudo $packageManager install "$cliTool" -y
 	fi
@@ -57,14 +58,14 @@ fi
 if [[ -f "/usr/bin/vlc" ]]; then
 	echo "VLC Media Player is already installed."
 else
+	cliTool="vlc"
 	if [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 		sudo dnf install vlc -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		# TODO: Check if pacman install is possible
-		echo y | yay -S "$cliTool"
+		echo y | sudo pacman -S "$cliTool"
 	else
-		# TODO: Add support for apt and
+		# TODO: Add support for apt
 		echo "Support not yet added for apt."
 	fi
 fi

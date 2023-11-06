@@ -25,7 +25,7 @@ else
 	if [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install python3 -y
 	elif [[ "$packageManaer" = "pacman" ]]; then
-		echo y | sudo pacman -Syu python3
+		echo y | sudo pacman -S python3
 	elif [[ "$packageManager" = "apt" ]]; then
 		sudo apt install python3.6 -y
 	else
@@ -38,8 +38,8 @@ if [[ -f "/usr/bin/python-pip" ]]; then
 else
 	if [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install python3-pip -y
-	elif [[ "$packageManaer" = "pacman" ]]; then
-		echo y | sudo pacman -Syu python-pip
+	elif [[ "$packageManager" = "pacman" ]]; then
+		echo y | sudo pacman -S python-pip
 	elif [[ "$packageManager" = "apt" ]]; then
 		sudo apt install python3-pip -y
 	else

@@ -72,9 +72,9 @@ else
 		sudo tar -xf 1password-latest.tar.gz
 		sudo mkdir -p /opt/1Password
 		sudo mv 1password-*/* /opt/1Password
-		sudo /opt/1Password/after-install.sh
+		sudo sh /opt/1Password/after-install.sh
 
-		cd $currentPath
+		cd "$currentPath"
 	else
 		# TODO: Add support for apt
 		echo "Support not yet added for apt."

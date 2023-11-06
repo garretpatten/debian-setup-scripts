@@ -32,7 +32,7 @@ fi
 if [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -Syu && yay -Yc
 else
-    sudo $packageManager upgrade -y && sudo $packageManager update -y && sudo $packageManager autoremove -y
+    sudo $packageManager update -y && sudo $packageManager upgrade -y && sudo $packageManager autoremove -y
 fi
 
 # TODO: cd to the root of the project
@@ -65,7 +65,7 @@ sh "$(pwd)/src/scripts/misc.sh" $packageManager
 if [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -Syu && yay -Yc
 else
-    sudo $packageManager upgrade -y && sudo $packageManager update -y && flatpak update -y && sudo $packageManager autoremove -y
+    sudo $packageManager update -y && sudo $packageManager upgrade -y && flatpak update -y && sudo $packageManager autoremove -y
 fi
 
 # Create a break in output
