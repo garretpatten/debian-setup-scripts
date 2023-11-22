@@ -65,6 +65,4 @@ alias ohmyzsh="nano ~/.oh-my-zsh"
 alias zshconfig="nano ~/.zshrc"
 
 # Environment Variables
-#
-# TODO: Get 1password export pattern with item ID missing
-export GITHUB_PERSONAL_TOKEN="op://todo"
+export GITHUB_PERSONAL_TOKEN="$(op read op://Personal/<Item ID>/token)"
