@@ -25,7 +25,7 @@ else
 	echo "Support not yet added for apt."
 fi
 
-# Install Vue.js
+# Vue.js
 if [[ -f "/usr/local/bin/vue" ]]; then
 	echo "Vue is already installed."
 else

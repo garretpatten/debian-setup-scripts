@@ -61,12 +61,12 @@ if [[ -f "/usr/bin/1password" ]]; then
 	echo "1Password is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
-		# Install 1Password Desktop
+		# 1Password Desktop
 		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf install 1password -y
 
-		# Install 1Password CLI
+		# 1Password CLI
 		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
@@ -74,13 +74,13 @@ else
 		currentPath=$(pwd)
 		cd ~/Downloads
 
-		# Install 1Password Desktop App
+		# 1Password Desktop App
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
 		git clone https://aur.archlinux.org/1password.git
 		cd 1password
-		makepkg -si
+		makepkg -sri --noconfirm
 
-		# Install 1Password CLI
+		# 1Password CLI
 		ARCH="amd64" && \
 		wget "https://cache.agilebits.com/dist/1P/op2/pkg/v2.23.0/op_linux_${ARCH}_v2.23.0.zip" -O op.zip && \
 		unzip -d op op.zip && \
@@ -92,14 +92,14 @@ else
 
 		cd "$currentPath"
 	else
-		# Install 1Password Desktop
+		# 1Password Desktop
 		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
 		sudo tar -xf 1password-latest.tar.gz
 		sudo mkdir -p /opt/1Password
 		sudo mv 1password-*/* /opt/1Password
 		sudo /opt/1Password/after-install.sh
 
-		# Install 1Password CLI
+		# 1Password CLI
 		sudo -s \
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
 		gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
@@ -151,16 +151,5 @@ else
 	else
 		# TODO: Add support for apt
 		echo "Support not yet added for apt."
-	fi
-fi
-
-# Network Mapper
-if [[ -f "/usr/bin/nmap" ]]; then
-	echo "Network Mapper is already installed."
-else
-	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S nmap
-	else
-		sudo $packageManager install "$cliTool" -y
 	fi
 fi

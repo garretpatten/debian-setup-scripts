@@ -14,7 +14,7 @@ elif [[ -f "/usr/bin/pacman" ]]; then
         cd ~/Downloads
         git clone https://aur.archlinux.org/yay.git
         cd yay
-        makepkg -si
+        makepkg -sri --noconfirm
 
         cd $currentPath
     fi
