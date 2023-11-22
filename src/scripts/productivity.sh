@@ -38,7 +38,7 @@ else
 	mkdir ~/.task/themes/
 fi
 
-# TODO: Update this from copying an artifact to pulling themes from GitHub ###
+# TODO: Update this from copying an artifact to pulling themes from GitHub
 # Add Custom Themes
 cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
 
