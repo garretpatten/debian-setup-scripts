@@ -19,14 +19,13 @@ else
 	# Add Manual Setup Tasks
 	task add Install Timeshift project:setup priority:H
 	task add Take a snapshot of system project:setup priority:H
-	task add Export GitHub PAT with 1Password project:dev priority:H
+	task add Update .zshrc project:dev priority:H
 
 	task add Sign into and sync Brave project:setup priority:M
-	task add Sign into Firefox project:setup priority:M
-	task add Look into Gnome tweaks project:setup priority:M
+	task add Configure 1Password project:setup priority:M
 
 	task add Install Burp Suite project:setup priority:L
-	task add Download files from Proton Drive project:setup priority:L
+	task add Download needed files from Proton Drive project:setup priority:L
 fi
 
 # Taskwarrior Config
