@@ -61,9 +61,15 @@ if [[ -f "/usr/bin/1password" ]]; then
 	echo "1Password is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
+		# Install 1Password Desktop
 		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf install 1password -y
+
+		# Install 1Password CLI
+		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+		sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
 	elif [[ "$packageManager" = "pacman" ]]; then
 		currentPath=$(pwd)
 		cd ~/Downloads
@@ -86,8 +92,26 @@ else
 
 		cd "$currentPath"
 	else
-		# TODO: Add support for apt
-		echo "Support not yet added for apt."
+		# Install 1Password Desktop
+		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
+		sudo tar -xf 1password-latest.tar.gz
+		sudo mkdir -p /opt/1Password
+		sudo mv 1password-*/* /opt/1Password
+		sudo /opt/1Password/after-install.sh
+
+		# Install 1Password CLI
+		sudo -s \
+		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+		gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" |
+		tee /etc/apt/sources.list.d/1password.list
+		mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+		curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+		tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+		mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+		gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+		apt update && apt install 1password-cli
 	fi
 fi
 
@@ -107,8 +131,7 @@ else
 		# Dependencies for Alternative Routing
 		sudo dnf install --user 'dnspython>=1.16.0' -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		yay -S protonvpn
-		# TODO: Automate 2 Enter keypresses & y parameter & 8 Y parameters
+		yay -S --no-confirm protonvpn
 		echo y | sudo pacman -S libappindicator-gtk3 gnome-shell-extension-appindicator
 	else
 		# TODO: Add support for apt
