@@ -2,7 +2,7 @@
 
 packageManager=$1
 
-# Base CLI tools
+# Foundational CLI Tools
 cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "wget")
 for cliTool in ${cliTools[@]}; do
 	if [[ -d "/usr/bin/$cliTool" ]]; then
@@ -18,7 +18,7 @@ for cliTool in ${cliTools[@]}; do
 	fi
 done
 
-# Python and Pip
+# Python
 if [[ -f "/usr/bin/python" ]]; then
 	echo "python3 is already installed."
 else
@@ -33,6 +33,7 @@ else
 	fi
 fi
 
+# Pip
 if [[ -f "/usr/bin/python-pip" ]]; then
 	echo "python-pip is already installed."
 else

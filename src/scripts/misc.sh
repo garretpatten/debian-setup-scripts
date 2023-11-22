@@ -10,7 +10,7 @@ if [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install flatpak -y
 	fi
 
-	# Add remote Flatpak repos
+	# Add remote Flathub repos
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 fi
 
@@ -36,7 +36,7 @@ elif [[ "$packageManager" = "pacman" ]]; then
 		fi
 	done
 elif [[ "$packageManager" = "apt" ]]; then
-	# TODO: Add apt installs
+	# TODO: Add support for apt
 	echo "Support not yet added for apt."
 else
 	echo "Support for Signal and Spotify has only been added for apt, dnf, and pacman."

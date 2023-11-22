@@ -3,7 +3,7 @@
 packageManager=$1
 
 # Burp Suite
-if [[ -f "/usr/bin/TODO" ]]; then
+if [[ -f "/usr/bin/burpsuite" ]]; then
 	echo "Burp Suite is already installed."
 else
 	if [[ "$packageManager" = "pacman" ]]; then
@@ -14,9 +14,10 @@ else
         cd burpsuite
         makepkg -sri --noconfirm
 
-        cd "$currentPath"
+        cd "$currentPath"\
+    # TODO: Add support for apt and dnf
 	else
-		sudo $packageManager install ufw -y
+		echo "Burp Suite is not supported for this package manager."
 	fi
 fi
 
