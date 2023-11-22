@@ -68,10 +68,21 @@ else
 		currentPath=$(pwd)
 		cd ~/Downloads
 
+		# Install 1Password Desktop App
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
 		git clone https://aur.archlinux.org/1password.git
 		cd 1password
 		makepkg -si
+
+		# Install 1Password CLI
+		ARCH="amd64" && \
+		wget "https://cache.agilebits.com/dist/1P/op2/pkg/v2.23.0/op_linux_${ARCH}_v2.23.0.zip" -O op.zip && \
+		unzip -d op op.zip && \
+		sudo mv op/op /usr/local/bin && \
+		rm -r op.zip op && \
+		sudo groupadd -f onepassword-cli && \
+		sudo chgrp onepassword-cli /usr/local/bin/op && \
+		sudo chmod g+s /usr/local/bin/op
 
 		cd "$currentPath"
 	else
