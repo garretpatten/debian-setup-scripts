@@ -68,11 +68,10 @@ else
 		currentPath=$(pwd)
 		cd ~/Downloads
 
-		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
-		sudo tar -xf 1password-latest.tar.gz
-		sudo mkdir -p /opt/1Password
-		sudo mv 1password-*/* /opt/1Password
-		sudo sh /opt/1Password/after-install.sh
+		curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
+		git clone https://aur.archlinux.org/1password.git
+		cd 1password
+		makepkg -si
 
 		cd "$currentPath"
 	else
