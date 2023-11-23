@@ -29,7 +29,7 @@ else
 fi
 
 # Taskwarrior Config
-cat "$(pwd)/src/artifacts/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
+cat "$(pwd)/src/config-files/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
 
 # Add Custom Themes Directory
 if [[ -d "$HOME/.task/themes/" ]]; then
@@ -40,7 +40,7 @@ fi
 
 # TODO: Update this from copying an artifact to pulling themes from GitHub
 # Add Custom Themes
-cp -r "$(pwd)/src/artifacts/taskwarrior/themes/" ~/.task/themes/
+cp -r "$(pwd)/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
 # Simplenote and Todoist
 if [[ "$packageManager" = "pacman" ]]; then

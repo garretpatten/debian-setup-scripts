@@ -12,7 +12,7 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 fi
 
 # Vim Config
-cat "$(pwd)/src/artifacts/vim/vimrc.txt" >> ~/.vimrc
+cat "$(pwd)/src/config-files/vim/vimrc.txt" >> ~/.vimrc
 
 # Node.js
 if [[ "$packageManager" = "dnf" ]]; then
