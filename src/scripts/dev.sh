@@ -69,8 +69,9 @@ fi
 if [[ -f "/usr/bin/code" ]]; then
 	echo "VS Code is already installed."
 else
+	isInstalled="yes"
 	if [[ "$packageManager" = "apt" ]]; then
-		$currentPath=$(pwd)
+		currentPath=$(pwd)
 		cd ~/Downloads
 
 		wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
@@ -89,6 +90,11 @@ else
 	elif [[ "$packageManager" = "pacman" ]]; then
 		echo y | sudo pacman -S code
 	else
+		isInstalled="no"
 		echo "VS Code installations are only support for apt, dnf, and pacman."
+	fi
+
+	if [[ "$isInstalled" = "yes" ]]; then
+		cp ../config-files/vs-code/settings.json ~/.config/'Code - OSS'/User/settings.json
 	fi
 fi
