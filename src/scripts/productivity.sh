@@ -71,8 +71,8 @@ else
 		sudo apt install notion-app-enhanced -y
 		sudo apt install notion-app
 	elif [[ "$packageManager" = "apt" ]]; then
-		# TODO: Install Notion on dnf
-		"Support not yet added for dnf."
+		echo "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
+		sudo dnf install notion-app -y
 	else
 		echo "Support not yet added for this package manager."
 	fi
