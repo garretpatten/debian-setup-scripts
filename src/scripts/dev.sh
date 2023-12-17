@@ -140,3 +140,26 @@ else
 		cp ../config-files/vs-code/settings.json ~/.config/'Code - OSS'/User/settings.json
 	fi
 fi
+
+# Fira Code
+if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
+	echo "Fira Code is already installed."
+	if [[ "$packageManager" = "apt" ]]; then
+		# TODO: Install Fira Code on apt
+		echo "Support not yet added for apt."
+	elif [[ "$packageManager" = "dnf" ]]; then
+		# TODO: Install Fira Code on dnf
+		echo "Support not yet added for dnf."
+	elif [[ "$packageManager" = "pacman" ]]; then
+		currentPath=$(pwd)
+		cd ~/Downloads
+
+		git clone https://aur.archlinux.org/ttf-firacode.git
+		cd ttf-firacode
+		echo y | makepkg -sri
+
+		cd "$currentPath"
+	else
+		echo "Support is not yet added for this package manager."
+	fi
+fi
