@@ -7,6 +7,7 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 	git config --global credential.helper store
 	git config --global user.email "garret.patten@proton.me"
 	git config --global user.name "Garret Patten"
+ 	git config --global commit.gpgsign true
 	# TODO: Does this need a --global flag?
 	git config pull.rebase false
 fi
