@@ -14,6 +14,48 @@ fi
 # Vim Config
 cat "$(pwd)/src/config-files/vim/vimrc.txt" >> ~/.vimrc
 
+# Docker and Docker-Compose
+# TODO: Eliminate duplicate lines
+if [[ "$packageManager" = "apt" ]]; then
+	sudo apt update -y
+	sudo apt install apt-transport-https ca-certificates software-properties-common -y
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+	apt-cache policy docker-ce
+	sudo apt install docker-ce -y
+	sudo systemctl start docker.service
+	sudo systemctl enable docker.service
+	sudo usermod -aG docker $USER
+	newgrp docker
+	sudo apt install docker-compose -y
+	docker image pull arch
+	docker image pull fedora
+elif [[ "$packageManager" = "dnf" ]]; then
+	sudo dnf -y install dnf-plugins-core
+	sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+	sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	sudo systemctl start docker.service
+	sudo systemctl enable docker.service
+	sudo usermod -aG docker $USER
+	newgrp docker
+	sudo dnf install docker-compose -y
+	docker iamge pull arch
+	docker image pull ubuntu
+elif [[ "$packageManager" = "pacman" ]]; then
+	echo y | sudo pacman -S gnome-terminal
+	echo y | sudo pacman -S docker
+	sudo systemctl start docker.service
+	sudo systemctl enable docker.service
+	sudo usermod -aG docker $USER
+	newgrp docker
+	echo y | sudo pacman -S docker-compose
+	docker iamge pull fedora
+	docker image pull ubuntu
+else
+	echo "Support not yet added for this package manager."
+if
+
+
 # Node.js
 if [[ "$packageManager" = "dnf" ]]; then
 	sudo dnf module install nodejs:18/common -y

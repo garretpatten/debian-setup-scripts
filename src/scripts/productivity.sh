@@ -42,13 +42,20 @@ fi
 # Add Custom Themes
 cp -r "$(pwd)/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
-# Simplenote and Todoist
+# Notion, Simplenote, and Todoist
 if [[ "$packageManager" = "pacman" ]]; then
+	if [[ -f "/usr/bin/notion-app" ]]; then
+		echo "Notion is already installed."
+	else
+		yay -S --noconfirm notion-app-electron
+	fi
+
 	if [[ -f "/usr/bin/simplenote" ]]; then
 		echo "Simplenote is already installed."
 	else
 		yay -S --noconfirm simplenote-electron-bin
 	fi
+
 	if [[ -f "/usr/bin/todoist" ]]; then
 		echo "Todoist is already installed."
 	else
@@ -58,6 +65,18 @@ if [[ "$packageManager" = "pacman" ]]; then
 		sudo mv appimage /usr/bin/todoist
 	fi
 else
+	if [[ "$packageManager" = "apt" ]]; then
+		echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
+		sudo apt update -y
+		sudo apt install notion-app-enhanced -y
+		sudo apt install notion-app
+	elif [[ "$packageManager" = "apt" ]]; then
+		# TODO: Install Notion on dnf
+		"Support not yet added for dnf."
+	else
+		echo "Support not yet added for this package manager."
+	fi
+
 	flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
 	for flatpakApp in ${flatpakApps[@]}; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
