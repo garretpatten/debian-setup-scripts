@@ -3,11 +3,11 @@
 packageManager=$1
 
 # Flatpak
-if [[ "$packageManager" = "dnf" ]]; then
+if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 	if [[ -f "/usr/bin/flatpak" ]]; then
 		echo "flatpak is already installed."
 	else
-		sudo dnf install flatpak -y
+		sudo $packageManager install flatpak -y
 	fi
 
 	# Add remote Flathub repos
@@ -15,7 +15,10 @@ if [[ "$packageManager" = "dnf" ]]; then
 fi
 
 # Signal Messenger & Spotify
-if [[ "$packageManager" = "dnf" ]]; then
+if [[ "$packageManager" = "apt" ]]; then
+	# TODO: Add support for apt
+	echo "Support not yet added for apt."
+elif [[ "$packageManager" = "dnf" ]]; then
 	flatpakApps=("org.signal.Signal" "com.spotify.Client")
 	for flatpakApp in ${flatpakApps[@]}; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
@@ -35,11 +38,8 @@ elif [[ "$packageManager" = "pacman" ]]; then
 			echo y | sudo pacman -Syu "$app"
 		fi
 	done
-elif [[ "$packageManager" = "apt" ]]; then
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
 else
-	echo "Support for Signal and Spotify has only been added for apt, dnf, and pacman."
+	echo "Error Message."
 fi
 
 # Thunderbird
@@ -47,10 +47,12 @@ if [[ -f "/usr/bin/thunderbird" ]]; then
 	echo "Thunderbird is already installed."
  else
 	cliTool = "thunderbird"
+	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
+		sudo $packageManager install "$cliTool" -y
 	if [[ "$packageManager" = "pacman" ]]; then
 		echo y | sudo pacman -S "$cliTool"
 	else
-		sudo $packageManager install "$cliTool" -y
+		echo "Error Message"
 	fi
 fi
 
@@ -59,13 +61,15 @@ if [[ -f "/usr/bin/vlc" ]]; then
 	echo "VLC Media Player is already installed."
 else
 	cliTool="vlc"
-	if [[ "$packageManager" = "dnf" ]]; then
+	if [[ "$packageManager" = "apt" ]]; then
+		# TODO: Add support for apt
+		echo "Support not yet added for apt."
+	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 		sudo dnf install vlc -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		echo y | sudo pacman -S "$cliTool"
 	else
-		# TODO: Add support for apt
-		echo "Support not yet added for apt."
+		echo "Error Message"
 	fi
 fi
