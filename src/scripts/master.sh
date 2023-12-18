@@ -1,8 +1,14 @@
 #!/bin/bash
 
+# TODO: cd to the root of the project.
+
+workingDirectory=$(pwd)
 packageManager=""
 
-if [[ -f "/usr/bin/dnf" ]]; then
+# TODO: Check if apt is binary or alias for apt-get.
+if [[ -f "/usr/bin/apt-get" ]]; then
+    packageManager="apt"
+elif [[ -f "/usr/bin/dnf" ]]; then
     packageManager="dnf"
 elif [[ -f "/usr/bin/pacman" ]]; then
     packageManager="pacman"
@@ -10,66 +16,60 @@ elif [[ -f "/usr/bin/pacman" ]]; then
         echo y | sudo pacman -S base-devel
         echo y | sudo pacman -S git
 
-        currentPath=$(pwd)
         cd ~/Downloads
         git clone https://aur.archlinux.org/yay.git
         cd yay
         makepkg -sri --noconfirm
 
-        cd $currentPath
+        cd "$workingDirectory"
     fi
-# TODO: Check if apt is binary or alias for apt-get
-elif [[ -f "/usr/bin/apt-get" ]]; then
-    packageManager="apt"
-else
+fi
+
+# Exit if package manager is not supported.
+if [[ "$packageManager" = "" ]]; then
     echo "The package manager on this system is not supported."
     echo "Currently, these setup scripts support the following package managers:"
     echo "apt, dnf, pacman"
     exit 1
 fi
 
-# Begin: System Updates
+# Update the system.
 if [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -Syu && yay -Yc
+    sudo pacman -Syu --noconfirm && yay -Yc --noconfirm
 else
     sudo $packageManager update -y && sudo $packageManager upgrade -y && sudo $packageManager autoremove -y
 fi
 
-# TODO: cd to the root of the project
+# Organize Directories.
+sh "$workingDirectory/src/scripts/organizeHome.sh"
 
-# Organize Directories
-sh "$(pwd)/src/scripts/organizeHome.sh"
+# Security: YubiKeys, Firewall, VPN, Anti-Virus.
+sh "$workingDirectory/src/scripts/security.sh" $packageManager
 
-# Security: YubiKeys, Firewall, VPN, Anti-Virus
-sh "$(pwd)/src/scripts/security.sh" $packageManager
+# CLI Tooling.
+sh "$workingDirectory/src/scripts/cli.sh" $packageManager
 
-# CLI Tooling
-sh "$(pwd)/src/scripts/cli.sh" $packageManager
+# Productivity: Taskwarrior, Todoist.
+sh "$workingDirectory/src/scripts/productivity.sh" $packageManager
 
-# Productivity: Taskwarrior, Todoist
-sh "$(pwd)/src/scripts/productivity.sh" $packageManager
+# Web Apps.
+sh "$workingDirectory/src/scripts/web.sh" $packageManager
 
-# Web Apps
-sh "$(pwd)/src/scripts/web.sh" $packageManager
+# Development Setup.
+sh "$workingDirectory/src/scripts/dev.sh" $packageManager
 
-# Development Setup
-sh "$(pwd)/src/scripts/dev.sh" $packageManager
+# Shell: Terminator, zsh, oh-my-zsh.
+zsh "$workingDirectory/src/scripts/shell.sh" $packageManager
 
-# Shell: Terminator, zsh, oh-my-zsh
-zsh "$(pwd)/src/scripts/shell.sh" $packageManager
+# Other: Thunderbird.
+sh "$workingDirectory/src/scripts/misc.sh" $packageManager
 
-# Other: Thunderbird
-sh "$(pwd)/src/scripts/misc.sh" $packageManager
-
-# End: System Updates
+# Update the system again.
 if [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -Syu && yay -Yc
+    sudo pacman -Syu --noconfirm && yay -Yc --noconfirm
 else
     sudo $packageManager update -y && sudo $packageManager upgrade -y && flatpak update -y && sudo $packageManager autoremove -y
 fi
 
-# Create a break in output
-echo ""
-echo ""
-
-echo "Cheers -- system setup is now complete!"
+# Print final output.
+echo "\n\nCheers -- system setup is now complete!"
