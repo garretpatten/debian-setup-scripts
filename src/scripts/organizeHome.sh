@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Remove Unneeded Directories
-directoriesToRemove=("Desktop" "Music" "Public" "Templates" "Videos")
+directoriesToRemove=("Music" "Public" "Templates" "Videos")
 for directoryToRemove in ${directoriesToRemove[@]}; do
 	if [[ -d "$HOME/$directoryToRemove/" ]]; then
 		rmdir "$HOME/$directoryToRemove"
