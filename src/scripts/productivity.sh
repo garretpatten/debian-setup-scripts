@@ -44,7 +44,6 @@ else
 	mkdir ~/.task/themes/
 fi
 
-# TODO: Update this from copying an artifact to pulling themes from GitHub
 # Add Custom Themes
 cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
