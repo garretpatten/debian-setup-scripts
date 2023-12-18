@@ -10,10 +10,12 @@ for cliTool in ${cliTools[@]}; do
 	elif [[ -f "/usr/sbin/$cliTool" ]]; then
 		echo "$cliTool is already installed."
 	else
-		if [[ "$packageManager" = "pacman" ]]; then
+		if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
+			sudo $packageManager install "$cliTool" -y
+		elif [[ "$packageManager" = "pacman" ]]; then
 			echo y | sudo pacman -S "$cliTool"
 		else
-			sudo $packageManager install "$cliTool" -y
+			echo "Error Message"
 		fi
 	fi
 done
@@ -22,12 +24,12 @@ done
 if [[ -f "/usr/bin/python" ]]; then
 	echo "python3 is already installed."
 else
-	if [[ "$packageManager" = "dnf" ]]; then
+	if [[ "$packageManager" = "apt" ]]; then
+		sudo apt install python3.6 -y
+	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install python3 -y
 	elif [[ "$packageManaer" = "pacman" ]]; then
 		echo y | sudo pacman -S python3
-	elif [[ "$packageManager" = "apt" ]]; then
-		sudo apt install python3.6 -y
 	else
 		echo "Support has only been added for apt, dnf, and pacman."
 	fi
@@ -37,12 +39,12 @@ fi
 if [[ -f "/usr/bin/python-pip" ]]; then
 	echo "python-pip is already installed."
 else
-	if [[ "$packageManager" = "dnf" ]]; then
+	if [[ "$packageManager" = "apt" ]]; then
+		sudo apt install python3-pip -y
+	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install python3-pip -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		echo y | sudo pacman -S python-pip
-	elif [[ "$packageManager" = "apt" ]]; then
-		sudo apt install python3-pip -y
 	else
 		echo "Support has only been added for apt, dnf, and pacman."
 	fi
