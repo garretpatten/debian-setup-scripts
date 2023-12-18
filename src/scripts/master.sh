@@ -49,8 +49,8 @@ sh "$workingDirectory/src/scripts/security.sh" $packageManager $workingDirectory
 # CLI Tooling.
 sh "$workingDirectory/src/scripts/cli.sh" $packageManager
 
-# Productivity: Taskwarrior, Todoist.
-sh "$workingDirectory/src/scripts/productivity.sh" $packageManager
+# Productivity: Notion, Simplenote, Taskwarrior, Todoist.
+sh "$workingDirectory/src/scripts/productivity.sh" $packageManager $workingDirectory
 
 # Web Apps.
 sh "$workingDirectory/src/scripts/web.sh" $packageManager
