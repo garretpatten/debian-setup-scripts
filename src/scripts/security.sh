@@ -1,6 +1,7 @@
 #!/bin/bash
 
 packageManager=$1
+workingDirectory=$2
 
 # Setup YubiKeys
 if [[ "$packageManager" = "dnf" ]]; then
@@ -71,7 +72,6 @@ else
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
 	elif [[ "$packageManager" = "pacman" ]]; then
-		currentPath=$(pwd)
 		cd ~/Downloads
 
 		# 1Password Desktop App
@@ -90,7 +90,7 @@ else
 		sudo chgrp onepassword-cli /usr/local/bin/op && \
 		sudo chmod g+s /usr/local/bin/op
 
-		cd "$currentPath"
+		cd "$workingDirectory"
 	else
 		# 1Password Desktop
 		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
@@ -120,10 +120,10 @@ if [[ -f "/usr/bin/protonvpn" ]]; then
 	echo "Proton VPN is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
-		currentPath=$(pwd)
 		cd ~/Downloads
 
 		wget https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
+		cd "$workingDirectory"
 		sudo dnf install ~/Downloads/protonvpn-stable-release-1.0.1-1.noarch.rpm -y
 		sudo dnf update -y
 		sudo dnf install protonvpn-cli -y

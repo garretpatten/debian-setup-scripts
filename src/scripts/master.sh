@@ -2,8 +2,8 @@
 
 # TODO: cd to the root of the project.
 
-workingDirectory=$(pwd)
 packageManager=""
+workingDirectory=$(pwd)
 
 # TODO: Check if apt is binary or alias for apt-get.
 if [[ -f "/usr/bin/apt-get" ]]; then
@@ -44,7 +44,7 @@ fi
 sh "$workingDirectory/src/scripts/organizeHome.sh"
 
 # Security: YubiKeys, Firewall, VPN, Anti-Virus.
-sh "$workingDirectory/src/scripts/security.sh" $packageManager
+sh "$workingDirectory/src/scripts/security.sh" $packageManager $workingDirectory
 
 # CLI Tooling.
 sh "$workingDirectory/src/scripts/cli.sh" $packageManager
