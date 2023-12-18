@@ -59,7 +59,7 @@ sh "$workingDirectory/src/scripts/web.sh" $packageManager
 sh "$workingDirectory/src/scripts/dev.sh" $packageManager $workingDirectory
 
 # Shell: Terminator, zsh, oh-my-zsh.
-zsh "$workingDirectory/src/scripts/shell.sh" $packageManager
+zsh "$workingDirectory/src/scripts/shell.sh" $packageManager $workingDirectory
 
 # Other: Thunderbird.
 sh "$workingDirectory/src/scripts/misc.sh" $packageManager
