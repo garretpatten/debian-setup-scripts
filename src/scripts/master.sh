@@ -56,7 +56,7 @@ sh "$workingDirectory/src/scripts/productivity.sh" $packageManager $workingDirec
 sh "$workingDirectory/src/scripts/web.sh" $packageManager
 
 # Development Setup.
-sh "$workingDirectory/src/scripts/dev.sh" $packageManager
+sh "$workingDirectory/src/scripts/dev.sh" $packageManager $workingDirectory
 
 # Shell: Terminator, zsh, oh-my-zsh.
 zsh "$workingDirectory/src/scripts/shell.sh" $packageManager

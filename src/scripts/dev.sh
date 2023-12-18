@@ -1,21 +1,20 @@
 #!/bin/bash
 
 packageManager=$1
+workingDirectory=$2
 
 # Git Config
 if [[ ! -f "$HOME/.gitconfig" ]]; then
 	git config --global credential.helper store
 	git config --global user.email "garret.patten@proton.me"
 	git config --global user.name "Garret Patten"
-	# TODO: Does this need a --global flag?
-	git config pull.rebase false
+	git config --global pull.rebase false
 fi
 
 # Vim Config
-cat "$(pwd)/src/config-files/vim/vimrc.txt" >> ~/.vimrc
+cat "$workingDirectory/src/config-files/vim/vimrc.txt" >> ~/.vimrc
 
 # Docker and Docker-Compose
-# TODO: Eliminate duplicate lines
 if [[ "$packageManager" = "apt" ]]; then
 	sudo apt update -y
 	sudo apt install apt-transport-https ca-certificates software-properties-common -y
@@ -42,13 +41,13 @@ elif [[ "$packageManager" = "dnf" ]]; then
 	docker iamge pull arch
 	docker image pull ubuntu
 elif [[ "$packageManager" = "pacman" ]]; then
-	echo y | sudo pacman -S gnome-terminal
-	echo y | sudo pacman -S docker
+	sudo pacman -S --noconfirm gnome-terminal
+	sudo pacman -S --noconfirm docker
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
 	sudo usermod -aG docker $USER
 	newgrp docker
-	echo y | sudo pacman -S docker-compose
+	sudo pacman -S --noconfirm docker-compose
 	docker iamge pull fedora
 	docker image pull ubuntu
 else
@@ -57,14 +56,15 @@ if
 
 
 # Node.js
-if [[ "$packageManager" = "dnf" ]]; then
+if [[ "$packageManager" = "apt" ]]; then
+	echo "Support not yet added for apt."
+elif [[ "$packageManager" = "dnf" ]]; then
 	sudo dnf module install nodejs:18/common -y
 elif [[ "$packageManager" = "pacman" ]]; then
-	echo y | sudo pacman -S nodejs
-	echo y | sudo pacman -S npm
+	sudo pacman -S --noconfirm nodejs
+	sudo pacman -S --noconfirm npm
 else
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
+	echo "Error Message"
 fi
 
 # Vue.js
@@ -81,10 +81,12 @@ for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
 	else
-		if [[ "$packageManager" = "pacman" ]]; then
+		if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
+			sudo $packageManager install "$cliTool" -y
+		elif [[ "$packageManager" = "pacman" ]]; then
 			echo y | sudo pacman -S "$cliTool"
 		else
-			sudo $packageManager install "$cliTool" -y
+			echo "Error Message"
 		fi
 	fi
 done
@@ -98,31 +100,34 @@ else
 fi
 
 # Postman
-if [[ "$packageManager" = "pacman" ]]; then
-	yay -S --noconfirm postman-bin
+if [[ "$packageManager" = "apt" ]]; then
+	echo "Support not yet added for apt."
 elif [[ "$packageManager" = "dnf" ]]; then
 	flatpak install flathub com.getpostman.Postman -y
+elif [[ "$packageManager" = "pacman" ]]; then
+	yay -S --noconfirm postman-bin
 else
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
+	echo "Error Message"
 fi
 
 # VS Code
 if [[ -f "/usr/bin/code" ]]; then
 	echo "VS Code is already installed."
 else
-	isInstalled="yes"
+	isInstalled="true"
 	if [[ "$packageManager" = "apt" ]]; then
-		currentPath=$(pwd)
 		cd ~/Downloads
 
 		wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
 		wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+
+		cd "$workingDirectory"
+
 		sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
 		sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 
 		sudo apt install apt-transport-https -y
-		sudo apt update
+		sudo apt update -y
 		sudo apt install code -y
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -130,14 +135,14 @@ else
 		sudo dnf check-update -y
 		sudo dnf install code -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S code
+		sudo pacman -S --noconfirm code
 	else
-		isInstalled="no"
-		echo "VS Code installations are only support for apt, dnf, and pacman."
+		isInstalled="false"
+		echo "Error Message"
 	fi
 
-	if [[ "$isInstalled" = "yes" ]]; then
-		cp ../config-files/vs-code/settings.json ~/.config/'Code - OSS'/User/settings.json
+	if [[ "$isInstalled" = "true" ]]; then
+		cp "$workingDirectory/src/config-files/vs-code/settings.json" ~/.config/'Code - OSS'/User/settings.json
 	fi
 fi
 
@@ -151,15 +156,14 @@ if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
 		# TODO: Install Fira Code on dnf
 		echo "Support not yet added for dnf."
 	elif [[ "$packageManager" = "pacman" ]]; then
-		currentPath=$(pwd)
 		cd ~/Downloads
 
 		git clone https://aur.archlinux.org/ttf-firacode.git
 		cd ttf-firacode
 		echo y | makepkg -sri
 
-		cd "$currentPath"
+		cd "$workingDirectory"
 	else
-		echo "Support is not yet added for this package manager."
+		echo "Error Message."
 	fi
 fi
