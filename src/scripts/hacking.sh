@@ -35,7 +35,7 @@ if [[ -f "/usr/bin/nmap" ]]; then
 	echo "Network Mapper is already installed."
 else
 	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S nmap
+		sudo pacman -S --noconfirm nmap
 	else
 		sudo $packageManager install "$cliTool" -y
 	fi

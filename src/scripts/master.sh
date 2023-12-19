@@ -13,8 +13,8 @@ elif [[ -f "/usr/bin/dnf" ]]; then
 elif [[ -f "/usr/bin/pacman" ]]; then
     packageManager="pacman"
     if [[ ! -f "/usr/bin/yay" ]]; then
-        echo y | sudo pacman -S base-devel
-        echo y | sudo pacman -S git
+        sudo pacman -S --noconfirm base-devel
+        sudo pacman -S --noconfirm git
 
         cd ~/Downloads
         git clone https://aur.archlinux.org/yay.git

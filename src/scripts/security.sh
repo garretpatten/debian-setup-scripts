@@ -50,7 +50,7 @@ if [[ -f "/usr/sbin/ufw" ]]; then
 	echo "Firewall is already installed."
 else
 	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S ufw
+		sudo pacman -S --noconfirm ufw
 	else
 		sudo $packageManager install ufw -y
 	fi
@@ -132,7 +132,7 @@ else
 		sudo dnf install --user 'dnspython>=1.16.0' -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		yay -S --no-confirm protonvpn
-		echo y | sudo pacman -S libappindicator-gtk3 gnome-shell-extension-appindicator
+		sudo pacman -S --noconfirm libappindicator-gtk3 gnome-shell-extension-appindicator
 	else
 		# TODO: Add support for apt
 		echo "Support not yet added for apt."
@@ -147,7 +147,7 @@ else
 		sudo dnf upgrade --refresh -y
 		sudo dnf install clamav clamd clamav-update -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S clamav
+		sudo pacman -S --noconfirm clamav
 	else
 		# TODO: Add support for apt
 		echo "Support not yet added for apt."

@@ -13,7 +13,7 @@ for cliTool in ${cliTools[@]}; do
 		if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 			sudo $packageManager install "$cliTool" -y
 		elif [[ "$packageManager" = "pacman" ]]; then
-			echo y | sudo pacman -S "$cliTool"
+			sudo pacman -S --noconfirm "$cliTool"
 		else
 			echo "Error Message"
 		fi
@@ -29,7 +29,7 @@ else
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install python3 -y
 	elif [[ "$packageManaer" = "pacman" ]]; then
-		echo y | sudo pacman -S python3
+		sudo pacman -S --noconfirm python3
 	else
 		echo "Support has only been added for apt, dnf, and pacman."
 	fi
@@ -44,7 +44,7 @@ else
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install python3-pip -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S python-pip
+		sudo pacman -S --noconfirm python-pip
 	else
 		echo "Support has only been added for apt, dnf, and pacman."
 	fi

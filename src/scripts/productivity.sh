@@ -15,7 +15,7 @@ else
 		# TODO: Check if dnf uses "taskwarrior"
 		sudo $packageManager install "$task" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S "$task"
+		sudo pacman -S --noconfirm "$task"
 	else
 		echo "Error Message"
 	fi

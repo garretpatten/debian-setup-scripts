@@ -84,7 +84,7 @@ for app in ${apps[@]}; do
 		if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 			sudo $packageManager install "$cliTool" -y
 		elif [[ "$packageManager" = "pacman" ]]; then
-			echo y | sudo pacman -S "$cliTool"
+			sudo pacman -S --noconfirm "$cliTool"
 		else
 			echo "Error Message"
 		fi

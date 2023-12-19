@@ -35,7 +35,7 @@ elif [[ "$packageManager" = "pacman" ]]; then
 		if [[ -d "/usr/bin/$app" ]]; then
 			echo "$app is already installed."
 		else
-			echo y | sudo pacman -Syu "$app"
+			sudo pacman -S --noconfirmyu "$app"
 		fi
 	done
 else
@@ -50,7 +50,7 @@ if [[ -f "/usr/bin/thunderbird" ]]; then
 	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 		sudo $packageManager install "$cliTool" -y
 	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S "$cliTool"
+		sudo pacman -S --noconfirm "$cliTool"
 	else
 		echo "Error Message"
 	fi
@@ -68,7 +68,7 @@ else
 		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 		sudo dnf install vlc -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S "$cliTool"
+		sudo pacman -S --noconfirm "$cliTool"
 	else
 		echo "Error Message"
 	fi
