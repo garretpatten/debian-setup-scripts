@@ -1,20 +1,20 @@
 #!/bin/bash
 
 packageManager=$1
+workingDirectory=$2
 
 # Burp Suite
 if [[ -f "/usr/bin/burpsuite" ]]; then
 	echo "Burp Suite is already installed."
 else
 	if [[ "$packageManager" = "pacman" ]]; then
-        currentPath=$(pwd)
         cd ~/Downloads
 
         git clone https://aur.archlinux.org/burpsuite.git
         cd burpsuite
         makepkg -sri --noconfirm
 
-        cd "$currentPath"\
+        cd "$workingDirectory"
     # TODO: Add support for apt and dnf
 	else
 		echo "Burp Suite is not supported for this package manager."

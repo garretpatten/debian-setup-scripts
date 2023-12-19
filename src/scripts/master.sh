@@ -28,7 +28,7 @@ fi
 # Exit if package manager is not supported.
 if [[ "$packageManager" = "" ]]; then
     echo "The package manager on this system is not supported."
-    echo "Currently, these setup scripts support the following package managers:"
+    echo "The following package managers are supported:"
     echo "apt, dnf, pacman"
     exit 1
 fi
@@ -60,6 +60,9 @@ sh "$workingDirectory/src/scripts/dev.sh" $packageManager $workingDirectory
 
 # Shell: Terminator, zsh, oh-my-zsh.
 zsh "$workingDirectory/src/scripts/shell.sh" $packageManager $workingDirectory
+
+# Hacking: Burp Suite, Black Arch/Kali tools.
+sh "$workingDirectory/src/scripts/hacking.sh" $packageManager $workingDirectory
 
 # Other: Thunderbird.
 sh "$workingDirectory/src/scripts/misc.sh" $packageManager
