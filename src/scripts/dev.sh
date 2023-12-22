@@ -160,7 +160,7 @@ if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
 
 		git clone https://aur.archlinux.org/ttf-firacode.git
 		cd ttf-firacode
-		echo y | makepkg -sri
+		makepkg -sri --noconfirm
 
 		cd "$workingDirectory"
 	else
