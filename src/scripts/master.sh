@@ -2,6 +2,7 @@
 
 # TODO: cd to the root of the project.
 
+errorMessage=" is not supported for the $packageManager package manager."
 packageManager=""
 workingDirectory=$(pwd)
 
@@ -43,28 +44,28 @@ fi
 sh "$workingDirectory/src/scripts/organizeHome.sh"
 
 # Security: YubiKeys, Firewall, VPN, Anti-Virus.
-sh "$workingDirectory/src/scripts/security.sh" $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/security.sh" $errorMessage $packageManager $workingDirectory
 
 # CLI Tooling.
-sh "$workingDirectory/src/scripts/cli.sh" $packageManager
+sh "$workingDirectory/src/scripts/cli.sh" $errorMessage $packageManager
 
 # Productivity: Notion, Simplenote, Taskwarrior, Todoist.
-sh "$workingDirectory/src/scripts/productivity.sh" $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/productivity.sh" $errorMessage $packageManager $workingDirectory
 
 # Web Apps.
-sh "$workingDirectory/src/scripts/web.sh" $packageManager
+sh "$workingDirectory/src/scripts/web.sh" $errorMessage $packageManager
 
 # Development Setup.
-sh "$workingDirectory/src/scripts/dev.sh" $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/dev.sh" $errorMessage $packageManager $workingDirectory
 
 # Shell: Terminator, zsh, oh-my-zsh.
-zsh "$workingDirectory/src/scripts/shell.sh" $packageManager $workingDirectory
+zsh "$workingDirectory/src/scripts/shell.sh" $errorMessage $packageManager $workingDirectory
 
 # Hacking: Burp Suite, Black Arch/Kali tools.
-sh "$workingDirectory/src/scripts/hacking.sh" $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/hacking.sh" $errorMessage $packageManager $workingDirectory
 
 # Other: Thunderbird.
-sh "$workingDirectory/src/scripts/misc.sh" $packageManager
+sh "$workingDirectory/src/scripts/misc.sh" $errorMessage $packageManager
 
 # Update the system again.
 if [[ "$packageManager" = "pacman" ]]; then
