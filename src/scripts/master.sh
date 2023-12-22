@@ -5,8 +5,7 @@
 packageManager=""
 workingDirectory=$(pwd)
 
-# TODO: Check if apt is binary or alias for apt-get.
-if [[ -f "/usr/bin/apt-get" ]]; then
+if [[ -f "/usr/bin/apt" ]]; then
     packageManager="apt"
 elif [[ -f "/usr/bin/dnf" ]]; then
     packageManager="dnf"

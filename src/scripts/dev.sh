@@ -95,8 +95,7 @@ done
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
-	# TODO: Fix for pacman
-	python3 -m pip install semgrep
+	sudo pacman -S python-semgrep --noconfirm
 fi
 
 # Postman

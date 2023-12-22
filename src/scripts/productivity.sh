@@ -9,21 +9,21 @@ if [[ -f "/usr/bin/task" ]]; then
 else
 	task="task"
 	if [[ "$packageManager" = "apt" ]]; then
-		# TODO: Check if apt uses "taskwarrior"
-		sudo $packageManager install "$task" -y
+		sudo $packageManager install "taskwarrior" -y
 	elif [[ "$packageManager" = "dnf" ]]; then
-		# TODO: Check if dnf uses "taskwarrior"
 		sudo $packageManager install "$task" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		sudo pacman -S --noconfirm "$task"
+		sudo pacman -S "$task" --noconfirm
 	else
 		echo "Error Message"
 	fi
 
-	# TODO: Handle first Taskwarrior prompt
+	# Handle first Taskwarrior prompt (to create config file).
+	echo "yes" | task
 
-	# Add Manual Setup Tasks
+	# Add manual setup tasks.
 	task add Install Timeshift project:setup priority:H
+	task add Remove unneeded update commands from .zshrc project:setup priority:H
 	task add Take a snapshot of system project:setup priority:H
 	task add Update .zshrc project:dev priority:H
 
@@ -34,17 +34,17 @@ else
 	task add Download needed files from Proton Drive project:setup priority:L
 fi
 
-# Taskwarrior Config
+# Taskwarrior config
 cat "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
 
-# Add Custom Themes Directory
+# Add custom themes directory.
 if [[ -d "$HOME/.task/themes/" ]]; then
 	echo "Taskwarrior themes directory already exists."
 else
 	mkdir ~/.task/themes/
 fi
 
-# Add Custom Themes
+# Add custom themes.
 cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
 # Notion, Simplenote, and Todoist

@@ -2,7 +2,7 @@
 
 packageManager=$1
 
-# Foundational CLI Tools
+# Foundational CLI tools
 cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "vim" "wget")
 for cliTool in ${cliTools[@]}; do
 	if [[ -d "/usr/bin/$cliTool" ]]; then
@@ -49,5 +49,3 @@ else
 		echo "Support has only been added for apt, dnf, and pacman."
 	fi
 fi
-
-

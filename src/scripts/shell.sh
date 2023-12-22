@@ -3,7 +3,7 @@
 packageManager=$1
 workingDirectory=$2
 
-# Terminator and zsh
+# Terminator and zsh.
 terminalApps=("terminator" "zsh")
 for terminalApp in ${terminalApps[@]}; do
     if [[ -f "/usr/bin/$terminalApp" ]]; then
@@ -19,12 +19,13 @@ for terminalApp in ${terminalApps[@]}; do
     fi
 done
 
-# Change User Shells to Zsh
-# TODO: Only run this if zsh is actually installed
-chsh -s $(which zsh)
-sudo chsh -s $(which zsh)
+# Change user shells to zsh.
+if [[ -f "/usr/bin/zsh" ]]; then
+    chsh -s $(which zsh)
+    sudo chsh -s $(which zsh)
+fi
 
-# Oh-my-zsh and Shell Configuration
+# Oh-my-zsh and shell configuration.
 if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
@@ -38,5 +39,5 @@ else
     cat "$workingDirectory/src/config-files/zsh/zshrc.txt" > ~/.zshrc
 fi
 
-# Reload config file
+# Reload config file.
 source ~/.zshrc

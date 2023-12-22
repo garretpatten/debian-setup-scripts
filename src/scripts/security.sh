@@ -14,29 +14,21 @@ if [[ "$packageManager" = "dnf" ]]; then
 	if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
 		mkdir -p ~/.config/yubico
 
-		# Create a break in output
-		echo ""
-		echo ""
-		echo ""
-
+		echo "\n\n\n"
 		echo "Hardware Key Registration"
+		echo "\n\n\n"
 
-		# Create a break in output
-		echo ""
-		echo ""
-		echo ""
-
-		# Register Primary Key
+		# Register the primary key.
 		pamu2fcfg >> ~/.config/yubico/u2f_keys
 
-		# Register Backup Key
+		# Register the backup key.
 		pamu2fcfg >> ~/.config/yubico/u2f_keys
 
 		sudo mkdir -p /etc/yubico
 		sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
 		sudo chmod 644 /etc/yubico/u2f_keys
 
-		# Authentication Updates
+		# Authentication updates
 		# TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
 	else
 		echo "YubiKey file already configured. To re-configure, delete the etc config file and re-run."
@@ -45,7 +37,7 @@ else
 	echo "Support not yet added for apt and pacman."
 fi
 
-# Enable Firewall
+# Enable firewall.
 if [[ -f "/usr/sbin/ufw" ]]; then
 	echo "Firewall is already installed."
 else
@@ -62,7 +54,7 @@ if [[ -f "/usr/bin/1password" ]]; then
 	echo "1Password is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
-		# 1Password Desktop
+		# 1Password desktop app
 		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf install 1password -y
@@ -74,7 +66,7 @@ else
 	elif [[ "$packageManager" = "pacman" ]]; then
 		cd ~/Downloads
 
-		# 1Password Desktop App
+		# 1Password desktop app
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
 		git clone https://aur.archlinux.org/1password.git
 		cd 1password
@@ -92,7 +84,7 @@ else
 
 		cd "$workingDirectory"
 	else
-		# 1Password Desktop
+		# 1Password desktop app
 		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
 		sudo tar -xf 1password-latest.tar.gz
 		sudo mkdir -p /opt/1Password
@@ -115,7 +107,7 @@ else
 	fi
 fi
 
-# Proton VPN, Proton VPN CLI, and System Tray Icon
+# Proton VPN, Proton VPN CLI, and system tray icon
 if [[ -f "/usr/bin/protonvpn" ]]; then
 	echo "Proton VPN is already installed."
 else
@@ -128,13 +120,13 @@ else
 		sudo dnf update -y
 		sudo dnf install protonvpn-cli -y
 
-		# Dependencies for Alternative Routing
+		# Dependencies for alternative routing.
 		sudo dnf install --user 'dnspython>=1.16.0' -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		yay -S --no-confirm protonvpn
 		sudo pacman -S --noconfirm libappindicator-gtk3 gnome-shell-extension-appindicator
 	else
-		# TODO: Add support for apt
+		# TODO: Add support for apt.
 		echo "Support not yet added for apt."
 	fi
 fi
