@@ -3,11 +3,11 @@
 packageManager=$1
 
 # Flatpak
-if [[ "$packageManager" = "dnf" ]]; then
+if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 	if [[ -f "/usr/bin/flatpak" ]]; then
 		echo "flatpak is already installed."
 	else
-		sudo dnf install flatpak -y
+		sudo $packageManager install flatpak -y
 	fi
 
 	# Add remote Flathub repos

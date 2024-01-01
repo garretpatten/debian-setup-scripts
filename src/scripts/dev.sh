@@ -79,15 +79,16 @@ fi
 
 
 # GitHub CLI & Sourcegraph CLI
+## TODO: Fix src-cli for debian
 apps=("gh" "src-cli")
 for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
 	else
 		if [[ "$packageManager" = "pacman" ]]; then
-			echo y | sudo pacman -S "$cliTool"
+			echo y | sudo pacman -S "$app"
 		else
-			sudo $packageManager install "$cliTool" -y
+			sudo $packageManager install "$app" -y
 		fi
 	fi
 done
@@ -96,7 +97,7 @@ done
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
-	# TODO: Fix for pacman
+	# TODO: Fix for debian and pacman
 	python3 -m pip install semgrep
 fi
 
