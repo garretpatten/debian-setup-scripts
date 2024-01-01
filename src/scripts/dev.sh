@@ -13,7 +13,7 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 fi
 
 # Vim Config
-cat "$(pwd)/src/config-files/vim/vimrc.txt" >> ~/.vimrc
+cp "$(pwd)/src/config-files/vim/vimrc.txt" ~/.vimrc
 
 # Docker and Docker-Compose
 # TODO: Eliminate duplicate lines
@@ -29,7 +29,7 @@ if [[ "$packageManager" = "apt" ]]; then
 	sudo usermod -aG docker $USER
 	newgrp docker
 	sudo apt install docker-compose -y
-	docker image pull arch
+	docker image pull archlinux
 	docker image pull fedora
 elif [[ "$packageManager" = "dnf" ]]; then
 	sudo dnf -y install dnf-plugins-core
@@ -40,7 +40,7 @@ elif [[ "$packageManager" = "dnf" ]]; then
 	sudo usermod -aG docker $USER
 	newgrp docker
 	sudo dnf install docker-compose -y
-	docker iamge pull arch
+	docker iamge pull archlinux
 	docker image pull ubuntu
 elif [[ "$packageManager" = "pacman" ]]; then
 	echo y | sudo pacman -S gnome-terminal
@@ -64,8 +64,10 @@ elif [[ "$packageManager" = "pacman" ]]; then
 	echo y | sudo pacman -S nodejs
 	echo y | sudo pacman -S npm
 else
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
+	curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
+	sudo apt install nodejs -y
+	#  NVM
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 fi
 
 # Vue.js
