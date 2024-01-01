@@ -123,7 +123,7 @@ else
 		sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 
 		sudo apt install apt-transport-https -y
-		sudo apt update
+		sudo apt update -y
 		sudo apt install code -y
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
