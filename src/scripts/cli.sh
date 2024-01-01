@@ -3,7 +3,7 @@
 packageManager=$1
 
 # Foundational CLI Tools
-cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "wget")
+cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "vim" "wget")
 for cliTool in ${cliTools[@]}; do
 	if [[ -d "/usr/bin/$cliTool" ]]; then
 		echo "$cliTool is already installed."
