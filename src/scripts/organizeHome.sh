@@ -12,7 +12,7 @@ done
 
 # Add Needed Directories
 # TODO: Add directories that align with backups
-directoriesToCreate=("AppImages" "Repos", "Writing")
+directoriesToCreate=("AppImages" "Repos" "Writing")
 for directoryToCreate in ${directoriesToCreate[@]}; do
 	if [[ -d "$HOME/$directoryToCreate/" ]]; then
 		echo "$HOME/$directoryToCreate is already created."
