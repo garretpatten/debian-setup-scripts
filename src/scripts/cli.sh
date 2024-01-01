@@ -19,7 +19,7 @@ for cliTool in ${cliTools[@]}; do
 done
 
 # Python
-if [[ -f "/usr/bin/python" ]]; then
+if [[ -f "/usr/bin/python" || -f "usr/bin/python3" ]]; then
 	echo "python3 is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
