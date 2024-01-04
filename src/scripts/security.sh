@@ -100,7 +100,7 @@ else
 		sudo /opt/1Password/after-install.sh
 
 		# 1Password CLI
-		sudo -s \
+		sudo su \
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
 		gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
 		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" | \
@@ -112,7 +112,7 @@ else
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
 		gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
 		apt update -y && apt install 1password-cli -y
-  		exit
+		exit
 	fi
 fi
 

@@ -54,7 +54,7 @@ elif [[ "$packageManager" = "pacman" ]]; then
 	docker image pull ubuntu
 else
 	echo "Support not yet added for this package manager."
-if
+fi
 
 
 # Node.js
