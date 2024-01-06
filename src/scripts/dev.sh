@@ -100,8 +100,15 @@ done
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
-	# TODO: Fix for debian and pacman
-	python3 -m pip install semgrep
+	if [[ "$packageManager" = "apt" ]]; then
+		echo "Support not yet added for apt."
+	elif [[ "$packageManager" = "dnf" ]]; then
+		python3 -m pip install semgrep
+	elif [[ "$packageManager" = "pacman" ]]; then
+		sudo pacman -S python-semgrep --no-confirm
+	else
+		echo "Error Message"
+	fi
 fi
 
 # Postman
