@@ -2,7 +2,7 @@
 
 packageManager=$1
 
-# Foundational CLI tools
+# Foundational CLI Tools
 cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "openvpn" "vim" "wget")
 for cliTool in ${cliTools[@]}; do
 	if [[ -d "/usr/bin/$cliTool" ]]; then
@@ -21,7 +21,7 @@ for cliTool in ${cliTools[@]}; do
 done
 
 # Python
-if [[ -f "/usr/bin/python" ]]; then
+if [[ -f "/usr/bin/python" || -f "usr/bin/python3" ]]; then
 	echo "python3 is already installed."
 else
 	if [[ "$packageManager" = "apt" ]]; then
@@ -36,7 +36,7 @@ else
 fi
 
 # Pip
-if [[ -f "/usr/bin/python-pip" ]]; then
+if [[ -f "/usr/bin/pip" || -f "/usr/bin/python-pip" ]]; then
 	echo "python-pip is already installed."
 else
 	if [[ "$packageManager" = "apt" ]]; then

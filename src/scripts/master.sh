@@ -68,10 +68,12 @@ sh "$workingDirectory/src/scripts/hacking.sh" $errorMessage $packageManager $wor
 sh "$workingDirectory/src/scripts/misc.sh" $errorMessage $packageManager
 
 # Update the system again.
-if [[ "$packageManager" = "pacman" ]]; then
+if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
+	sudo $packageManager update -y && sudo $packageManager upgrade -y && flatpak update -y && sudo $packageManager autoremove -y
+elif [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -Syu --noconfirm && yay -Yc --noconfirm
 else
-    sudo $packageManager update -y && sudo $packageManager upgrade -y && flatpak update -y && sudo $packageManager autoremove -y
+    echo "Error Message"
 fi
 
 # Print final output.

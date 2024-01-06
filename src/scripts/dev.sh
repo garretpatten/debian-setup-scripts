@@ -18,46 +18,52 @@ cat "$workingDirectory/src/config-files/vim/vimrc.txt" >> ~/.vimrc
 if [[ "$packageManager" = "apt" ]]; then
 	sudo apt update -y
 	sudo apt install apt-transport-https ca-certificates software-properties-common -y
-	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-	apt-cache policy docker-ce
-	sudo apt install docker-ce -y
+	curl docker.io -y
+
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
 	sudo usermod -aG docker $USER
 	newgrp docker
+
 	sudo apt install docker-compose -y
-	docker image pull arch
+	docker image pull archlinux
 	docker image pull fedora
 elif [[ "$packageManager" = "dnf" ]]; then
 	sudo dnf -y install dnf-plugins-core
 	sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
 	sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
 	sudo usermod -aG docker $USER
 	newgrp docker
+
 	sudo dnf install docker-compose -y
-	docker iamge pull arch
+	docker iamge pull archlinux
 	docker image pull ubuntu
 elif [[ "$packageManager" = "pacman" ]]; then
 	sudo pacman -S --noconfirm gnome-terminal
 	sudo pacman -S --noconfirm docker
+
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
 	sudo usermod -aG docker $USER
 	newgrp docker
+
 	sudo pacman -S --noconfirm docker-compose
 	docker iamge pull fedora
 	docker image pull ubuntu
 else
 	echo "Support not yet added for this package manager."
-if
+fi
 
 
 # Node.js
 if [[ "$packageManager" = "apt" ]]; then
-	echo "Support not yet added for apt."
+	curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
+	sudo apt install nodejs -y
+	#  NVM
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 elif [[ "$packageManager" = "dnf" ]]; then
 	sudo dnf module install nodejs:18/common -y
 elif [[ "$packageManager" = "pacman" ]]; then
@@ -76,17 +82,16 @@ fi
 
 
 # GitHub CLI & Sourcegraph CLI
+## TODO: Fix src-cli for debian
 apps=("gh" "src-cli")
 for app in ${apps[@]}; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
 	else
-		if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-			sudo $packageManager install "$cliTool" -y
-		elif [[ "$packageManager" = "pacman" ]]; then
-			sudo pacman -S --noconfirm "$cliTool"
+		if [[ "$packageManager" = "pacman" ]]; then
+			echo y | sudo pacman -S "$app"
 		else
-			echo "Error Message"
+			sudo $packageManager install "$app" -y
 		fi
 	fi
 done
@@ -95,7 +100,8 @@ done
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
 	echo "Semgrep is already installed."
 else
-	sudo pacman -S python-semgrep --noconfirm
+	# TODO: Fix for debian and pacman
+	python3 -m pip install semgrep
 fi
 
 # Postman
