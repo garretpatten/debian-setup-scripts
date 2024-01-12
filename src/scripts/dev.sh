@@ -22,7 +22,7 @@ if [[ "$packageManager" = "apt" ]]; then
 
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
-	sudo usermod -aG docker $USER
+	sudo usermod -aG docker "$USER"
 	newgrp docker
 
 	sudo apt install docker-compose -y
