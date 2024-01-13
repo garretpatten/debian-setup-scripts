@@ -12,7 +12,7 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 fi
 
 # Vim Config
-cat "$workingDirectory/src/config-files/vim/vimrc.txt" >> ~/.vimrc
+cp "$workingDirectory/src/config-files/vim/vimrc.txt" ~/.vimrc
 
 # Docker and Docker-Compose
 if [[ "$packageManager" = "apt" ]]; then
@@ -35,7 +35,7 @@ elif [[ "$packageManager" = "dnf" ]]; then
 
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
-	sudo usermod -aG docker $USER
+	sudo usermod -aG docker "$USER"
 	newgrp docker
 
 	sudo dnf install docker-compose -y
@@ -47,7 +47,7 @@ elif [[ "$packageManager" = "pacman" ]]; then
 
 	sudo systemctl start docker.service
 	sudo systemctl enable docker.service
-	sudo usermod -aG docker $USER
+	sudo usermod -aG docker "$USER"
 	newgrp docker
 
 	sudo pacman -S --noconfirm docker-compose
@@ -91,7 +91,7 @@ for app in ${apps[@]}; do
 		if [[ "$packageManager" = "pacman" ]]; then
 			echo y | sudo pacman -S "$app"
 		else
-			sudo $packageManager install "$app" -y
+			sudo "$packageManager" install "$app" -y
 		fi
 	fi
 done
@@ -128,12 +128,12 @@ if [[ -f "/usr/bin/code" ]]; then
 else
 	isInstalled="true"
 	if [[ "$packageManager" = "apt" ]]; then
-		cd ~/Downloads
+		cd ~/Downloads || return
 
 		wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
 		wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 
-		cd "$workingDirectory"
+		cd "$workingDirectory" || return
 
 		sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
 		sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
@@ -168,13 +168,13 @@ if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
 		# TODO: Install Fira Code on dnf
 		echo "Support not yet added for dnf."
 	elif [[ "$packageManager" = "pacman" ]]; then
-		cd ~/Downloads
+		cd ~/Downloads || return
 
 		git clone https://aur.archlinux.org/ttf-firacode.git
 		cd ttf-firacode
 		makepkg -sri --noconfirm
 
-		cd "$workingDirectory"
+		cd "$workingDirectory" || return
 	else
 		echo "Error Message."
 	fi

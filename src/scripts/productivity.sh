@@ -11,7 +11,7 @@ else
 	if [[ "$packageManager" = "apt" ]]; then
 		sudo $packageManager install "taskwarrior" -y
 	elif [[ "$packageManager" = "dnf" ]]; then
-		sudo $packageManager install "$task" -y
+		sudo "$packageManager" install "$task" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S "$task" --noconfirm
 	else
@@ -35,7 +35,7 @@ else
 fi
 
 # Taskwarrior config
-cat "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
+cp "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" ~/.taskrc
 
 # Add custom themes directory.
 if [[ -d "$HOME/.task/themes/" ]]; then
