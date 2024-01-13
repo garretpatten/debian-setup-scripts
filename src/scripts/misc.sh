@@ -22,9 +22,9 @@ elif [[ "$packageManager" = "dnf" ]]; then
 	flatpakApps=("org.signal.Signal" "com.spotify.Client")
 	for flatpakApp in "${flatpakApps[@]}"; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
+			echo "$flatpakApp is already installed."
 		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
+			echo "$flatpakApp is already installed."
 		else
 			flatpak install flathub "$flatpak" -y
 		fi
@@ -47,7 +47,7 @@ if [[ -f "/usr/bin/thunderbird" ]]; then
 	echo "Thunderbird is already installed."
 else
 	cliTool = "thunderbird"
-	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
+	if [[ "$packageManager"="apt" || "$packageManager"="dnf" ]]; then
 		sudo "$packageManager" install "$cliTool" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S --noconfirm "$cliTool"
