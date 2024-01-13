@@ -10,7 +10,7 @@ for terminalApp in "${terminalApps[@]}"; do
         echo "$terminalApp is already installed."
     else
         if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-            sudo $packageManager install "$terminalApp" -y
+            sudo "$packageManager" install "$terminalApp" -y
         elif [[ "$packageManager" = "pacman" ]]; then
             sudo pacman -S --noconfirm "$terminalApp"
         else
@@ -21,8 +21,8 @@ done
 
 # Change user shells to zsh.
 if [[ -f "/usr/bin/zsh" ]]; then
-    chsh -s $(which zsh)
-    sudo chsh -s $(which zsh)
+    chsh -s "$(which zsh)"
+    sudo chsh -s "$(which zsh)"
 fi
 
 # Oh-my-zsh and shell configuration.
@@ -31,13 +31,14 @@ if [[ -d "$HOME/.oh-my-zsh/" ]]; then
 else
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-    cd "$HOME/.oh-my-zsh/custom/plugins"
+    cd "$HOME/.oh-my-zsh/custom/plugins" || return
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
-    cd "$workingDirectory"
-    cat "$workingDirectory/src/config-files/zsh/zshrc.txt" > ~/.zshrc
+    cd "$workingDirectory" || return
+    cp "$workingDirectory/src/config-files/zsh/zshrc.txt" ~/.zshrc
+
+	# Reload config file.
+	omz reload
 fi
 
-# Reload config file.
-source ~/.zshrc
