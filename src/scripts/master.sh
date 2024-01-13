@@ -50,7 +50,7 @@ sh "$workingDirectory/src/scripts/security.sh" "$errorMessage" "$packageManager"
 sh "$workingDirectory/src/scripts/cli.sh" "$errorMessage" "$packageManager"
 
 # Productivity: Notion, Simplenote, Taskwarrior, Todoist.
-sh "$workingDirectory/src/scripts/productivity.sh" "$errorMessage" "$packageManager "$workingDirectory"
+sh "$workingDirectory/src/scripts/productivity.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
 # Web Apps.
 sh "$workingDirectory/src/scripts/web.sh" "$errorMessage" "$packageManager"
@@ -69,7 +69,7 @@ sh "$workingDirectory/src/scripts/misc.sh" "$errorMessage" "$packageManager"
 
 # Update the system again.
 if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-	sudo $packageManager update -y && sudo $packageManager upgrade -y && flatpak update -y && sudo $packageManager autoremove -y
+	sudo "$packageManager" update -y && sudo "$packageManager" upgrade -y && flatpak update -y && sudo "$packageManager" autoremove -y
 elif [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -Syu --noconfirm && yay -Yc --noconfirm
 else
