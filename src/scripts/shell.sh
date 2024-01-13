@@ -5,13 +5,13 @@ workingDirectory=$2
 
 # Terminator and zsh.
 terminalApps=("terminator" "zsh")
-for terminalApp in ${terminalApps[@]}; do
+for terminalApp in "${terminalApps[@]}"; do
     if [[ -f "/usr/bin/$terminalApp" ]]; then
         echo "$terminalApp is already installed."
     else
         if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
             sudo $packageManager install "$terminalApp" -y
-        if [[ "$packageManager" = "pacman" ]]; then
+        elif [[ "$packageManager" = "pacman" ]]; then
             sudo pacman -S --noconfirm "$terminalApp"
         else
             echo "Error Message"

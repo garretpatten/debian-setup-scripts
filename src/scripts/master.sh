@@ -16,12 +16,12 @@ elif [[ -f "/usr/bin/pacman" ]]; then
         sudo pacman -S --noconfirm base-devel
         sudo pacman -S --noconfirm git
 
-        cd ~/Downloads
+        cd ~/Downloads || return
         git clone https://aur.archlinux.org/yay.git
         cd yay
         makepkg -sri --noconfirm
 
-        cd "$workingDirectory"
+        cd "$workingDirectory" || return
     fi
 fi
 
@@ -77,4 +77,4 @@ else
 fi
 
 # Print final output.
-echo "\n\nCheers -- system setup is now complete!"
+printf "\n\n\nCheers -- system setup is now complete!\n"

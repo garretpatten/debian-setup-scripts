@@ -10,13 +10,13 @@ else
 	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 		echo "Support not yet added for apt and dnf"
 	elif [[ "$packageManager" = "pacman" ]]; then
-        cd ~/Downloads
+        cd ~/Downloads || return
 
         git clone https://aur.archlinux.org/burpsuite.git
-        cd burpsuite
+        cd burpsuite || return
         makepkg -sri --noconfirm
 
-        cd "$workingDirectory"
+        cd "$workingDirectory" || return
 	fi
 fi
 
@@ -36,6 +36,6 @@ else
 	if [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S --noconfirm nmap
 	else
-		sudo $packageManager install "$cliTool" -y
+		sudo "$packageManager" install nmap -y
 	fi
 fi
