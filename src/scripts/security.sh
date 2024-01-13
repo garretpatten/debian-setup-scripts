@@ -14,9 +14,7 @@ if [[ "$packageManager" = "dnf" ]]; then
 	if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
 		mkdir -p ~/.config/yubico
 
-		echo "\n\n\n"
-		echo "Hardware Key Registration"
-		echo "\n\n\n"
+		printf "\n\n\nHardware Key Registration\n\n\n"
 
 		# Register the primary key.
 		pamu2fcfg >> ~/.config/yubico/u2f_keys
@@ -44,7 +42,7 @@ else
 	if [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S --noconfirm ufw
 	else
-		sudo $packageManager install ufw -y
+		sudo "$packageManager" install ufw -y
 	fi
 fi
 sudo ufw enable
@@ -64,12 +62,12 @@ else
 		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
 		sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
 	elif [[ "$packageManager" = "pacman" ]]; then
-		cd ~/Downloads
+		cd ~/Downloads || return
 
 		# 1Password desktop app
 		curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
 		git clone https://aur.archlinux.org/1password.git
-		cd 1password
+		cd 1password || return
 		makepkg -sri --noconfirm
 
 		# 1Password CLI
@@ -82,7 +80,7 @@ else
 		sudo chgrp onepassword-cli /usr/local/bin/op && \
 		sudo chmod g+s /usr/local/bin/op
 
-		cd "$workingDirectory"
+		cd "$workingDirectory" || return
 	else
 		# 1Password desktop app
 		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
@@ -113,10 +111,10 @@ if [[ -f "/usr/bin/protonvpn" ]]; then
 	echo "Proton VPN is already installed."
 else
 	if [[ "$packageManager" = "dnf" ]]; then
-		cd ~/Downloads
+		cd ~/Downloads || return
 
 		wget https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
-		cd "$workingDirectory"
+		cd "$workingDirectory" || return
 		sudo dnf install ~/Downloads/protonvpn-stable-release-1.0.1-1.noarch.rpm -y
 		sudo dnf update -y
 		sudo dnf install protonvpn-cli -y
