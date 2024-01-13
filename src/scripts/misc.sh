@@ -7,7 +7,7 @@ if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 	if [[ -f "/usr/bin/flatpak" ]]; then
 		echo "flatpak is already installed."
 	else
-		sudo $packageManager install flatpak -y
+		sudo "$packageManager" install flatpak -y
 	fi
 
 	# Add remote Flathub repos
@@ -20,7 +20,7 @@ if [[ "$packageManager" = "apt" ]]; then
 	echo "Support not yet added for apt."
 elif [[ "$packageManager" = "dnf" ]]; then
 	flatpakApps=("org.signal.Signal" "com.spotify.Client")
-	for flatpakApp in ${flatpakApps[@]}; do
+	for flatpakApp in "${flatpakApps[@]}"; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
 			echo "$flatpak is already installed."
 		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
@@ -31,7 +31,7 @@ elif [[ "$packageManager" = "dnf" ]]; then
 	done
 elif [[ "$packageManager" = "pacman" ]]; then
 	apps=("signal-desktop" "spotify-launcher")
-	for app in ${apps[@]}; do
+	for app in "${apps[@]}"; do
 		if [[ -d "/usr/bin/$app" ]]; then
 			echo "$app is already installed."
 		else
@@ -48,7 +48,7 @@ if [[ -f "/usr/bin/thunderbird" ]]; then
 else
 	cliTool = "thunderbird"
 	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-		sudo $packageManager install "$cliTool" -y
+		sudo "$packageManager" install "$cliTool" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S --noconfirm "$cliTool"
 	else
@@ -65,7 +65,7 @@ else
 		# TODO: Add support for apt
 		echo "Support not yet added for apt."
 	elif [[ "$packageManager" = "dnf" ]]; then
-		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+		sudo dnf install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" -y
 		sudo dnf install vlc -y
 	elif [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S --noconfirm "$cliTool"
