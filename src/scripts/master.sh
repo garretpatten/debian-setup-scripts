@@ -18,7 +18,7 @@ elif [[ -f "/usr/bin/pacman" ]]; then
 
         cd ~/Downloads || return
         git clone https://aur.archlinux.org/yay.git
-        cd yay
+        cd yay || return
         makepkg -sri --noconfirm
 
         cd "$workingDirectory" || return
@@ -44,7 +44,7 @@ fi
 sh "$workingDirectory/src/scripts/organizeHome.sh"
 
 # Security: YubiKeys, Firewall, VPN, Anti-Virus.
-sh "$workingDirectory/src/scripts/security.sh" $errorMessage $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/security.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
 # CLI Tooling.
 sh "$workingDirectory/src/scripts/cli.sh" $errorMessage $packageManager
