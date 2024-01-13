@@ -9,7 +9,7 @@ if [[ -f "/usr/bin/task" ]]; then
 else
 	task="task"
 	if [[ "$packageManager" = "apt" ]]; then
-		sudo $packageManager install "taskwarrior" -y
+		sudo "$packageManager" install "taskwarrior" -y
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo "$packageManager" install "$task" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
@@ -55,16 +55,16 @@ if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 		sudo apt install notion-app-enhanced -y
 		sudo apt install notion-app
 	else
-		echo "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
+		printf "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
 		sudo dnf install notion-app -y
 	fi
 
 	flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
-	for flatpakApp in ${flatpakApps[@]}; do
+	for flatpakApp in "${flatpakApps[@]}"; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
+			echo "$flatpakApp is already installed."
 		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
+			echo "$flatpakApp is already installed."
 		else
 			sudo dnf install "$flatpakApp" -y
 		fi
@@ -85,10 +85,10 @@ elif [[ "$packageManager" = "pacman" ]]; then
 	if [[ -f "/usr/bin/todoist" ]]; then
 		echo "Todoist is already installed."
 	else
-		cd ~/AppImages
+		cd ~/AppImages || return
 		wget https://todoist.com/linux_app/appimage
 		sudo mv appimage /usr/bin/todoist
-		cd "$workingDirectory"
+		cd "$workingDirectory" || return
 	fi
 else
 	echo "Error Message"
