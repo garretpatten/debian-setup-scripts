@@ -2,7 +2,7 @@ name: Semgrep Scan
 permissions:
   contents: read
 
-on: pull_request
+on: push
 
 jobs:
   semgrep:
