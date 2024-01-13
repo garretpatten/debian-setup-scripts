@@ -45,11 +45,11 @@ fi
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
 	echo "Thunderbird is already installed."
- else
+else
 	cliTool = "thunderbird"
 	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
 		sudo $packageManager install "$cliTool" -y
-	if [[ "$packageManager" = "pacman" ]]; then
+	elif [[ "$packageManager" = "pacman" ]]; then
 		sudo pacman -S --noconfirm "$cliTool"
 	else
 		echo "Error Message"

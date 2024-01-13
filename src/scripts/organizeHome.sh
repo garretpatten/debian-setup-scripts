@@ -2,7 +2,7 @@
 
 # Remove unneeded directories.
 directoriesToRemove=("Music" "Public" "Templates" "Videos")
-for directoryToRemove in ${directoriesToRemove[@]}; do
+for directoryToRemove in "${directoriesToRemove[@]}"; do
 	if [[ -d "$HOME/$directoryToRemove/" ]]; then
 		rmdir "$HOME/$directoryToRemove"
 	else
@@ -12,7 +12,7 @@ done
 
 # Add needed directories.
 directoriesToCreate=("AppImages" "Books" "Games" "Repos" "Writing")
-for directoryToCreate in ${directoriesToCreate[@]}; do
+for directoryToCreate in "${directoriesToCreate[@]}"; do
 	if [[ -d "$HOME/$directoryToCreate/" ]]; then
 		echo "$HOME/$directoryToCreate is already created."
 	else
