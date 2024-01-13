@@ -47,25 +47,25 @@ sh "$workingDirectory/src/scripts/organizeHome.sh"
 sh "$workingDirectory/src/scripts/security.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
 # CLI Tooling.
-sh "$workingDirectory/src/scripts/cli.sh" $errorMessage $packageManager
+sh "$workingDirectory/src/scripts/cli.sh" "$errorMessage" "$packageManager"
 
 # Productivity: Notion, Simplenote, Taskwarrior, Todoist.
-sh "$workingDirectory/src/scripts/productivity.sh" $errorMessage $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/productivity.sh" "$errorMessage" "$packageManager "$workingDirectory"
 
 # Web Apps.
-sh "$workingDirectory/src/scripts/web.sh" $errorMessage $packageManager
+sh "$workingDirectory/src/scripts/web.sh" "$errorMessage" "$packageManager"
 
 # Development Setup.
-sh "$workingDirectory/src/scripts/dev.sh" $errorMessage $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/dev.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
 # Shell: Terminator, zsh, oh-my-zsh.
-zsh "$workingDirectory/src/scripts/shell.sh" $errorMessage $packageManager $workingDirectory
+zsh "$workingDirectory/src/scripts/shell.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
 # Hacking: Burp Suite, Black Arch/Kali tools.
-sh "$workingDirectory/src/scripts/hacking.sh" $errorMessage $packageManager $workingDirectory
+sh "$workingDirectory/src/scripts/hacking.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
 # Other: Thunderbird.
-sh "$workingDirectory/src/scripts/misc.sh" $errorMessage $packageManager
+sh "$workingDirectory/src/scripts/misc.sh" "$errorMessage" "$packageManager"
 
 # Update the system again.
 if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
