@@ -84,7 +84,7 @@ fi
 # GitHub CLI & Sourcegraph CLI
 ## TODO: Fix src-cli for debian
 apps=("gh" "src-cli")
-for app in ${apps[@]}; do
+for app in "${apps[@]}"; do
 	if [[ -f "/usr/local/bin/$app" ]]; then
 		echo "$app is already installed."
 	else
@@ -130,7 +130,7 @@ else
 	if [[ "$packageManager" = "apt" ]]; then
 		cd ~/Downloads || return
 
-		wget https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+		wget "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
 		wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 
 		cd "$workingDirectory" || return
@@ -171,7 +171,7 @@ if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
 		cd ~/Downloads || return
 
 		git clone https://aur.archlinux.org/ttf-firacode.git
-		cd ttf-firacode
+		cd ttf-firacode || return
 		makepkg -sri --noconfirm
 
 		cd "$workingDirectory" || return
