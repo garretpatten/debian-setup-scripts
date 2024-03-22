@@ -1,75 +1,99 @@
 #!/bin/bash
 
-packageManager=""
+# TODO: cd to the root of the project.
 
-if [[ -f "/usr/bin/dnf" ]]; then
+errorMessage=" is not supported for the $packageManager package manager."
+packageManager=""
+workingDirectory=$(pwd)
+
+if [[ -f "/usr/bin/apt-get" ]]; then
+    packageManager="apt-get"
+elif [[ -f "/usr/bin/dnf" ]]; then
     packageManager="dnf"
 elif [[ -f "/usr/bin/pacman" ]]; then
     packageManager="pacman"
     if [[ ! -f "/usr/bin/yay" ]]; then
-        echo y | sudo pacman -S base-devel
-        echo y | sudo pacman -S git
+        sudo pacman -S --noconfirm base-devel
+        sudo pacman -S --noconfirm git
 
-        currentPath=$(pwd)
-        cd ~/Downloads
+        cd ~/Downloads || return
         git clone https://aur.archlinux.org/yay.git
-        cd yay
+        cd yay || return
         makepkg -sri --noconfirm
 
-        cd $currentPath
+        cd "$workingDirectory" || return
     fi
-# TODO: Check if apt is binary or alias for apt-get
-elif [[ -f "/usr/bin/apt-get" ]]; then
-    packageManager="apt"
-else
+fi
+
+# Exit if package manager is not supported.
+if [[ "$packageManager" = "" ]]; then
     echo "The package manager on this system is not supported."
-    echo "Currently, these setup scripts support the following package managers:"
-    echo "apt, dnf, pacman"
+    echo "The following package managers are supported:"
+    echo "apt-get, dnf, pacman"
     exit 1
 fi
 
-# Begin: System Updates
+# Update the system.
 if [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -Syu && yay -Yc
+    sudo pacman -Syu --noconfirm && yay -Yc --noconfirm
 else
-    sudo $packageManager update -y && sudo $packageManager upgrade -y && sudo $packageManager autoremove -y
+    sudo "$packageManager" update -y && sudo "$packageManager" upgrade -y && sudo "$packageManager" autoremove -y
 fi
 
-# TODO: cd to the root of the project
+# Organize Directories.
+sh "$workingDirectory/src/scripts/organizeHome.sh"
 
-# Organize Directories
-bash "$(pwd)/src/scripts/organizeHome.sh"
+# CLI Tooling.
+sh "$workingDirectory/src/scripts/cli.sh" "$errorMessage" "$packageManager"
 
-# Security: YubiKeys, Firewall, VPN, Anti-Virus
-bash "$(pwd)/src/scripts/security.sh" $packageManager
+# Security: YubiKeys, Firewall, VPN, Anti-Virus.
+bash "$workingDirectory/src/scripts/security.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
-# CLI Tooling
-bash "$(pwd)/src/scripts/cli.sh" $packageManager
+# Productivity: Notion, Simplenote, Taskwarrior, Todoist.
+bash "$workingDirectory/src/scripts/productivity.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
-# Productivity: Taskwarrior, Todoist
-bash "$(pwd)/src/scripts/productivity.sh" $packageManager
+# Web Apps.
+bash "$workingDirectory/src/scripts/web.sh" "$errorMessage" "$packageManager"
 
-# Web Apps
-bash "$(pwd)/src/scripts/web.sh" $packageManager
+# Development Setup.
+bash "$workingDirectory/src/scripts/dev.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
-# Development Setup
-bash "$(pwd)/src/scripts/dev.sh" $packageManager
+# Shell: Terminator, zsh, oh-my-zsh.
+zsh "$workingDirectory/src/scripts/shell.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
-# Shell: Terminator, zsh, oh-my-zsh
-zsh "$(pwd)/src/scripts/shell.sh" $packageManager
+# Hacking: Burp Suite, Black Arch/Kali tools.
+bash "$workingDirectory/src/scripts/hacking.sh" "$errorMessage" "$packageManager" "$workingDirectory"
 
-# Other: Thunderbird
-bash "$(pwd)/src/scripts/misc.sh" $packageManager
+# Other: Signal, Spotify, Thunderbird.
+bash "$workingDirectory/src/scripts/misc.sh" "$errorMessage" "$packageManager"
 
-# End: System Updates
-if [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -Syu && yay -Yc
+# Update the system.
+if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+    sudo "$packageManager" update -y && sudo "$packageManager" upgrade -y && flatpak update -y && sudo "$packageManager" autoremove -y
+elif [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -Syu --noconfirm && yay -Yc --noconfirm
 else
-    sudo $packageManager update -y && sudo $packageManager upgrade -y && flatpak update -y && sudo $packageManager autoremove -y
+    echo "Error Message"
 fi
 
-# Create a break in output
-echo ""
-echo ""
+printf "\n\n============================================================================\n\n"
 
-echo "Cheers -- system setup is now complete!"
+cat "$workingDirectory/src/assets/wolf.txt"
+
+# Print final output.
+printf "\n\n============================================================================\n\n"
+
+printf \
+"Run the following to enable Docker daemon on startup:
+    sudo systemctl start docker.service
+    sudo systemctl enable docker.service
+    sudo usermod -aG docker %s
+    newgrp docker\r" "$USER"
+
+printf \
+"\n\nRun the following to reload oh-my-zsh config:
+    omz reload\r"
+
+printf "\n\n============================================================================\n\n\r"
+
+printf "Cheers -- system setup is now complete\!\n\r"

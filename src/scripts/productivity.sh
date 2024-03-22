@@ -1,90 +1,99 @@
 #!/bin/bash
 
-packageManager=$1
+errorMessage=$1
+packageManager=$2
+workingDirectory=$3
 
 # Taskwarrior
 if [[ -f "/usr/bin/task" ]]; then
-	echo "Taskwarrior is already installed."
+    echo "Taskwarrior is already installed."
 else
-	task="task"
-	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S "$task"
-	else
-		# TODO: Check if apt uses "taskwarrior"
-		sudo $packageManager install "$task" -y
-	fi
+    task="task"
+    if [[ "$packageManager" = "apt-get" ]]; then
+        sudo "$packageManager" install "taskwarrior" -y
+    elif [[ "$packageManager" = "dnf" ]]; then
+        sudo "$packageManager" install "$task" -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S "$task" --noconfirm
+    else
+        echo "Error Message"
+    fi
 
-	# TODO: Handle first Taskwarrior prompt
+    # Handle first Taskwarrior prompt (to create config file).
+    echo "yes" | task
 
-	# Add Manual Setup Tasks
-	task add Install Timeshift project:setup priority:H
-	task add Take a snapshot of system project:setup priority:H
-	task add Update .zshrc project:dev priority:H
+    # Add manual setup tasks.
+    task add Install Timeshift project:setup priority:H
+    task add Remove unneeded update commands from .zshrc project:setup priority:H
+    task add Take a snapshot of system project:setup priority:H
+    task add Update .zshrc project:dev priority:H
 
-	task add Sign into and sync Brave project:setup priority:M
-	task add Configure 1Password project:setup priority:M
+    task add Sign into and sync Brave project:setup priority:M
+    task add Configure 1Password project:setup priority:M
 
-	task add Install Burp Suite project:setup priority:L
-	task add Download needed files from Proton Drive project:setup priority:L
+    task add Install Burp Suite project:setup priority:L
+    task add Download needed files from Proton Drive project:setup priority:L
 fi
 
-# Taskwarrior Config
-cat "$(pwd)/src/config-files/taskwarrior/taskrcUpdates.txt" >> ~/.taskrc
+# Taskwarrior config
+cp "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" ~/.taskrc
 
-# Add Custom Themes Directory
+# Add custom themes directory.
 if [[ -d "$HOME/.task/themes/" ]]; then
-	echo "Taskwarrior themes directory already exists."
+    echo "Taskwarrior themes directory already exists."
 else
-	mkdir ~/.task/themes/
+    mkdir ~/.task/themes/
 fi
 
-# TODO: Update this from copying an artifact to pulling themes from GitHub
-# Add Custom Themes
-cp -r "$(pwd)/src/config-files/taskwarrior/themes/" ~/.task/themes/
+# Add custom themes.
+cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
-# Notion, Simplenote, and Todoist
-if [[ "$packageManager" = "pacman" ]]; then
-	if [[ -f "/usr/bin/notion-app" ]]; then
-		echo "Notion is already installed."
-	else
-		yay -S --noconfirm notion-app-electron
-	fi
+# Notion and Todoist
+if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+    if [[ -f "/usr/bin/notion-app" || -f "/bin/notion-app" ]]; then
+        echo "Notion is already installed."
+    else
+        if [[ "$packageManager" = "apt-get" ]]; then
+            echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
+            sudo apt-get update -y
+            sudo apt-get install notion-app -y
+        else
+            printf "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
+            sudo dnf install notion-app -y
+        fi
+    fi
 
-	if [[ -f "/usr/bin/simplenote" ]]; then
-		echo "Simplenote is already installed."
-	else
-		yay -S --noconfirm simplenote-electron-bin
-	fi
+    flatpakApps=("com.todoist.Todoist")
+    for flatpakApp in "${flatpakApps[@]}"; do
+        if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
+            echo "$flatpakApp is already installed."
+        elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
+            echo "$flatpakApp is already installed."
+        else
+            sudo flatpak install flathub "$flatpakApp" -y
+        fi
+    done
+elif [[ "$packageManager" = "pacman" ]]; then
+    if [[ -f "/usr/bin/notion-app" ]]; then
+        echo "Notion is already installed."
+    else
+        yay -S --noconfirm notion-app-electron
+    fi
 
-	if [[ -f "/usr/bin/todoist" ]]; then
-		echo "Todoist is already installed."
-	else
-		currentPath=$(pwd)
-		cd ~/AppImages
-		wget https://todoist.com/linux_app/appimage
-		sudo mv appimage /usr/bin/todoist
-	fi
+    if [[ -f "/usr/bin/simplenote" ]]; then
+        echo "Simplenote is already installed."
+    else
+        yay -S --noconfirm simplenote-electron-bin
+    fi
+
+    if [[ -f "/usr/bin/todoist" ]]; then
+        echo "Todoist is already installed."
+    else
+        cd ~/AppImages || return
+        wget https://todoist.com/linux_app/appimage
+        sudo mv appimage /usr/bin/todoist
+        cd "$workingDirectory" || return
+    fi
 else
-	if [[ "$packageManager" = "apt" ]]; then
-		echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
-		sudo apt update -y
-		sudo apt install notion-app-enhanced -y
-		sudo apt install notion-app
-	elif [[ "$packageManager" = "apt" ]]; then
-		echo "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
-		sudo dnf install notion-app -y
-	else
-		echo "Support not yet added for this package manager."
-	fi
-
-	flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
-	for flatpakApp in ${flatpakApps[@]}; do
-		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
-		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
-		else
-			sudo dnf install "$flatpakApp" -y
-		fi
-	done
+    echo "Notion and Todoist $errorMessage"
 fi
