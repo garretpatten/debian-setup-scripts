@@ -76,6 +76,8 @@ else
     echo "Error Message"
 fi
 
+printf "\n\n============================================================================\n\n"
+
 cat "$workingDirectory/src/assets/wolf.txt"
 
 # Print final output.
@@ -94,4 +96,4 @@ printf \
 
 printf "\n\n============================================================================\n\n\r"
 
-printf "\n\nCheers -- system setup is now complete\!\n\r"
+printf "Cheers -- system setup is now complete\!\n\r"
