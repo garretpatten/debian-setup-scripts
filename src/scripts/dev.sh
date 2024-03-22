@@ -58,9 +58,11 @@ fi
 
 # Node.js
 if [[ "$packageManager" = "apt-get" ]]; then
+    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
     curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
     sudo apt-get install nodejs -y
     #  NVM
+    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 elif [[ "$packageManager" = "dnf" ]]; then
     sudo dnf module install nodejs:18/common -y

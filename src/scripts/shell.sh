@@ -31,6 +31,7 @@ if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
     # TODO: This installation stops the script; refactoring is needed.
+    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from oh my zsh docs
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
