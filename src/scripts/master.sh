@@ -87,8 +87,8 @@ printf \
 "Run the following to enable Docker daemon on startup:
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
-    sudo usermod -aG docker "$USER"
-    newgrp docker\r"
+    sudo usermod -aG docker %s
+    newgrp docker\r" "$USER"
 
 printf \
 "\n\nRun the following to reload oh-my-zsh config:

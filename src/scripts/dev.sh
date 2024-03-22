@@ -46,13 +46,13 @@ else
 fi
 
 # GitHub CLI
-if [[ -f "/usr/local/bin/$app" ]]; then
-    echo "$app is already installed."
+if [[ -f "/usr/local/bin/gh" ]]; then
+    echo "gh is already installed."
 else
     if [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm "$app"
+        sudo pacman -S --noconfirm gh
     else
-        sudo "$packageManager" install "$app" -y
+        sudo "$packageManager" install gh -y
     fi
 fi
 

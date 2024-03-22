@@ -34,7 +34,7 @@ fi
 if [[ -f "/usr/bin/nmap" ]]; then
     echo "Network Mapper is already installed."
 else
-    elif [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+    if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
         sudo "$packageManager" install nmap -y
     elif [[ "$packageManager" = "pacman" ]]; then
         sudo pacman -S --noconfirm nmap

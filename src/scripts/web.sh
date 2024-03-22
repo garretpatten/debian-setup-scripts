@@ -2,7 +2,6 @@
 
 errorMessage=$1
 packageManager=$2
-workingDirectory=$3
 
 # Brave
 if [[ -f "/usr/bin/brave-browser" ]]; then

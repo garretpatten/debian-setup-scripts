@@ -73,7 +73,7 @@ else
         sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
         sudo apt-get update -y && sudo apt-get install 1password-cli -y
         exit
-    if [[ "$packageManager" = "dnf" ]]; then
+    elif [[ "$packageManager" = "dnf" ]]; then
         # 1Password desktop app
         sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
         sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
