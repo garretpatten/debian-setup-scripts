@@ -96,4 +96,4 @@ printf \
 
 printf "\n\n============================================================================\n\n\r"
 
-printf "Cheers -- system setup is now complete\!\n\r"
+printf "Cheers -- system setup is now complete.\n\r"
