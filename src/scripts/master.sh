@@ -76,5 +76,22 @@ else
     echo "Error Message"
 fi
 
+cat "$workingDirectory/src/assets/wolf.txt"
+
 # Print final output.
-printf "\n\n\nCheers -- system setup is now complete!\n"
+printf "\n\n============================================================================\n\n"
+
+printf \
+"Run the following to enable Docker daemon on startup:
+    sudo systemctl start docker.service
+    sudo systemctl enable docker.service
+    sudo usermod -aG docker "$USER"
+    newgrp docker\r"
+
+printf \
+"\n\nRun the following to reload oh-my-zsh config:
+    omz reload\r"
+
+printf "\n\n============================================================================\n\n\r"
+
+printf "\n\nCheers -- system setup is now complete\!\n\r"

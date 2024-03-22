@@ -48,26 +48,29 @@ fi
 # Add custom themes.
 cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
-# Notion, Simplenote, and Todoist
+# Notion and Todoist
 if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
-    if [[ "$packageManager" = "apt-get" ]]; then
-        echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
-        sudo apt-get update -y
-        sudo apt-get install notion-app-enhanced -y
-        sudo apt-get install notion-app
+    if [[ -f "/usr/bin/notion-app" || -f "/bin/notion-app" ]]; then
+        echo "Notion is already installed."
     else
-        printf "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
-        sudo dnf install notion-app -y
+        if [[ "$packageManager" = "apt-get" ]]; then
+            echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
+            sudo apt-get update -y
+            sudo apt-get install notion-app -y
+        else
+            printf "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
+            sudo dnf install notion-app -y
+        fi
     fi
 
-    flatpakApps=("com.simplenote.Simplenote" "com.todoist.Todoist")
+    flatpakApps=("com.todoist.Todoist")
     for flatpakApp in "${flatpakApps[@]}"; do
         if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
             echo "$flatpakApp is already installed."
         elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
             echo "$flatpakApp is already installed."
         else
-            sudo dnf install "$flatpakApp" -y
+            sudo flatpak install flathub "$flatpakApp" -y
         fi
     done
 elif [[ "$packageManager" = "pacman" ]]; then
@@ -92,5 +95,5 @@ elif [[ "$packageManager" = "pacman" ]]; then
         cd "$workingDirectory" || return
     fi
 else
-    echo "Error Message"
+    echo "Notion and Todoist $errorMessage"
 fi

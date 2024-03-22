@@ -30,16 +30,18 @@ fi
 if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
+    # TODO: This installation stops the script; refactoring is needed.
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+# Install plugins and update .zshrc if needed
+if [[ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]]; then
 
     cd "$HOME/.oh-my-zsh/custom/plugins" || return
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
     cd "$workingDirectory" || return
-    cp "$workingDirectory/src/config-files/zsh/zshrc.txt" ~/.zshrc
-
-    # Reload config file.
-    omz reload
+    cp "$workingDirectory/src/config-files/zsh/.zshrc" ~/.zshrc
 fi
 

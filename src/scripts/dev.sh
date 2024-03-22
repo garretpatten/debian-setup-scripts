@@ -13,18 +13,15 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 fi
 
 # Vim Config
-cp "$workingDirectory/src/config-files/vim/vimrc.txt" ~/.vimrc
+cp "$workingDirectory/src/config-files/vim/.vimrc" ~/.vimrc
+
+echo "Pre Docker stuff"
 
 # Docker and Docker-Compose
 if [[ "$packageManager" = "apt-get" ]]; then
     sudo apt-get update -y
     sudo apt-get install apt-transport-https ca-certificates software-properties-common -y
-    curl docker.io -y
-
-    sudo systemctl start docker.service
-    sudo systemctl enable docker.service
-    sudo usermod -aG docker "$USER"
-    newgrp docker
+    sudo apt-get install docker.io -y
 
     sudo apt-get install docker-compose -y
     docker image pull archlinux
@@ -34,30 +31,19 @@ elif [[ "$packageManager" = "dnf" ]]; then
     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-    sudo systemctl start docker.service
-    sudo systemctl enable docker.service
-    sudo usermod -aG docker "$USER"
-    newgrp docker
-
     sudo dnf install docker-compose -y
-    docker iamge pull archlinux
+    docker image pull archlinux
     docker image pull ubuntu
 elif [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -S --noconfirm gnome-terminal
     sudo pacman -S --noconfirm docker
 
-    sudo systemctl start docker.service
-    sudo systemctl enable docker.service
-    sudo usermod -aG docker "$USER"
-    newgrp docker
-
     sudo pacman -S --noconfirm docker-compose
-    docker iamge pull fedora
+    docker image pull fedora
     docker image pull ubuntu
 else
     echo "Support not yet added for this package manager."
 fi
-
 
 # Node.js
 if [[ "$packageManager" = "apt-get" ]]; then
@@ -71,7 +57,7 @@ elif [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -S --noconfirm nodejs
     sudo pacman -S --noconfirm npm
 else
-    echo "Error Message"
+    echo "Node $errorMessage"
 fi
 
 # Vue.js
@@ -80,7 +66,6 @@ if [[ -f "/usr/local/bin/vue" ]]; then
 else
     sudo npm install -g @vue/cli
 fi
-
 
 # GitHub CLI & Sourcegraph CLI
 ## TODO: Fix src-cli for debian

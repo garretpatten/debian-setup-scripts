@@ -3,10 +3,25 @@
 errorMessage=$1
 packageManager=$2
 
-# Signal Messenger & Spotify
+# Signal Messenger and Spotify
 if [[ "$packageManager" = "apt-get" ]]; then
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
+	if [[ -f "/usr/bin/signal-desktop" || -f "/bin/signal-desktop" ]]; then
+		echo "Signal is already installed."
+	else
+		wget -O- https://updates.signal.org/desktop/apt/keys.asc | sudo gpg --dearmor > "$HOME/signal-desktop-keyring.gpg"
+		cat "$HOME/signal-desktop-keyring.gpg" | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+		echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | \
+		sudo tee /etc/apt/sources.list.d/signal-xenial.list
+		sudo apt-get update -y && sudo apt-get install signal-desktop -y
+	fi
+
+	if [[ -f "/usr/bin/spotify" || -f "/bin/spotify" ]]; then
+		echo "Spotify is already installed."
+	else
+		sudo curl -sS https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+		echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+		sudo apt-get update -y && sudo apt-get install spotify-client -y
+	fi
 elif [[ "$packageManager" = "dnf" ]]; then
 	flatpakApps=("org.signal.Signal" "com.spotify.Client")
 	for flatpakApp in "${flatpakApps[@]}"; do
@@ -51,8 +66,7 @@ if [[ -f "/usr/bin/vlc" ]]; then
 else
 	app="vlc"
 	if [[ "$packageManager" = "apt-get" ]]; then
-		# TODO: Add support for apt
-		echo "Support not yet added for apt."
+		sudo apt-get install "$app" -y
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" -y
 		sudo dnf install "$app" -y
