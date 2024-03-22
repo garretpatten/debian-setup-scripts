@@ -1,146 +1,148 @@
 #!/bin/bash
 
-packageManager=$1
-workingDirectory=$2
+errorMessage=$1
+packageManager=$2
+workingDirectory=$3
 
 # Setup YubiKeys
 if [[ "$packageManager" = "dnf" ]]; then
-	if [[ -f "/usr/bin/pamu2fcfg" ]]; then
-		echo "pam modules are already installed."
-	else
-		sudo dnf install pam pam-u2f pamu2fcfg -y
-	fi
+    if [[ -f "/usr/bin/pamu2fcfg" ]]; then
+        echo "pam modules are already installed."
+    else
+        sudo dnf install pam pam-u2f pamu2fcfg -y
+    fi
 
-	if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
-		mkdir -p ~/.config/yubico
+    if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
+        mkdir -p ~/.config/yubico
 
-		printf "\n\n\nHardware Key Registration\n\n\n"
+        printf "\n\n\nHardware Key Registration\n\n\n"
 
-		# Register the primary key.
-		pamu2fcfg >> ~/.config/yubico/u2f_keys
+        # Register the primary key.
+        pamu2fcfg >> ~/.config/yubico/u2f_keys
 
-		# Register the backup key.
-		pamu2fcfg >> ~/.config/yubico/u2f_keys
+        # Register the backup key.
+        pamu2fcfg >> ~/.config/yubico/u2f_keys
 
-		sudo mkdir -p /etc/yubico
-		sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
-		sudo chmod 644 /etc/yubico/u2f_keys
+        sudo mkdir -p /etc/yubico
+        sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
+        sudo chmod 644 /etc/yubico/u2f_keys
 
-		# Authentication updates
-		# TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
-	else
-		echo "YubiKey file already configured. To re-configure, delete the etc config file and re-run."
-	fi
+        # Authentication updates
+        # TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
+    else
+        echo "YubiKey file already configured. To re-configure, delete the etc config file and re-run."
+    fi
 else
-	echo "Support not yet added for apt and pacman."
+    echo "Error Message."
 fi
 
 # Enable firewall.
 if [[ -f "/usr/sbin/ufw" ]]; then
-	echo "Firewall is already installed."
+    echo "Firewall is already installed."
 else
-	if [[ "$packageManager" = "pacman" ]]; then
-		sudo pacman -S --noconfirm ufw
-	else
-		sudo "$packageManager" install ufw -y
-	fi
+    if [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm ufw
+    else
+        sudo "$packageManager" install ufw -y
+    fi
 fi
 sudo ufw enable
 
 # 1Password
 if [[ -f "/usr/bin/1password" ]]; then
-	echo "1Password is already installed."
+    echo "1Password is already installed."
 else
-	if [[ "$packageManager" = "dnf" ]]; then
-		# 1Password desktop app
-		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
-		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
-		sudo dnf install 1password -y
+    if [[ "$packageManager" = "apt-get" ]]; then
+        # 1Password desktop app
+        curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
+        sudo tar -xf 1password-latest.tar.gz
+        sudo mkdir -p /opt/1Password
+        sudo mv 1password-*/* /opt/1Password
+        sudo /opt/1Password/after-install.sh
 
-		# 1Password CLI
-		sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
-		sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
-		sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
-	elif [[ "$packageManager" = "pacman" ]]; then
-		cd ~/Downloads || return
+        # 1Password CLI
+        sudo curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+        sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+        sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" | \
+        sudo tee /etc/apt/sources.list.d/1password.list
+        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+        sudo curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+        sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+        sudo curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+        sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+        sudo apt-get update -y && sudo apt-get install 1password-cli -y
+        exit
+    if [[ "$packageManager" = "dnf" ]]; then
+        # 1Password desktop app
+        sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+        sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+        sudo dnf install 1password -y
 
-		# 1Password desktop app
-		curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
-		git clone https://aur.archlinux.org/1password.git
-		cd 1password || return
-		makepkg -sri --noconfirm
+        # 1Password CLI
+        sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+        sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+        sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
+    elif [[ "$packageManager" = "pacman" ]]; then
+        cd ~/Downloads || return
 
-		# 1Password CLI
-		ARCH="amd64" && \
-		wget "https://cache.agilebits.com/dist/1P/op2/pkg/v2.23.0/op_linux_${ARCH}_v2.23.0.zip" -O op.zip && \
-		unzip -d op op.zip && \
-		sudo mv op/op /usr/local/bin && \
-		rm -r op.zip op && \
-		sudo groupadd -f onepassword-cli && \
-		sudo chgrp onepassword-cli /usr/local/bin/op && \
-		sudo chmod g+s /usr/local/bin/op
+        # 1Password desktop app
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import
+        git clone https://aur.archlinux.org/1password.git
+        cd 1password || return
+        makepkg -sri --noconfirm
 
-		cd "$workingDirectory" || return
-	else
-		# 1Password desktop app
-		curl -sSO https://downloads.1password.com/linux/tar/stable/x86_64/1password-latest.tar.gz
-		sudo tar -xf 1password-latest.tar.gz
-		sudo mkdir -p /opt/1Password
-		sudo mv 1password-*/* /opt/1Password
-		sudo /opt/1Password/after-install.sh
+        # 1Password CLI
+        ARCH="amd64" && \
+        wget "https://cache.agilebits.com/dist/1P/op2/pkg/v2.23.0/op_linux_${ARCH}_v2.23.0.zip" -O op.zip && \
+        unzip -d op op.zip && \
+        sudo mv op/op /usr/local/bin && \
+        rm -r op.zip op && \
+        sudo groupadd -f onepassword-cli && \
+        sudo chgrp onepassword-cli /usr/local/bin/op && \
+        sudo chmod g+s /usr/local/bin/op
 
-		# 1Password CLI
-		sudo su \
-		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
-		gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
-		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" | \
-		tee /etc/apt/sources.list.d/1password.list
-		mkdir -p /etc/debsig/policies/AC2D62742012EA22/
-		curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
-		tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
-		mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-		curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
-		gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-		apt update -y && apt install 1password-cli -y
-		exit
-	fi
+        cd "$workingDirectory" || return
+    else
+        echo "1Password $errorMessage"
+    fi
 fi
 
 # Proton VPN, Proton VPN CLI, and system tray icon
 if [[ -f "/usr/bin/protonvpn" ]]; then
-	echo "Proton VPN is already installed."
+    echo "Proton VPN is already installed."
 else
-	if [[ "$packageManager" = "dnf" ]]; then
-		cd ~/Downloads || return
+    if [[ "$packageManager" = "dnf" ]]; then
+        cd ~/Downloads || return
 
-		wget https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
-		cd "$workingDirectory" || return
-		sudo dnf install ~/Downloads/protonvpn-stable-release-1.0.1-1.noarch.rpm -y
-		sudo dnf update -y
-		sudo dnf install protonvpn-cli -y
+        wget https://protonvpn.com/download/protonvpn-stable-release-1.0.1-1.noarch.rpm
+        cd "$workingDirectory" || return
+        sudo dnf install ~/Downloads/protonvpn-stable-release-1.0.1-1.noarch.rpm -y
+        sudo dnf update -y
+        sudo dnf install protonvpn-cli -y
 
-		# Dependencies for alternative routing.
-		sudo dnf install --user 'dnspython>=1.16.0' -y
-	elif [[ "$packageManager" = "pacman" ]]; then
-		yay -S --no-confirm protonvpn
-		sudo pacman -S --noconfirm libappindicator-gtk3 gnome-shell-extension-appindicator
-	else
-		# TODO: Add support for apt.
-		echo "Support not yet added for apt."
-	fi
+        # Dependencies for alternative routing.
+        sudo dnf install --user 'dnspython>=1.16.0' -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        yay -S --no-confirm protonvpn
+        sudo pacman -S --noconfirm libappindicator-gtk3 gnome-shell-extension-appindicator
+    else
+        # TODO: Add support for apt.
+        echo "Support not yet added for apt."
+    fi
 fi
 
 # Clam AV
 if [[ -f "/usr/bin/clamscan" ]]; then
-	echo "Clam Anti-Virus is already installed."
+    echo "Clam Anti-Virus is already installed."
 else
-	if [[ "$packageManager" = "dnf" ]]; then
-		sudo dnf upgrade --refresh -y
-		sudo dnf install clamav clamd clamav-update -y
-	elif [[ "$packageManager" = "pacman" ]]; then
-		sudo pacman -S --noconfirm clamav
-	else
-		# TODO: Add support for apt
-		echo "Support not yet added for apt."
-	fi
+    if [[ "$packageManager" = "dnf" ]]; then
+        sudo dnf upgrade --refresh -y
+        sudo dnf install clamav clamd clamav-update -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm clamav
+    else
+        # TODO: Add support for apt
+        echo "Support not yet added for apt."
+    fi
 fi

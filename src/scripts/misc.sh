@@ -1,21 +1,10 @@
 #!/bin/bash
 
-packageManager=$1
-
-# Flatpak
-if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-	if [[ -f "/usr/bin/flatpak" ]]; then
-		echo "flatpak is already installed."
-	else
-		sudo "$packageManager" install flatpak -y
-	fi
-
-	# Add remote Flathub repos
-	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-fi
+errorMessage=$1
+packageManager=$2
 
 # Signal Messenger & Spotify
-if [[ "$packageManager" = "apt" ]]; then
+if [[ "$packageManager" = "apt-get" ]]; then
 	# TODO: Add support for apt
 	echo "Support not yet added for apt."
 elif [[ "$packageManager" = "dnf" ]]; then
@@ -35,24 +24,24 @@ elif [[ "$packageManager" = "pacman" ]]; then
 		if [[ -d "/usr/bin/$app" ]]; then
 			echo "$app is already installed."
 		else
-			sudo pacman -S --noconfirmyu "$app"
+			sudo pacman -S --noconfirm "$app"
 		fi
 	done
 else
-	echo "Error Message."
+	echo "$app $errorMessage"
 fi
 
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
 	echo "Thunderbird is already installed."
 else
-	cliTool="thunderbird"
-	if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-		sudo "$packageManager" install "$cliTool" -y
+	app="thunderbird"
+	if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+		sudo "$packageManager" install "$app" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		sudo pacman -S --noconfirm "$cliTool"
+		sudo pacman -S --noconfirm "$app"
 	else
-		echo "Error Message"
+		echo "$app $errorMessage"
 	fi
 fi
 
@@ -60,16 +49,16 @@ fi
 if [[ -f "/usr/bin/vlc" ]]; then
 	echo "VLC Media Player is already installed."
 else
-	cliTool="vlc"
-	if [[ "$packageManager" = "apt" ]]; then
+	app="vlc"
+	if [[ "$packageManager" = "apt-get" ]]; then
 		# TODO: Add support for apt
 		echo "Support not yet added for apt."
 	elif [[ "$packageManager" = "dnf" ]]; then
 		sudo dnf install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" -y
-		sudo dnf install vlc -y
+		sudo dnf install "$app" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		sudo pacman -S --noconfirm "$cliTool"
+		sudo pacman -S --noconfirm "$app"
 	else
-		echo "Error Message"
+		echo "$app $errorMessage"
 	fi
 fi
