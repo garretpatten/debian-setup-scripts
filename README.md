@@ -5,17 +5,19 @@
 
 ## How to Use
 ```
-# Clone repository
+# Clone repository and submodules
 git clone https://github.com/garretpatten/linux-setup-scripts
+git submodule init
+git submodule update
 
-# Checkout root of project
+# Checkout the root of the project
 cd linux-setup-scripts
 
 # Make scripts executable
 sudo chmod +x src/scripts/
 
 # Run master script
-sh src/scripts/master.sh
+bash src/scripts/master.sh
 ```
 
 # Installations
