@@ -45,6 +45,17 @@ else
     echo "Support not yet added for this package manager."
 fi
 
+# GitHub CLI
+if [[ -f "/usr/local/bin/$app" ]]; then
+    echo "$app is already installed."
+else
+    if [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm "$app"
+    else
+        sudo "$packageManager" install "$app" -y
+    fi
+fi
+
 # Node.js
 if [[ "$packageManager" = "apt-get" ]]; then
     curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
@@ -67,21 +78,6 @@ else
     sudo npm install -g @vue/cli
 fi
 
-# GitHub CLI & Sourcegraph CLI
-## TODO: Fix src-cli for debian
-apps=("gh" "src-cli")
-for app in "${apps[@]}"; do
-    if [[ -f "/usr/local/bin/$app" ]]; then
-        echo "$app is already installed."
-    else
-        if [[ "$packageManager" = "pacman" ]]; then
-            sudo pacman -S --noconfirm "$app"
-        else
-            sudo "$packageManager" install "$app" -y
-        fi
-    fi
-done
-
 # Semgrep
 if [[ -f "$HOME/.local/bin/semgrep" ]]; then
     echo "Semgrep is already installed."
@@ -96,6 +92,15 @@ else
         echo "Semgrep $errorMessage"
     fi
 fi
+
+# Sourcegraph CLI
+if [[ -f "/usr/local/bin/src" ]]; then
+    echo "Sourcegraph CLI is already installed."
+else
+    curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
+    chmod +x /usr/local/bin/src
+fi
+
 
 # Postman
 if [[ "$packageManager" = "dnf" ]]; then
