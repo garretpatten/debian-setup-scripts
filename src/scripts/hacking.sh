@@ -1,24 +1,24 @@
 #!/bin/bash
 
-packageManager=$1
+errorMessage=$1
+packageManager=$2
+workingDirectory=$3
 
 # Burp Suite
 if [[ -f "/usr/bin/burpsuite" ]]; then
-	echo "Burp Suite is already installed."
+    echo "Burp Suite is already installed."
 else
-	if [[ "$packageManager" = "pacman" ]]; then
-        currentPath=$(pwd)
-        cd ~/Downloads
+    if [[ "$packageManager" = "pacman" ]]; then
+        cd ~/Downloads || return
 
         git clone https://aur.archlinux.org/burpsuite.git
-        cd burpsuite
+        cd burpsuite || return
         makepkg -sri --noconfirm
 
-        cd "$currentPath"\
-    # TODO: Add support for apt and dnf
-	else
-		echo "Burp Suite is not supported for this package manager."
-	fi
+        cd "$workingDirectory" || return
+    else
+        echo "Burp Suite $errorMessage"
+    fi
 fi
 
 # Black Arch tools
@@ -27,16 +27,18 @@ if [[ "$packageManager" = "pacman" ]]; then
     chmod +x strap.sh
     sudo ./strap.sh
 else
-    echo "Black Arch tools are not supported for this package manager."
+    echo "Black Arch tools $errorMessage"
 fi
 
 # Network Mapper
 if [[ -f "/usr/bin/nmap" ]]; then
-	echo "Network Mapper is already installed."
+    echo "Network Mapper is already installed."
 else
-	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S nmap
-	else
-		sudo $packageManager install "$cliTool" -y
-	fi
+    if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+        sudo "$packageManager" install nmap -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm nmap
+    else
+        echo "nmap $errorMessage"
+    fi
 fi

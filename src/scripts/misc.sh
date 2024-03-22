@@ -1,56 +1,62 @@
 #!/bin/bash
 
-packageManager=$1
+errorMessage=$1
+packageManager=$2
 
-# Flatpak
-if [[ "$packageManager" = "apt" || "$packageManager" = "dnf" ]]; then
-	if [[ -f "/usr/bin/flatpak" ]]; then
-		echo "flatpak is already installed."
+# Signal Messenger and Spotify
+if [[ "$packageManager" = "apt-get" ]]; then
+	if [[ -f "/usr/bin/signal-desktop" || -f "/bin/signal-desktop" ]]; then
+		echo "Signal is already installed."
 	else
-		sudo $packageManager install flatpak -y
+		wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > "$HOME/signal-desktop-keyring.gpg"
+		tee < "$HOME/signal-desktop-keyring.gpg" /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+		echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | \
+		sudo tee /etc/apt/sources.list.d/signal-xenial.list
+		sudo apt-get update -y && sudo apt-get install signal-desktop -y
 	fi
 
-	# Add remote Flathub repos
-	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-fi
-
-# Signal Messenger & Spotify
-if [[ "$packageManager" = "dnf" ]]; then
+	if [[ -f "/usr/bin/spotify" || -f "/bin/spotify" ]]; then
+		echo "Spotify is already installed."
+	else
+		sudo curl -sS https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+		echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+		sudo apt-get update -y && sudo apt-get install spotify-client -y
+	fi
+elif [[ "$packageManager" = "dnf" ]]; then
 	flatpakApps=("org.signal.Signal" "com.spotify.Client")
-	for flatpakApp in ${flatpakApps[@]}; do
+	for flatpakApp in "${flatpakApps[@]}"; do
 		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
+			echo "$flatpakApp is already installed."
 		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpak is already installed."
+			echo "$flatpakApp is already installed."
 		else
-			flatpak install flathub "$flatpak" -y
+			flatpak install flathub "$flatpakApp" -y
 		fi
 	done
 elif [[ "$packageManager" = "pacman" ]]; then
 	apps=("signal-desktop" "spotify-launcher")
-	for app in ${apps[@]}; do
+	for app in "${apps[@]}"; do
 		if [[ -d "/usr/bin/$app" ]]; then
 			echo "$app is already installed."
 		else
-			echo y | sudo pacman -Syu "$app"
+			sudo pacman -S --noconfirm "$app"
 		fi
 	done
-elif [[ "$packageManager" = "apt" ]]; then
-	# TODO: Add support for apt
-	echo "Support not yet added for apt."
 else
-	echo "Support for Signal and Spotify has only been added for apt, dnf, and pacman."
+	echo "$app $errorMessage"
 fi
 
 # Thunderbird
 if [[ -f "/usr/bin/thunderbird" ]]; then
 	echo "Thunderbird is already installed."
- else
-	cliTool = "thunderbird"
-	if [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S "$cliTool"
+else
+	app="thunderbird"
+	if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+		sudo "$packageManager" install "$app" -y
+	elif [[ "$packageManager" = "pacman" ]]; then
+		sudo pacman -S --noconfirm "$app"
 	else
-		sudo $packageManager install "$cliTool" -y
+		echo "$app $errorMessage"
 	fi
 fi
 
@@ -58,14 +64,15 @@ fi
 if [[ -f "/usr/bin/vlc" ]]; then
 	echo "VLC Media Player is already installed."
 else
-	cliTool="vlc"
-	if [[ "$packageManager" = "dnf" ]]; then
-		sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
-		sudo dnf install vlc -y
+	app="vlc"
+	if [[ "$packageManager" = "apt-get" ]]; then
+		sudo apt-get install "$app" -y
+	elif [[ "$packageManager" = "dnf" ]]; then
+		sudo dnf install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" -y
+		sudo dnf install "$app" -y
 	elif [[ "$packageManager" = "pacman" ]]; then
-		echo y | sudo pacman -S "$cliTool"
+		sudo pacman -S --noconfirm "$app"
 	else
-		# TODO: Add support for apt
-		echo "Support not yet added for apt."
+		echo "$app $errorMessage"
 	fi
 fi

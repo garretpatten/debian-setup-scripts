@@ -1,39 +1,48 @@
 #!/bin/bash
 
-packageManager=$1
+errorMessage=$1
+packageManager=$2
+workingDirectory=$3
 
-# Terminator and zsh
+# Terminator and zsh.
 terminalApps=("terminator" "zsh")
-for terminalApp in ${terminalApps[@]}; do
+for terminalApp in "${terminalApps[@]}"; do
     if [[ -f "/usr/bin/$terminalApp" ]]; then
         echo "$terminalApp is already installed."
     else
-        if [[ "$packageManager" = "pacman" ]]; then
-            echo y | sudo pacman -S "$terminalApp"
+        if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+            sudo "$packageManager" install "$terminalApp" -y
+        elif [[ "$packageManager" = "pacman" ]]; then
+            sudo pacman -S --noconfirm "$terminalApp"
         else
-            sudo $packageManager install "$terminalApp" -y
+            echo "$terminalApp $errorMessage"
         fi
     fi
 done
 
-# Change User Shells to Zsh
-chsh -s $(which zsh)
-sudo chsh -s $(which zsh)
+# Change user shells to zsh.
+if [[ -f "/usr/bin/zsh" ]]; then
+    chsh -s "$(which zsh)"
+    sudo chsh -s "$(which zsh)"
+fi
 
-# Oh-my-zsh and Shell Configuration
+# Oh-my-zsh and shell configuration.
 if [[ -d "$HOME/.oh-my-zsh/" ]]; then
     echo "oh-my-zsh is already installed."
 else
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    # TODO: This installation stops the script; refactoring is needed.
+    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from oh my zsh docs
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
 
-    currentPath=$(pwd)
-    cd "$HOME/.oh-my-zsh/custom/plugins"
+# Install plugins and update .zshrc if needed
+if [[ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]]; then
+
+    cd "$HOME/.oh-my-zsh/custom/plugins" || return
     git clone https://github.com/zsh-users/zsh-autosuggestions.git
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 
-    cd "$currentPath"
-    cat "$(pwd)/src/config-files/zsh/zshrc.txt" > ~/.zshrc
+    cd "$workingDirectory" || return
+    cp "$workingDirectory/src/config-files/zsh/.zshrc" ~/.zshrc
 fi
 
-# Reload config file
-source ~/.zshrc
