@@ -14,6 +14,7 @@ fi
 
 # Vim Config
 cp "$workingDirectory/src/config-files/vim/.vimrc" ~/.vimrc
+cp "$workingDirectory/src/config-files/nvim/init.vim" ~/.config/nvim/init.vim
 
 echo "Pre Docker stuff"
 
