@@ -80,12 +80,6 @@ elif [[ "$packageManager" = "pacman" ]]; then
         yay -S --noconfirm notion-app-electron
     fi
 
-    if [[ -f "/usr/bin/simplenote" ]]; then
-        echo "Simplenote is already installed."
-    else
-        yay -S --noconfirm simplenote-electron-bin
-    fi
-
     if [[ -f "/usr/bin/todoist" ]]; then
         echo "Todoist is already installed."
     else
