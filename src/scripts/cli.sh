@@ -7,7 +7,7 @@ packageManager=$2
 # https://github.com/neovim/neovim/wiki/Installing-Neovim/e24ab440745f569ed931c6a7a2b2b714b01c7ddf
 
 # Foundational CLI tools
-cliTools=("bat" "curl" "exa" "git" "htop" "neofetch" "neovim" "openvpn" "vim" "wget" "zsh")
+cliTools=("bat" "curl" "exa" "fastfetch" "git" "htop" "neovim" "openvpn" "vim" "wget" "zsh")
 for cliTool in "${cliTools[@]}"; do
     if [[ -d "/usr/bin/$cliTool" ]]; then
         echo "$cliTool is already installed."
