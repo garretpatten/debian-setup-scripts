@@ -22,7 +22,6 @@ done
 
 # Change user shells to zsh.
 if [[ -f "/usr/bin/zsh" ]]; then
-    chsh -s "$(which zsh)"
     sudo chsh -s "$(which zsh)"
 fi
 
