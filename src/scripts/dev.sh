@@ -14,8 +14,24 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global pull.rebase false
 fi
 
+<<<<<<< HEAD
 # Neovim Config
 cp "$workingDirectory/src/config-files/nvim/init.vim" ~/.config/nvim/init.vim
+=======
+# Vim Config
+cd "$workingDirectory" || return
+cd src/config-files/vim/
+cp .vimrc ~/.vimrc
+cd .. || return
+cd nvim
+mkdir -p ~/.config/nvim/
+cp init.vim ~/.config/nvim/init.vim
+cd "$workingDirectory" || return
+
+# Clone Packer repository for neovim
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ "$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
+>>>>>>> 697f4866dd724aaba446258b481edc2588619fa7
 
 # Vim Config
 cp "$workingDirectory/src/config-files/vim/.vimrc" ~/.vimrc
@@ -99,7 +115,8 @@ if [[ -f "/usr/local/bin/gh" ]]; then
     echo "gh is already installed."
 else
     if [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm gh
+        # TODO: Install GitHub CLI AUR package
+        # https://archlinux.org/packages/extra/x86_64/github-cli/
     else
         sudo "$packageManager" install gh -y
     fi
@@ -123,7 +140,7 @@ else
     elif [[ "$packageManager" = "dnf" ]]; then
         python3 -m pip install semgrep
     elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S python-semgrep --no-confirm
+        sudo pacman -S python-semgrep --noconfirm
     else
         echo "Semgrep $errorMessage"
     fi
@@ -144,8 +161,8 @@ fi
 if [[ -f "/usr/local/bin/src" ]]; then
     echo "Sourcegraph CLI is already installed."
 else
-    curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
-    chmod +x /usr/local/bin/src
+    curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o "/usr/local/bin/src"
+    chmod +x "/usr/local/bin/src"
 fi
 
 # VS Code

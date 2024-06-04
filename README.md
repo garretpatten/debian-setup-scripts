@@ -23,18 +23,18 @@ bash src/scripts/master.sh
 # Installations
 
 ## CLI Tools
-- bat
+- bat | batcat
 - clamav
 - clamd
 - clamav-update
 - curl
 - exa
+- fastfetch
 - flatpak
 - gh
 - git
 - https
 - htop
-- neofetch
 - nmap
 - openvpn
 - pam
@@ -42,7 +42,7 @@ bash src/scripts/master.sh
 - pamu2fcfg
 - semgrep
 - src-cli
-- task (Taskwarrior)
+- task
 - ufw
 - wget
 
@@ -64,9 +64,9 @@ bash src/scripts/master.sh
 - Git Credential Helper
 - Home Directory
 - TaskWarrior
-- Vim
+- Vim & Neovim
 - Zsh (oh-my-zsh)
 
 ---
 
-*Disclaimer: Code under active development and setup scripts expect the dnf package manager*
+*Disclaimer: Code under active development*
