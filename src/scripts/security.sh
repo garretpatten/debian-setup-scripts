@@ -152,3 +152,32 @@ else
         echo "Support not yet added for apt."
     fi
 fi
+
+# Signal Messenger
+if [[ "$packageManager" = "apt-get" ]]; then
+	if [[ -f "/usr/bin/signal-desktop" || -f "/bin/signal-desktop" ]]; then
+		echo "Signal $errorMessage"
+	else
+		wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > "$HOME/signal-desktop-keyring.gpg"
+		tee < "$HOME/signal-desktop-keyring.gpg" /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+		echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | \
+		sudo tee /etc/apt/sources.list.d/signal-xenial.list
+		sudo apt-get update -y && sudo apt-get install signal-desktop -y
+	fi
+elif [[ "$packageManager" = "dnf" ]]; then
+    if [[ -d "/var/lib/flatpak/app/org.signal.Signal" ]]; then
+		echo "Signal is already installed."
+	elif [[ -d "$HOME/.local/share/flatpak/app/org.signal.Signal" ]]; then
+		echo "Signal is already installed."
+	else
+		flatpak install flathub "org.signal.Signal" -y
+	fi
+elif [[ "$packageManager" = "pacman" ]]; then
+    if [[ -d "/usr/bin/signal-desktop" ]]; then
+		echo "Signal is already installed."
+	else
+	    sudo pacman -S signal-desktop --noconfirm
+	fi
+else
+    "Signal $errorMessage"
+fi

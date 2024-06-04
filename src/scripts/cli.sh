@@ -16,7 +16,7 @@ for cliTool in "${cliTools[@]}"; do
         if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
             sudo "$packageManager" install "$cliTool" -y
         elif [[ "$packageManager" = "pacman" ]]; then
-            sudo pacman -S --noconfirm "$cliTool"
+            sudo pacman -S "$cliTool" --noconfirm
         else
             echo "$cliTool $errorMessage"
         fi
@@ -34,44 +34,13 @@ elif [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -S fastfetch -y
 fi
 
+### Package managers ###
+
 # Flatpak
-if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
-	if [[ -f "/usr/bin/flatpak" ]]; then
-		echo "flatpak is already installed."
-	else
-		sudo "$packageManager" install flatpak -y
-	fi
-
-	# Add remote Flathub repos
-	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-fi
-
-# Python
-if [[ -f "/usr/bin/python" || -f "usr/bin/python3" ]]; then
-    echo "python3 is already installed."
+if [[ -f "/usr/bin/flatpak" ]]; then
+	echo "flatpak is already installed."
 else
-    if [[ "$packageManager" = "apt-get" ]]; then
-        sudo apt-get install python3.6 -y
-    elif [[ "$packageManager" = "dnf" ]]; then
-        sudo dnf install python3 -y
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm python3
-    else
-        echo "Python $errorMessage"
-    fi
+	sudo "$packageManager" install flatpak -y
 fi
 
-# Pip
-if [[ -f "/usr/bin/pip" || -f "/usr/bin/python-pip" ]]; then
-    echo "python-pip is already installed."
-else
-    if [[ "$packageManager" = "apt-get" ]]; then
-        sudo apt-get install python3-pip -y
-    elif [[ "$packageManager" = "dnf" ]]; then
-        sudo dnf install python3-pip -y
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm python-pip
-    else
-        echo "PIP $errorMessage"
-    fi
-fi
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo

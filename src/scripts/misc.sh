@@ -3,18 +3,8 @@
 errorMessage=$1
 packageManager=$2
 
-# Signal Messenger and Spotify
+# Spotify
 if [[ "$packageManager" = "apt-get" ]]; then
-	if [[ -f "/usr/bin/signal-desktop" || -f "/bin/signal-desktop" ]]; then
-		echo "Signal is already installed."
-	else
-		wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > "$HOME/signal-desktop-keyring.gpg"
-		tee < "$HOME/signal-desktop-keyring.gpg" /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
-		echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | \
-		sudo tee /etc/apt/sources.list.d/signal-xenial.list
-		sudo apt-get update -y && sudo apt-get install signal-desktop -y
-	fi
-
 	if [[ -f "/usr/bin/spotify" || -f "/bin/spotify" ]]; then
 		echo "Spotify is already installed."
 	else
@@ -23,27 +13,21 @@ if [[ "$packageManager" = "apt-get" ]]; then
 		sudo apt-get update -y && sudo apt-get install spotify-client -y
 	fi
 elif [[ "$packageManager" = "dnf" ]]; then
-	flatpakApps=("org.signal.Signal" "com.spotify.Client")
-	for flatpakApp in "${flatpakApps[@]}"; do
-		if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpakApp is already installed."
-		elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-			echo "$flatpakApp is already installed."
-		else
-			flatpak install flathub "$flatpakApp" -y
-		fi
-	done
+	if [[ -d "/var/lib/flatpak/app/org.spotify.Client" ]]; then
+		echo "Spotify is already installed."
+	elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
+		echo "Spotify is already installed."
+	else
+		flatpak install flathub "$flatpakApp" -y
+	fi
 elif [[ "$packageManager" = "pacman" ]]; then
-	apps=("signal-desktop" "spotify-launcher")
-	for app in "${apps[@]}"; do
-		if [[ -d "/usr/bin/$app" ]]; then
-			echo "$app is already installed."
-		else
-			sudo pacman -S --noconfirm "$app"
-		fi
-	done
+	if [[ -d "/usr/bin/$app" ]]; then
+		echo "Spotify is already installed."
+	else
+		sudo pacman -S "spotify-launcher" --noconfirm
+	fi
 else
-	echo "$app $errorMessage"
+	echo "Spotify $errorMessage"
 fi
 
 # Thunderbird
