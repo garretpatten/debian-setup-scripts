@@ -4,6 +4,25 @@ errorMessage=$1
 packageManager=$2
 workingDirectory=$3
 
+### Payloads ###
+
+# Payloads All the Things
+git clone https://github.com/swisskyrepo/PayloadsAllTheThings ~/Hacking
+
+# SecLists
+git clone https://github.com/danielmiessler/SecLists ~/Hacking
+
+### Tools ###
+
+# Black Arch tools
+if [[ "$packageManager" = "pacman" ]]; then
+    curl -O https://blackarch.org/strap.sh
+    chmod +x strap.sh
+    sudo ./strap.sh
+else
+    echo "Black Arch tools $errorMessage"
+fi
+
 # Burp Suite
 if [[ -f "/usr/bin/burpsuite" ]]; then
     echo "Burp Suite is already installed."
@@ -21,15 +40,6 @@ else
     fi
 fi
 
-# Black Arch tools
-if [[ "$packageManager" = "pacman" ]]; then
-    curl -O https://blackarch.org/strap.sh
-    chmod +x strap.sh
-    sudo ./strap.sh
-else
-    echo "Black Arch tools $errorMessage"
-fi
-
 # Network Mapper
 if [[ -f "/usr/bin/nmap" ]]; then
     echo "Network Mapper is already installed."
@@ -42,9 +52,3 @@ else
         echo "nmap $errorMessage"
     fi
 fi
-
-# Payloads All the Things
-git clone https://github.com/swisskyrepo/PayloadsAllTheThings ~/Hacking
-
-# SecLists
-git clone https://github.com/danielmiessler/SecLists

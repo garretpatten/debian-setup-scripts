@@ -11,7 +11,7 @@ for directoryToRemove in "${directoriesToRemove[@]}"; do
 done
 
 # Add needed directories.
-directoriesToCreate=("AppImages" "Books" "Games" "Projects" "Writing")
+directoriesToCreate=("AppImages" "Books" "Games" "Hacking" "Projects" "Writing")
 for directoryToCreate in "${directoriesToCreate[@]}"; do
     if [[ -d "$HOME/$directoryToCreate/" ]]; then
         echo "$HOME/$directoryToCreate is already created."
