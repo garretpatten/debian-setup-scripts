@@ -52,3 +52,12 @@ else
         echo "nmap $errorMessage"
     fi
 fi
+
+# ZAP
+if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
+    flatpak install flathub org.zaproxy.ZAP
+elif [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -S zaproxy --noconfirm
+else
+    echo "ZAProxy $errorMessage"
+fi
