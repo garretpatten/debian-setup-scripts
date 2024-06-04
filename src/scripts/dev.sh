@@ -6,7 +6,7 @@ workingDirectory=$3
 
 ### Configuration ###
 
-# Git Config
+# Git config
 if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global credential.helper store
     git config --global user.email "garret.patten@proton.me"
@@ -14,11 +14,10 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global pull.rebase false
 fi
 
-<<<<<<< HEAD
-# Neovim Config
+# Neovim config
 cp "$workingDirectory/src/config-files/nvim/init.vim" ~/.config/nvim/init.vim
-=======
-# Vim Config
+
+# Vim config
 cd "$workingDirectory" || return
 cd src/config-files/vim/
 cp .vimrc ~/.vimrc
@@ -27,14 +26,6 @@ cd nvim
 mkdir -p ~/.config/nvim/
 cp init.vim ~/.config/nvim/init.vim
 cd "$workingDirectory" || return
-
-# Clone Packer repository for neovim
-git clone --depth 1 https://github.com/wbthomason/packer.nvim\
- "$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
->>>>>>> 697f4866dd724aaba446258b481edc2588619fa7
-
-# Vim Config
-cp "$workingDirectory/src/config-files/vim/.vimrc" ~/.vimrc
 
 ### Runtimes ###
 
@@ -53,6 +44,21 @@ elif [[ "$packageManager" = "pacman" ]]; then
     sudo pacman -S --noconfirm npm
 else
     echo "Node $errorMessage"
+fi
+
+# Python
+if [[ -f "/usr/bin/python" || -f "usr/bin/python3" ]]; then
+    echo "python3 is already installed."
+else
+    if [[ "$packageManager" = "apt-get" ]]; then
+        sudo apt-get install python3.6 -y
+    elif [[ "$packageManager" = "dnf" ]]; then
+        sudo dnf install python3 -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm python3
+    else
+        echo "Python $errorMessage"
+    fi
 fi
 
 ### Frameworks ###
@@ -92,22 +98,6 @@ elif [[ "$packageManager" = "pacman" ]]; then
     docker image pull ubuntu
 else
     echo "Support not yet added for this package manager."
-fi
-
-# Fira Code
-if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
-    echo "Fira Code is already installed."
-    if [[ "$packageManager" = "pacman" ]]; then
-        cd ~/Downloads || return
-
-        git clone https://aur.archlinux.org/ttf-firacode.git
-        cd ttf-firacode || return
-        makepkg -sri --noconfirm
-
-        cd "$workingDirectory" || return
-    else
-        echo "Fira Code $errorMessage"
-    fi
 fi
 
 # GitHub CLI
@@ -198,5 +188,44 @@ else
 
     if [[ "$isInstalled" = "true" ]]; then
         cp "$workingDirectory/src/config-files/vs-code/settings.json" ~/.config/'Code - OSS'/User/settings.json
+    fi
+fi
+
+### Fonts ###
+
+# Fira Code
+if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
+    echo "Fira Code is already installed."
+    if [[ "$packageManager" = "pacman" ]]; then
+        cd ~/Downloads || return
+
+        git clone https://aur.archlinux.org/ttf-firacode.git
+        cd ttf-firacode || return
+        makepkg -sri --noconfirm
+
+        cd "$workingDirectory" || return
+    else
+        echo "Fira Code $errorMessage"
+    fi
+fi
+
+### Package Managers ###
+
+# Packer installation
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ "$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
+
+# Pip
+if [[ -f "/usr/bin/pip" || -f "/usr/bin/python-pip" ]]; then
+    echo "python-pip is already installed."
+else
+    if [[ "$packageManager" = "apt-get" ]]; then
+        sudo apt-get install python3-pip -y
+    elif [[ "$packageManager" = "dnf" ]]; then
+        sudo dnf install python3-pip -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm python-pip
+    else
+        echo "PIP $errorMessage"
     fi
 fi

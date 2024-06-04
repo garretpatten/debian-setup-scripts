@@ -6,8 +6,7 @@ packageManager=$2
 # TODO: Install dependencies for neovim for apt and dnf
 # https://github.com/neovim/neovim/wiki/Installing-Neovim/e24ab440745f569ed931c6a7a2b2b714b01c7ddf
 
-# Foundational CLI tools
-cliTools=("bat" "curl" "exa" "fastfetch" "git" "htop" "neovim" "openvpn" "vim" "wget" "zsh")
+cliTools=("bat" "curl" "exa" "git" "htop" "neovim" "openvpn" "vim" "wget" "zsh")
 for cliTool in "${cliTools[@]}"; do
     if [[ -d "/usr/bin/$cliTool" ]]; then
         echo "$cliTool is already installed."
@@ -23,6 +22,17 @@ for cliTool in "${cliTools[@]}"; do
         fi
     fi
 done
+
+# fastfetch
+if [[ "$packageManager" = "apt" ]]; then
+    sudo add-apt-repository ppa:zhangsongcui3371/fastfetch
+    sudo apt update 
+    sudo apt install fastfetch -y
+elif [[ "$packageManager" = "dnf" ]]; then
+    sudo dnf install fastfetch -y
+elif [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -S fastfetch -y
+fi
 
 # Flatpak
 if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
