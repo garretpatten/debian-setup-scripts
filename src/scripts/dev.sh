@@ -4,6 +4,8 @@ errorMessage=$1
 packageManager=$2
 workingDirectory=$3
 
+### Configuration ###
+
 # Git Config
 if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global credential.helper store
@@ -12,11 +14,41 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global pull.rebase false
 fi
 
-# Vim Config
-cp "$workingDirectory/src/config-files/vim/.vimrc" ~/.vimrc
+# Neovim Config
 cp "$workingDirectory/src/config-files/nvim/init.vim" ~/.config/nvim/init.vim
 
-echo "Pre Docker stuff"
+# Vim Config
+cp "$workingDirectory/src/config-files/vim/.vimrc" ~/.vimrc
+
+### Runtimes ###
+
+# Node.js
+if [[ "$packageManager" = "apt-get" ]]; then
+    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
+    sudo apt-get install nodejs -y
+    #  NVM
+    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+elif [[ "$packageManager" = "dnf" ]]; then
+    sudo dnf module install nodejs:18/common -y
+elif [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -S --noconfirm nodejs
+    sudo pacman -S --noconfirm npm
+else
+    echo "Node $errorMessage"
+fi
+
+### Frameworks ###
+
+# Vue.js
+if [[ -f "/usr/local/bin/vue" ]]; then
+    echo "Vue is already installed."
+else
+    sudo npm install -g @vue/cli
+fi
+
+### Dev Tooling ###
 
 # Docker and Docker-Compose
 if [[ "$packageManager" = "apt-get" ]]; then
@@ -46,6 +78,22 @@ else
     echo "Support not yet added for this package manager."
 fi
 
+# Fira Code
+if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
+    echo "Fira Code is already installed."
+    if [[ "$packageManager" = "pacman" ]]; then
+        cd ~/Downloads || return
+
+        git clone https://aur.archlinux.org/ttf-firacode.git
+        cd ttf-firacode || return
+        makepkg -sri --noconfirm
+
+        cd "$workingDirectory" || return
+    else
+        echo "Fira Code $errorMessage"
+    fi
+fi
+
 # GitHub CLI
 if [[ -f "/usr/local/bin/gh" ]]; then
     echo "gh is already installed."
@@ -57,28 +105,13 @@ else
     fi
 fi
 
-# Node.js
-if [[ "$packageManager" = "apt-get" ]]; then
-    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
-    curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
-    sudo apt-get install nodejs -y
-    #  NVM
-    # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-elif [[ "$packageManager" = "dnf" ]]; then
-    sudo dnf module install nodejs:18/common -y
+# Postman
+if [[ "$packageManager" = "dnf" ]]; then
+    flatpak install flathub com.getpostman.Postman -y
 elif [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -S --noconfirm nodejs
-    sudo pacman -S --noconfirm npm
+    yay -S --noconfirm postman-bin
 else
-    echo "Node $errorMessage"
-fi
-
-# Vue.js
-if [[ -f "/usr/local/bin/vue" ]]; then
-    echo "Vue is already installed."
-else
-    sudo npm install -g @vue/cli
+    echo "Postman $errorMessage"
 fi
 
 # Semgrep
@@ -96,22 +129,23 @@ else
     fi
 fi
 
-# Sourcegraph CLI
+# Shellcheck
+if [[ "$packageManager" = "apt-get" ]]; then
+    sudo apt install shellcheck -y
+elif [[ "$packageManager" = "dnf" ]]; then
+    sudo dnf install Shellcheck -y
+elif [[ "$packageManager" = "pacman" ]]; then
+    sudo pacman -S shellcheck --noconfirm
+else
+    echo "Shellcheck $errorMessage"
+fi
+
+# Sourcegraph
 if [[ -f "/usr/local/bin/src" ]]; then
     echo "Sourcegraph CLI is already installed."
 else
     curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
     chmod +x /usr/local/bin/src
-fi
-
-
-# Postman
-if [[ "$packageManager" = "dnf" ]]; then
-    flatpak install flathub com.getpostman.Postman -y
-elif [[ "$packageManager" = "pacman" ]]; then
-    yay -S --noconfirm postman-bin
-else
-    echo "Postman $errorMessage"
 fi
 
 # VS Code
@@ -147,21 +181,5 @@ else
 
     if [[ "$isInstalled" = "true" ]]; then
         cp "$workingDirectory/src/config-files/vs-code/settings.json" ~/.config/'Code - OSS'/User/settings.json
-    fi
-fi
-
-# Fira Code
-if [[ -d "/usr/share/fonts/FiraCode/" ]]; then
-    echo "Fira Code is already installed."
-    if [[ "$packageManager" = "pacman" ]]; then
-        cd ~/Downloads || return
-
-        git clone https://aur.archlinux.org/ttf-firacode.git
-        cd ttf-firacode || return
-        makepkg -sri --noconfirm
-
-        cd "$workingDirectory" || return
-    else
-        echo "Fira Code $errorMessage"
     fi
 fi

@@ -42,3 +42,9 @@ else
         echo "nmap $errorMessage"
     fi
 fi
+
+# Payloads All the Things
+git clone https://github.com/swisskyrepo/PayloadsAllTheThings ~/Hacking
+
+# SecLists
+git clone https://github.com/danielmiessler/SecLists
