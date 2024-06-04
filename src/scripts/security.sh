@@ -4,49 +4,7 @@ errorMessage=$1
 packageManager=$2
 workingDirectory=$3
 
-# Setup YubiKeys
-if [[ "$packageManager" = "dnf" ]]; then
-    if [[ -f "/usr/bin/pamu2fcfg" ]]; then
-        echo "pam modules are already installed."
-    else
-        sudo dnf install pam pam-u2f pamu2fcfg -y
-    fi
-
-    if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
-        mkdir -p ~/.config/yubico
-
-        printf "\n\n\nHardware Key Registration\n\n\n"
-
-        # Register the primary key.
-        pamu2fcfg >> ~/.config/yubico/u2f_keys
-
-        # Register the backup key.
-        pamu2fcfg >> ~/.config/yubico/u2f_keys
-
-        sudo mkdir -p /etc/yubico
-        sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
-        sudo chmod 644 /etc/yubico/u2f_keys
-
-        # Authentication updates
-        # TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
-    else
-        echo "YubiKey file already configured. To re-configure, delete the etc config file and re-run."
-    fi
-else
-    echo "Error Message."
-fi
-
-# Enable firewall.
-if [[ -f "/usr/sbin/ufw" ]]; then
-    echo "Firewall is already installed."
-else
-    if [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm ufw
-    else
-        sudo "$packageManager" install ufw -y
-    fi
-fi
-sudo ufw enable
+### Authentication ###
 
 # 1Password
 if [[ -f "/usr/bin/1password" ]]; then
@@ -108,6 +66,69 @@ else
     fi
 fi
 
+# Hardware keys
+if [[ "$packageManager" = "dnf" ]]; then
+    if [[ -f "/usr/bin/pamu2fcfg" ]]; then
+        echo "pam modules are already installed."
+    else
+        sudo dnf install pam pam-u2f pamu2fcfg -y
+    fi
+
+    if [[ ! -f "/etc/yubico/u2f_keys" ]]; then
+        mkdir -p ~/.config/yubico
+
+        printf "\n\n\nHardware Key Registration\n\n\n"
+
+        # Register the primary key.
+        pamu2fcfg >> ~/.config/yubico/u2f_keys
+
+        # Register the backup key.
+        pamu2fcfg >> ~/.config/yubico/u2f_keys
+
+        sudo mkdir -p /etc/yubico
+        sudo cp ~/.config/yubico/u2f_keys /etc/yubico/u2f_keys
+        sudo chmod 644 /etc/yubico/u2f_keys
+
+        # Authentication updates
+        # TODO: Add python script to update /etc/pam.d/sudo to add: auth sufficient pam_u2f.so authfile=/etc/yubico/u2f_keys
+    else
+        echo "YubiKey file already configured. To re-configure, delete the etc config file and re-run."
+    fi
+else
+    echo "Error Message."
+fi
+
+### Defense ###
+
+# Clam AV
+if [[ -f "/usr/bin/clamscan" ]]; then
+    echo "Clam Anti-Virus is already installed."
+else
+    if [[ "$packageManager" = "dnf" ]]; then
+        sudo dnf upgrade --refresh -y
+        sudo dnf install clamav clamd clamav-update -y
+    elif [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm clamav
+    else
+        # TODO: Add support for apt
+        echo "Support not yet added for apt."
+    fi
+fi
+
+# Firewall
+if [[ -f "/usr/sbin/ufw" ]]; then
+    echo "Firewall is already installed."
+else
+    if [[ "$packageManager" = "pacman" ]]; then
+        sudo pacman -S --noconfirm ufw
+    else
+        sudo "$packageManager" install ufw -y
+    fi
+fi
+sudo ufw enable
+
+### Privacy ###
+
 # Proton VPN, Proton VPN CLI, and system tray icon
 if [[ -f "/usr/bin/protonvpn" ]]; then
     echo "Proton VPN is already installed."
@@ -128,21 +149,6 @@ else
         sudo pacman -S --noconfirm libappindicator-gtk3 gnome-shell-extension-appindicator
     else
         # TODO: Add support for apt.
-        echo "Support not yet added for apt."
-    fi
-fi
-
-# Clam AV
-if [[ -f "/usr/bin/clamscan" ]]; then
-    echo "Clam Anti-Virus is already installed."
-else
-    if [[ "$packageManager" = "dnf" ]]; then
-        sudo dnf upgrade --refresh -y
-        sudo dnf install clamav clamd clamav-update -y
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm clamav
-    else
-        # TODO: Add support for apt
         echo "Support not yet added for apt."
     fi
 fi
