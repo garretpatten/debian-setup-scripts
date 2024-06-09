@@ -7,6 +7,7 @@ workingDirectory=$3
 ### Configuration ###
 
 # Git config
+# TODO: Copy over from dotfiles
 if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global credential.helper store
     git config --global user.email "garret.patten@proton.me"
@@ -15,11 +16,11 @@ if [[ ! -f "$HOME/.gitconfig" ]]; then
 fi
 
 # Neovim config
-cp "$workingDirectory/src/config-files/nvim/init.vim" ~/.config/nvim/init.vim
+cp "$workingDirectory/src/dotfiles/nvim/init.vim" ~/.config/nvim/init.vim
 
 # Vim config
 cd "$workingDirectory" || return
-cd src/config-files/vim/
+cd src/dotfiles/vim/
 cp .vimrc ~/.vimrc
 cd .. || return
 cd nvim
