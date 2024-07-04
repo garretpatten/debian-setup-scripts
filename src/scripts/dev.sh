@@ -1,19 +1,21 @@
 #!/bin/bash
 
-errorMessage=$1
-packageManager=$2
-workingDirectory=$3
-
 ### Configuration ###
 
 # Git config
 # TODO: Copy over from dotfiles
 if [[ ! -f "$HOME/.gitconfig" ]]; then
     git config --global credential.helper store
+    git config --global http.postBuffer 157286400
+    git config --global pack.window 1
     git config --global user.email "garret.patten@proton.me"
     git config --global user.name "Garret Patten"
     git config --global pull.rebase false
 fi
+
+### Runtimes ###
+
+
 
 # Neovim config
 cp "$workingDirectory/src/dotfiles/nvim/init.vim" ~/.config/nvim/init.vim
@@ -30,7 +32,7 @@ cd "$workingDirectory" || return
 
 ### Runtimes ###
 
-# Node.js
+# Node & npm
 if [[ "$packageManager" = "apt-get" ]]; then
     # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
     curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
@@ -38,40 +40,22 @@ if [[ "$packageManager" = "apt-get" ]]; then
     #  NVM
     # nosemgrep: bash.curl.security.curl-pipe-bash.curl-pipe-bash Installation comes from Debian docs
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-elif [[ "$packageManager" = "dnf" ]]; then
-    sudo dnf module install nodejs:18/common -y
-elif [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -S --noconfirm nodejs
-    sudo pacman -S --noconfirm npm
-else
-    echo "Node $errorMessage"
 fi
 
-# Python
-if [[ -f "/usr/bin/python" || -f "usr/bin/python3" ]]; then
-    echo "python3 is already installed."
-else
-    if [[ "$packageManager" = "apt-get" ]]; then
-        sudo apt-get install python3.6 -y
-    elif [[ "$packageManager" = "dnf" ]]; then
-        sudo dnf install python3 -y
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm python3
-    else
-        echo "Python $errorMessage"
-    fi
+# Python & pip
+if [[ ! -f "/usr/bin/python" || ! -f "usr/bin/python3" ]]; then
+    sudo apt-get install python3.6 -y
+    sudo apt-get install python3-pip -y
 fi
 
 ### Frameworks ###
 
 # Vue.js
-if [[ -f "/usr/local/bin/vue" ]]; then
-    echo "Vue is already installed."
-else
+if [[ ! -f "/usr/local/bin/vue" ]]; then
     sudo npm install -g @vue/cli
 fi
 
-### Dev Tooling ###
+### Dev Tools ###
 
 # Docker and Docker-Compose
 if [[ "$packageManager" = "apt-get" ]]; then
@@ -82,84 +66,36 @@ if [[ "$packageManager" = "apt-get" ]]; then
     sudo apt-get install docker-compose -y
     docker image pull archlinux
     docker image pull fedora
-elif [[ "$packageManager" = "dnf" ]]; then
-    sudo dnf -y install dnf-plugins-core
-    sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-    sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-    sudo dnf install docker-compose -y
-    docker image pull archlinux
-    docker image pull ubuntu
-elif [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -S --noconfirm gnome-terminal
-    sudo pacman -S --noconfirm docker
-
-    sudo pacman -S --noconfirm docker-compose
-    docker image pull fedora
-    docker image pull ubuntu
-else
-    echo "Support not yet added for this package manager."
 fi
 
 # GitHub CLI
-if [[ -f "/usr/local/bin/gh" ]]; then
-    echo "gh is already installed."
-else
-    if [[ "$packageManager" = "pacman" ]]; then
-        # TODO: Install GitHub CLI AUR package
-        # https://archlinux.org/packages/extra/x86_64/github-cli/
-    else
-        sudo "$packageManager" install gh -y
-    fi
+if [[ ! -f "/usr/local/bin/gh" ]]; then
+    sudo apt install gh -y
 fi
 
 # Postman
 if [[ "$packageManager" = "dnf" ]]; then
     flatpak install flathub com.getpostman.Postman -y
-elif [[ "$packageManager" = "pacman" ]]; then
-    yay -S --noconfirm postman-bin
-else
-    echo "Postman $errorMessage"
 fi
 
 # Semgrep
-if [[ -f "$HOME/.local/bin/semgrep" ]]; then
-    echo "Semgrep is already installed."
-else
-    if [[ "$packageManager" = "apt-get" ]]; then
-        echo "Support not yet added for apt."
-    elif [[ "$packageManager" = "dnf" ]]; then
-        python3 -m pip install semgrep
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S python-semgrep --noconfirm
-    else
-        echo "Semgrep $errorMessage"
-    fi
+if [[ ! -f "$HOME/.local/bin/semgrep" ]]; then
+    python -m pip install semgrep
 fi
 
 # Shellcheck
 if [[ "$packageManager" = "apt-get" ]]; then
     sudo apt install shellcheck -y
-elif [[ "$packageManager" = "dnf" ]]; then
-    sudo dnf install Shellcheck -y
-elif [[ "$packageManager" = "pacman" ]]; then
-    sudo pacman -S shellcheck --noconfirm
-else
-    echo "Shellcheck $errorMessage"
 fi
 
 # Sourcegraph
-if [[ -f "/usr/local/bin/src" ]]; then
-    echo "Sourcegraph CLI is already installed."
-else
+if [[ ! -f "/usr/local/bin/src" ]]; then
     curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o "/usr/local/bin/src"
     chmod +x "/usr/local/bin/src"
 fi
 
 # VS Code
-if [[ -f "/usr/bin/code" ]]; then
-    echo "VS Code is already installed."
-else
+if [[ ! -f "/usr/bin/code" ]]; then
     isInstalled="true"
     if [[ "$packageManager" = "apt-get" ]]; then
         cd ~/Downloads || return
@@ -215,18 +151,3 @@ fi
 # Packer installation
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  "$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
-
-# Pip
-if [[ -f "/usr/bin/pip" || -f "/usr/bin/python-pip" ]]; then
-    echo "python-pip is already installed."
-else
-    if [[ "$packageManager" = "apt-get" ]]; then
-        sudo apt-get install python3-pip -y
-    elif [[ "$packageManager" = "dnf" ]]; then
-        sudo dnf install python3-pip -y
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S --noconfirm python-pip
-    else
-        echo "PIP $errorMessage"
-    fi
-fi
