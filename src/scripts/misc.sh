@@ -1,8 +1,5 @@
 #!/bin/bash
 
-errorMessage=$1
-packageManager=$2
-
 # Spotify
 if [[ "$packageManager" = "apt-get" ]]; then
 	if [[ -f "/usr/bin/spotify" || -f "/bin/spotify" ]]; then

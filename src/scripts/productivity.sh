@@ -1,22 +1,14 @@
 #!/bin/bash
 
-errorMessage=$1
-packageManager=$2
-workingDirectory=$3
+workingDirectory=$1
 
 # Taskwarrior
-if [[ -f "/usr/bin/task" ]]; then
-    echo "Taskwarrior is already installed."
-else
+if [[ ! -f "/usr/bin/task" ]]; then
     task="task"
     if [[ "$packageManager" = "apt-get" ]]; then
         sudo "$packageManager" install "taskwarrior" -y
     elif [[ "$packageManager" = "dnf" ]]; then
         sudo "$packageManager" install "$task" -y
-    elif [[ "$packageManager" = "pacman" ]]; then
-        sudo pacman -S "$task" --noconfirm
-    else
-        echo "Error Message"
     fi
 
     # Handle first Taskwarrior prompt (to create config file).
@@ -39,9 +31,7 @@ fi
 cp "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" ~/.taskrc
 
 # Add custom themes directory.
-if [[ -d "$HOME/.task/themes/" ]]; then
-    echo "Taskwarrior themes directory already exists."
-else
+if [[ ! -d "$HOME/.task/themes/" ]]; then
     mkdir ~/.task/themes/
 fi
 
@@ -50,9 +40,7 @@ cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" ~/.task/themes/
 
 # Notion and Todoist
 if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
-    if [[ -f "/usr/bin/notion-app" || -f "/bin/notion-app" ]]; then
-        echo "Notion is already installed."
-    else
+    if [[ ! -f "/usr/bin/notion-app" || -f "/bin/notion-app" ]]; then
         if [[ "$packageManager" = "apt-get" ]]; then
             echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
             sudo apt-get update -y
@@ -73,21 +61,4 @@ if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
             sudo flatpak install flathub "$flatpakApp" -y
         fi
     done
-elif [[ "$packageManager" = "pacman" ]]; then
-    if [[ -f "/usr/bin/notion-app" ]]; then
-        echo "Notion is already installed."
-    else
-        yay -S --noconfirm notion-app-electron
-    fi
-
-    if [[ -f "/usr/bin/todoist" ]]; then
-        echo "Todoist is already installed."
-    else
-        cd ~/AppImages || return
-        wget https://todoist.com/linux_app/appimage
-        sudo mv appimage /usr/bin/todoist
-        cd "$workingDirectory" || return
-    fi
-else
-    echo "Notion and Todoist $errorMessage"
 fi
