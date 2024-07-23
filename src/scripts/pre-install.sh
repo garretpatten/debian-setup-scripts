@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Initial System Update
+# Initial system update
 sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
 
 # Git

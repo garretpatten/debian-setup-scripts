@@ -5,10 +5,10 @@ workingDirectory=$(pwd)
 bash "$workingDirectory/src/scripts/pre-install.sh"
 
 # Home directory customization
-sh "$workingDirectory/src/scripts/organizeHome.sh"
+bash "$workingDirectory/src/scripts/organizeHome.sh"
 
 # CLI tools
-sh "$workingDirectory/src/scripts/cli.sh"
+bash "$workingDirectory/src/scripts/cli.sh"
 
 # Browsers
 bash "$workingDirectory/src/scripts/web.sh"
