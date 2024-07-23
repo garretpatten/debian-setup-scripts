@@ -3,10 +3,10 @@
 ### Payloads ###
 
 # Payloads All the Things
-git clone https://github.com/swisskyrepo/PayloadsAllTheThings ~/Hacking
+git clone https://github.com/swisskyrepo/PayloadsAllTheThings "$HOME/Hacking/"
 
 # SecLists
-git clone https://github.com/danielmiessler/SecLists ~/Hacking
+git clone https://github.com/danielmiessler/SecLists "$HOME/Hacking/"
 
 ### Tools ###
 
