@@ -4,12 +4,7 @@ workingDirectory=$1
 
 # Taskwarrior
 if [[ ! -f "/usr/bin/task" ]]; then
-    task="task"
-    if [[ "$packageManager" = "apt-get" ]]; then
-        sudo "$packageManager" install "taskwarrior" -y
-    elif [[ "$packageManager" = "dnf" ]]; then
-        sudo "$packageManager" install "$task" -y
-    fi
+    sudo apt install "taskwarrior" -y
 
     # Handle first Taskwarrior prompt (to create config file).
     echo "yes" | task
@@ -28,37 +23,15 @@ if [[ ! -f "/usr/bin/task" ]]; then
 fi
 
 # Taskwarrior config
-cp "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" ~/.taskrc
+cat "$workingDirectory/src/config-files/taskwarrior/taskrcUpdates.txt" >> "$HOME/.taskrc"
 
-# Add custom themes directory.
+# Add custom themes
 if [[ ! -d "$HOME/.task/themes/" ]]; then
     mkdir ~/.task/themes/
+    cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" "$HOME/.task/themes/"
 fi
 
-# Add custom themes.
-cp -r "$workingDirectory/src/config-files/taskwarrior/themes/" ~/.task/themes/
-
-# Notion and Todoist
-if [[ "$packageManager" = "apt-get" || "$packageManager" = "dnf" ]]; then
-    if [[ ! -f "/usr/bin/notion-app" || -f "/bin/notion-app" ]]; then
-        if [[ "$packageManager" = "apt-get" ]]; then
-            echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
-            sudo apt-get update -y
-            sudo apt-get install notion-app -y
-        else
-            printf "[notion-repackaged]\nname=notion-repackaged\nbaseurl=https://yum.fury.io/notion-repackaged/\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/notion-repackaged.repo
-            sudo dnf install notion-app -y
-        fi
-    fi
-
-    flatpakApps=("com.todoist.Todoist")
-    for flatpakApp in "${flatpakApps[@]}"; do
-        if [[ -d "/var/lib/flatpak/app/$flatpakApp" ]]; then
-            echo "$flatpakApp is already installed."
-        elif [[ -d "$HOME/.local/share/flatpak/app/$flatpakApp" ]]; then
-            echo "$flatpakApp is already installed."
-        else
-            sudo flatpak install flathub "$flatpakApp" -y
-        fi
-    done
+# Timeshift
+if [[ ! -f "/usr/bin/timeshift" ]]; then
+    sudo apt install timeshift -y
 fi
