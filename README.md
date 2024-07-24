@@ -1,20 +1,25 @@
 # Linux Setup Scripts
-- A repository of setup scripts for my personal linux environments
+- A repository of setup scripts for my personal debian linux environments
 
 # Instructions
 
 ## How to Use
 ```
-# Clone repository and submodules
-git clone https://github.com/garretpatten/linux-setup-scripts
+# Clone repository
+git clone https://github.com/garretpatten/arch-setup-scripts
+
+# Checkout repository
+cd arch-setup-scripts
+
+# Initialize submodules
 git submodule init
-git submodule update
+git submodule update --remote --recursive
+cd src/dotfiles
+git submodule init
+git submodule update --remote --recursive
 
-# Checkout the root of the project
-cd linux-setup-scripts
-
-# Make scripts executable
-sudo chmod +x src/scripts/
+# Return to the root of the project
+cd ../..
 
 # Run master script
 bash src/scripts/master.sh
@@ -22,51 +27,59 @@ bash src/scripts/master.sh
 
 # Installations
 
-## CLI Tools
-- bat | batcat
+## CLI Tools and Terminal Applications
+- bat
 - clamav
-- clamd
-- clamav-update
 - curl
+- docker
+- docker-compose
 - exa
 - fastfetch
+- fd
 - flatpak
 - gh
 - git
-- https
 - htop
+- neovim
 - nmap
+- node
+- npm
 - openvpn
-- pam
-- pam-u2f
-- pamu2fcfg
+- ripgrep
 - semgrep
+- shellcheck
 - src-cli
 - task
+- tmux
 - ufw
+- vim
 - wget
-
-## Applications
-- 1Password
-- Brave
-- Postman
-- Proton VPN
-- Signl
-- Simplenote
-- Spotify
-- Thunderbird
-- Todoist
-- VLC
-- VS Code
+- zsh
 
 # Configurations
-- Firewall
+- Alacritty
 - Git Credential Helper
 - Home Directory
-- TaskWarrior
-- Vim & Neovim
-- Zsh (oh-my-zsh)
+- Neovim
+- Taskwarrior
+- Vim
+- VS Code
+- Z-shell
 
----
+## Desktop Applications
+- 1Password
+- Alacritty
+- Brave
+- Burp Suite
+- Postman
+- Proton VPN
+- Signl Messenger
+- Sourcegraph
+- Spotify
+- Todoist
+- VLC Media Player
+- VS Code
+- ZAProxy
 
-*Disclaimer: Code under active development*
+# Other
+- Hacking Wordlists
