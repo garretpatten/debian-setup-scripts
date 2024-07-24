@@ -2,7 +2,7 @@
 
 workingDirectory=$1
 
-# Update ~/.vimrc
+# Configure vim
 if [[ ! -f "$HOME/.vimrc" ]]; then
     cp "$workingDirectory/src/dotfiles/vim/.vimrc" "$HOME/.vimrc"
 fi
