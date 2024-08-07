@@ -38,12 +38,12 @@ fi
 
 # Zsh Autosuggestions
 if [[ ! -d "/usr/share/zsh/plugins/zsh-autosuggestions/" ]]; then
-    sudo dnf install zsh-autosuggestions -y
+    sudo apt install zsh-autosuggestions -y
 fi
 
 # Zsh Syntax Highlighting
 if [[ ! -d "/usr/share/zsh/plugins/zsh-syntax-highlighting/" ]]; then
-    sudo dnf install zsh-syntax-highlighting -y
+    sudo apt install zsh-syntax-highlighting -y
 fi
 
 ### Terminal Configuration ###
