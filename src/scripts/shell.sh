@@ -26,7 +26,7 @@ fi
 
 # Powerline Fonts
 if [[ ! -d "/usr/share/fonts/OTF/" ]]; then
-    # TODO
+    sudo apt install fonts-powerline -y
 fi
 
 ### Install oh-my-posh ###
