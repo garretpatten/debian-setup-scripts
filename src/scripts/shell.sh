@@ -17,7 +17,7 @@ fi
 
 # Fira Code Fonts
 if [[ ! -d "/usr/share/fonts/FiraCode/" ]]; then
-    # TODO
+    sudo apt install fonts-firacode -y
 fi
 
 if [[ ! -d "/usr/share/fonts/TTF/" ]]; then
