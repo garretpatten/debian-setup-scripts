@@ -1,6 +1,8 @@
 #!/bin/bash
 
+# shellcheck source-path=SCRIPTDIR
 # shellcheck source=../utils.sh
+# shellcheck disable=SC1091
 source "$(dirname "$0")/../utils.sh"
 
 update_apt_cache
