@@ -1,6 +1,10 @@
-name: 'Security Checks'
+name: 'Security Guardrails'
 
 on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   scans:
@@ -8,6 +12,7 @@ jobs:
     # yamllint disable-line rule:line-length
     uses: garretpatten/security-checks/.github/workflows/security-checks.yaml@master
     with:
-      semgrep_run: true
+      opengrep_run: true
+      supply_chain_run: true
       trufflehog_run: true
     secrets: inherit
