@@ -10,7 +10,7 @@ jobs:
   scans:
     name: 'Scans'
     # yamllint disable-line rule:line-length
-    uses: garretpatten/security-checks/.github/workflows/security-checks.yaml@master
+    uses: garretpatten/security-guardrails/.github/workflows/security-checks.yaml@master
     with:
       opengrep_run: true
       supply_chain_run: true
