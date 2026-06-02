@@ -31,8 +31,8 @@
     <a href="https://github.com/garretpatten/debian-setup-scripts/actions/workflows/quality-checks.yaml"
         ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/debian-setup-scripts/quality-checks.yaml?branch=master&label=quality&logo=github&style=flat-square" alt="Quality checks workflow status"
     /></a>
-    <a href="https://github.com/garretpatten/debian-setup-scripts/actions/workflows/security-checks.yaml"
-        ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/debian-setup-scripts/security-checks.yaml?branch=master&label=security&logo=github&style=flat-square" alt="Security checks workflow status"
+    <a href="https://github.com/garretpatten/debian-setup-scripts/actions/workflows/security-guardrails.yaml"
+        ><img src="https://img.shields.io/github/actions/workflow/status/garretpatten/debian-setup-scripts/security-guardrails.yaml?branch=master&label=security&logo=github&style=flat-square" alt="Security guardrails workflow status"
     /></a>
 </p>
 
