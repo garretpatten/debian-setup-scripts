@@ -17,12 +17,18 @@ jobs:
     steps:
       - name: Prepare container
         run: |
+          apt_components='main contrib non-free non-free-firmware'
           apt-get update
           apt-get install -y --no-install-recommends \
             ca-certificates curl git gnupg lsb-release sudo
-          sed -i \
-            's/ main$/ main contrib non-free non-free-firmware/' \
-            /etc/apt/sources.list
+          if [[ -f /etc/apt/sources.list ]]; then
+            sed -i "s/ main\$/ ${apt_components}/" /etc/apt/sources.list
+          fi
+          for sources_file in /etc/apt/sources.list.d/*.sources; do
+            [[ -f "$sources_file" ]] || continue
+            sed -i "s/^Components: main\$/Components: ${apt_components}/" \
+              "$sources_file"
+          done
           apt-get update
           useradd -m -s /bin/bash ci
           echo 'ci ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/ci

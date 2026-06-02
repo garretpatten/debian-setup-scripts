@@ -34,6 +34,29 @@ update_apt_cache() {
     }
 }
 
+# Enable contrib/non-free on legacy sources.list and DEB822 .sources stanzas.
+enable_debian_contrib_nonfree() {
+    local changed=0
+    local sources_file
+
+    if [[ -f /etc/apt/sources.list ]] && ! grep -qE '\bcontrib\b' /etc/apt/sources.list 2>/dev/null; then
+        sudo sed -E -i 's/([[:space:]]main)([[:space:]]*$)/\1 contrib non-free non-free-firmware\2/' /etc/apt/sources.list 2>>"$ERROR_LOG_FILE" || true
+        changed=1
+    fi
+
+    for sources_file in /etc/apt/sources.list.d/*.sources; do
+        [[ -f "$sources_file" ]] || continue
+        if grep -q '^Components: main$' "$sources_file" 2>/dev/null; then
+            sudo sed -i 's/^Components: main$/Components: main contrib non-free non-free-firmware/' "$sources_file" 2>>"$ERROR_LOG_FILE" || true
+            changed=1
+        fi
+    done
+
+    if [[ "$changed" -eq 1 ]]; then
+        update_apt_cache
+    fi
+}
+
 # Create directory
 ensure_directory() {
     mkdir -p "$1" 2>>"$ERROR_LOG_FILE" || {
@@ -135,7 +158,7 @@ gsettings_schema_exists() {
 mkdir -p "$TEMP_DIR"
 
 # Export functions and variables for use in other scripts
-export -f log_error install_apt_packages update_apt_cache ensure_directory remove_empty_directory
+export -f log_error install_apt_packages update_apt_cache enable_debian_contrib_nonfree ensure_directory remove_empty_directory
 export -f copy_file_safe copy_directory_safe download_file_safe clone_repository_safe
 export -f gsettings_ok gsettings_set gsettings_schema_exists
 export PROJECT_ROOT SCRIPT_DIR SCRIPTS_DIR ERROR_LOG_FILE TEMP_DIR
