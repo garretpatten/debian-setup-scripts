@@ -17,12 +17,18 @@ jobs:
     steps:
       - name: Prepare container
         run: |
+          apt_components='main contrib non-free non-free-firmware'
           apt-get update
           apt-get install -y --no-install-recommends \
             ca-certificates curl git gnupg lsb-release sudo
-          sed -i \
-            's/ main$/ main contrib non-free non-free-firmware/' \
-            /etc/apt/sources.list
+          if [[ -f /etc/apt/sources.list ]]; then
+            sed -i "s/ main\$/ ${apt_components}/" /etc/apt/sources.list
+          fi
+          for sources_file in /etc/apt/sources.list.d/*.sources; do
+            [[ -f "$sources_file" ]] || continue
+            sed -i "s/^Components: main\$/Components: ${apt_components}/" \
+              "$sources_file"
+          done
           apt-get update
           useradd -m -s /bin/bash ci
           echo 'ci ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/ci
@@ -38,16 +44,15 @@ jobs:
           chmod +x src/scripts/*.sh \
             src/scripts/install/*.sh \
             src/scripts/config/*.sh
-          chown -R ci:ci "${{ github.workspace }}"
+          chown -R ci:ci "$GITHUB_WORKSPACE"
 
       # CI: no GNOME; config/system-config.sh skips gsettings.
       - name: Run setup scripts
         run: |
-          workspace='${{ github.workspace }}'
-          su - ci -c "cd '${workspace}/src/scripts' && bash master.sh" || true
+          su - ci -c \
+            "cd '${GITHUB_WORKSPACE}/src/scripts' && bash master.sh" || true
 
       - name: Check error log
-        working-directory: ${{ github.workspace }}
         run: |
           ERROR_LOG="setup_errors.log"
           if [[ -f "$ERROR_LOG" ]] && [[ -s "$ERROR_LOG" ]]; then

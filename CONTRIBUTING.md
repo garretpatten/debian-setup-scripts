@@ -21,12 +21,13 @@ Use [GitHub Issues](https://github.com/garretpatten/debian-setup-scripts/issues)
 npm install
 
 npx prettier --check .
-shellcheck src/scripts/utils.sh \
+shellcheck -x -P SCRIPTDIR src/scripts/utils.sh \
   src/scripts/master.sh \
   src/scripts/run-install.sh \
   src/scripts/run-config.sh \
   src/scripts/install/*.sh \
   src/scripts/config/*.sh
+actionlint
 npx markdownlint-cli2 "**/*.md" "#node_modules" "#src/dotfiles/node_modules"
 ```
 
