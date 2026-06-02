@@ -290,8 +290,12 @@ After installation, check:
 ## ⚠️ Post-Installation Notes
 
 1. **Restart Required**: Log out and back in for shell and group changes
-1. **GNOME / desktop**: Some `config/system-config.sh` preferences apply fully after
-   re-login or when running the script from an active desktop session
+1. **GNOME / desktop**: Run provisioning from a terminal inside your session, or
+   expect a logout/reboot for some changes. **`system-config.sh`** does not restart
+   **`systemd-logind`** while a graphical session is active (restarting it logs you out).
+   Lid-switch settings from a first-time drop-in apply after reboot if you were logged in.
+1. **GNOME / gsettings**: Night Light and other preferences apply when the script runs
+   with a live D-Bus session (`gsettings_ok`); re-login if you ran headless first.
 1. **Docker**: User added to docker group (logout required for effect)
 1. **Firewall**: UFW enabled with SSH access allowed
 1. **Night Light vs Redshift**: If you use GNOME Night Light from
@@ -334,6 +338,17 @@ newgrp docker
 # Manually change shell
 chsh -s $(which zsh)
 # Then log out and back in
+```
+
+**Black screen, logout during setup, or frozen terminal after login:**
+
+Older runs restarted **`systemd-logind`** on every **`system-config.sh`** invocation,
+which ends the GNOME session. If the default shell is Zsh and the terminal hangs,
+switch to a TTY (**Ctrl+Alt+F3**), then restore Bash or fix **`~/.zshrc`** (for example
+comment out **`pass-cli`** / Proton Pass lines until Pass is configured):
+
+```bash
+chsh -s /bin/bash
 ```
 
 ### Getting Help
