@@ -154,11 +154,33 @@ gsettings_schema_exists() {
     gsettings list-schemas 2>/dev/null | grep -qx "$1"
 }
 
+# True when a graphical login session is active. Restarting systemd-logind then
+# terminates GNOME/Wayland sessions — avoid during desktop provisioning.
+graphical_login_active() {
+    if [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" ]]; then
+        return 0
+    fi
+    case "${XDG_SESSION_TYPE:-}" in
+        x11 | wayland) return 0 ;;
+    esac
+    if command -v loginctl >/dev/null 2>&1; then
+        local sid stype
+        while read -r sid _; do
+            [[ -n "$sid" ]] || continue
+            stype=$(loginctl show-session "$sid" -p Type --value 2>/dev/null) || continue
+            case "$stype" in
+                x11 | wayland) return 0 ;;
+            esac
+        done < <(loginctl list-sessions --no-legend 2>/dev/null)
+    fi
+    return 1
+}
+
 # Create temporary directory
 mkdir -p "$TEMP_DIR"
 
 # Export functions and variables for use in other scripts
 export -f log_error install_apt_packages update_apt_cache enable_debian_contrib_nonfree ensure_directory remove_empty_directory
 export -f copy_file_safe copy_directory_safe download_file_safe clone_repository_safe
-export -f gsettings_ok gsettings_set gsettings_schema_exists
+export -f gsettings_ok gsettings_set gsettings_schema_exists graphical_login_active
 export PROJECT_ROOT SCRIPT_DIR SCRIPTS_DIR ERROR_LOG_FILE TEMP_DIR

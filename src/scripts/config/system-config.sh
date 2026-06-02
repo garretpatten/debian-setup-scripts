@@ -84,13 +84,6 @@ fi
 systemctl stop apport.service 2>/dev/null || true
 systemctl disable apport.service 2>/dev/null || true
 
-logind_dropin="/etc/systemd/logind.conf.d/50-lid.conf"
-mkdir -p "$(dirname "$logind_dropin")" 2>>"$ERROR_LOG_FILE" || true
-if [[ ! -f "$logind_dropin" ]]; then
-    printf "%s\n" "[Login]" "HandleLidSwitch=suspend" "HandleLidSwitchExternalPower=suspend" "HandleLidSwitchDocked=ignore" >"$logind_dropin"
-fi
-systemctl try-restart systemd-logind.service 2>>"$ERROR_LOG_FILE" || true
-
 sysctl_conf="/etc/sysctl.d/99-tcp-keepalive.conf"
 if [[ ! -f "$sysctl_conf" ]]; then
     printf "%s\n" \
@@ -101,3 +94,17 @@ if [[ ! -f "$sysctl_conf" ]]; then
 fi
 sysctl --system 2>>"$ERROR_LOG_FILE" || true
 ' || true
+
+logind_dropin="/etc/systemd/logind.conf.d/50-lid.conf"
+logind_dropin_created=0
+if [[ ! -f "$logind_dropin" ]]; then
+    sudo mkdir -p "$(dirname "$logind_dropin")" 2>>"$ERROR_LOG_FILE" || true
+    if printf '%s\n' "[Login]" "HandleLidSwitch=suspend" "HandleLidSwitchExternalPower=suspend" "HandleLidSwitchDocked=ignore" |
+        sudo tee "$logind_dropin" >/dev/null 2>>"$ERROR_LOG_FILE"; then
+        logind_dropin_created=1
+    fi
+fi
+# try-restart logind kicks graphical users off; only apply immediately when headless.
+if [[ "$logind_dropin_created" -eq 1 ]] && ! graphical_login_active; then
+    sudo systemctl try-restart systemd-logind.service 2>>"$ERROR_LOG_FILE" || true
+fi
