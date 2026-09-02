@@ -85,6 +85,33 @@ dev_tools=(
 )
 install_apt_packages "${dev_tools[@]}"
 
+sudo npm install -g bash-language-server pyright typescript-language-server yaml-language-server \
+    --loglevel=error --no-update-notifier 2>>"$ERROR_LOG_FILE" || true
+
+if ! command -v lua-language-server >/dev/null 2>&1; then
+    latest_url=$(curl -sL -o /dev/null -w '%{url_effective}' --connect-timeout 10 --max-time 30 \
+        https://github.com/LuaLS/lua-language-server/releases/latest 2>>"$ERROR_LOG_FILE")
+    lls_version=${latest_url##*/}
+    if [[ -n "$lls_version" ]]; then
+        lls_tar="$TEMP_DIR/lua-language-server-${lls_version}-linux-x64.tar.gz"
+        if download_file_safe \
+            "https://github.com/LuaLS/lua-language-server/releases/download/${lls_version}/lua-language-server-${lls_version}-linux-x64.tar.gz" \
+            "$lls_tar"; then
+            lls_install_dir="$HOME/.local/share/lua-language-server"
+            ensure_directory "$lls_install_dir"
+            tar -xzf "$lls_tar" -C "$lls_install_dir" 2>>"$ERROR_LOG_FILE" || true
+            if [[ -f "$lls_install_dir/bin/lua-language-server" ]]; then
+                ensure_directory "$HOME/.local/bin"
+                cat > "$HOME/.local/bin/lua-language-server" <<EOF
+#!/bin/bash
+exec "$lls_install_dir/bin/lua-language-server" "\$@"
+EOF
+                chmod +x "$HOME/.local/bin/lua-language-server" 2>>"$ERROR_LOG_FILE" || true
+            fi
+        fi
+    fi
+fi
+
 if flatpak remote-info flathub >/dev/null 2>&1; then
     flatpak install -y flathub com.getpostman.Postman 2>>"$ERROR_LOG_FILE" || true
 fi
