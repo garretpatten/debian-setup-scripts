@@ -20,10 +20,6 @@ if ! command -v zoom >/dev/null 2>&1; then
     fi
 fi
 
-if flatpak remote-info flathub >/dev/null 2>&1; then
-    flatpak install -y flathub org.standardnotes.standardnotes 2>>"$ERROR_LOG_FILE" || true
-fi
-
 productivity_packages=(
     "keepassxc"
     "redshift"
