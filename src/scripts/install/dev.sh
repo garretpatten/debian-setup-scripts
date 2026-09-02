@@ -82,6 +82,7 @@ dev_tools=(
     "gh"
     "shellcheck"
     "git"
+    "golang-go"
 )
 install_apt_packages "${dev_tools[@]}"
 
