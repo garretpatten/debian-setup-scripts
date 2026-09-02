@@ -28,6 +28,13 @@ if ! command -v ghostty >/dev/null 2>&1; then
     install_apt_packages "ghostty"
 fi
 
+griffo_packages=(
+    "lazydocker"
+    "lazygit"
+    "yazi"
+)
+install_apt_packages "${griffo_packages[@]}"
+
 font_packages=(
     "fonts-font-awesome"
     "fonts-firacode"

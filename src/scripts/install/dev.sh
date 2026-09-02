@@ -43,6 +43,18 @@ install_apt_packages "${python_packages[@]}"
 
 sudo npm install -g @vue/cli --loglevel=error --no-update-notifier 2>>"$ERROR_LOG_FILE" || true
 
+libsecret_packages=(
+    "libsecret-1-0"
+    "libsecret-1-dev"
+)
+install_apt_packages "${libsecret_packages[@]}"
+
+credential_src="/usr/share/doc/git/contrib/credential/libsecret"
+credential_bin="$credential_src/git-credential-libsecret"
+if [[ -d "$credential_src" ]] && [[ ! -x "$credential_bin" ]]; then
+    (cd "$credential_src" && sudo make) 2>>"$ERROR_LOG_FILE" || true
+fi
+
 docker_deps=(
     "apt-transport-https"
     "ca-certificates"
@@ -111,6 +123,46 @@ EOF
             fi
         fi
     fi
+fi
+
+lsp_packages=(
+    "build-essential"
+    "composer"
+    "default-jdk-headless"
+    "gzip"
+    "liblua5.4-dev"
+    "luarocks"
+    "lua5.4"
+    "php-cli"
+    "php-mbstring"
+    "php-xml"
+    "php-zip"
+    "ruby-dev"
+    "ruby-full"
+    "tar"
+)
+install_apt_packages "${lsp_packages[@]}"
+
+install_apt_packages "julia" 2>>"$ERROR_LOG_FILE" || true
+
+if [[ ! -f "$HOME/.cargo/env" ]]; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y 2>>"$ERROR_LOG_FILE" || true
+fi
+
+curl -fsSL https://cursor.com/install | bash 2>>"$ERROR_LOG_FILE" || true
+
+if ! command -v ollama >/dev/null 2>&1; then
+    curl -fsSL https://ollama.com/install.sh | sh 2>>"$ERROR_LOG_FILE" || true
+fi
+
+if command -v gem >/dev/null 2>&1; then
+    gem install --user-install solargraph 2>>"$ERROR_LOG_FILE" || true
+fi
+
+if [[ ! -x /usr/local/bin/ufw-docker ]]; then
+    sudo wget -q -O /usr/local/bin/ufw-docker \
+        https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker 2>>"$ERROR_LOG_FILE" || true
+    sudo chmod +x /usr/local/bin/ufw-docker 2>>"$ERROR_LOG_FILE" || true
 fi
 
 if flatpak remote-info flathub >/dev/null 2>&1; then

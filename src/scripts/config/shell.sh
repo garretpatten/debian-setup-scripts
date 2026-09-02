@@ -13,6 +13,7 @@ if [[ -d "$dotfiles_root/config" ]]; then
     copy_directory_safe "$dotfiles_root/config/oh-my-posh" "$HOME/.config/oh-my-posh"
     # home/.tmux.conf sources ~/.config/tmux/includes/base.conf — see submodule README.
     copy_directory_safe "$dotfiles_root/config/tmux" "$HOME/.config/tmux"
+    copy_directory_safe "$dotfiles_root/config/zsh" "$HOME/.config/zsh"
 fi
 
 if [[ -d "$dotfiles_home_root" ]]; then
