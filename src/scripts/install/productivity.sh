@@ -48,6 +48,14 @@ productivity_packages=(
 )
 install_apt_packages "${productivity_packages[@]}"
 
+if ! command -v google-chrome >/dev/null 2>&1 && ! dpkg -s google-chrome-stable >/dev/null 2>&1; then
+    chrome_deb="$TEMP_DIR/google-chrome-stable.deb"
+    if download_file_safe "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" "$chrome_deb"; then
+        sudo dpkg -i "$chrome_deb" 2>>"$ERROR_LOG_FILE" || true
+        sudo apt-get install -f -y 2>>"$ERROR_LOG_FILE" || true
+    fi
+fi
+
 etcher_dir="$HOME/.local/bin"
 etcher_path="$etcher_dir/balenaEtcher.AppImage"
 if [[ ! -f "$etcher_path" ]]; then

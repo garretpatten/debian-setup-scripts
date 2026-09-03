@@ -227,7 +227,8 @@ Brave, VLC, Spotify (**Flatpak**), multimedia codec packages, **`ttf-mscorefonts
 
 #### 📊 **Productivity** (`install/productivity.sh`)
 
-LibreOffice, Zoom (`.deb` from zoom.us), KeePassXC, Redshift, Flameshot, Balena Etcher AppImage.
+LibreOffice, Zoom (`.deb` from zoom.us), Google Chrome, KeePassXC, Redshift,
+Flameshot, Balena Etcher AppImage.
 
 #### 🔒 **Security packages & payloads** (`install/security.sh`)
 
