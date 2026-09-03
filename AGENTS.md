@@ -16,6 +16,20 @@ shared helpers, and a `src/dotfiles` git submodule. Changes should stay **idempo
 | `src/assets/`          | Completion banner ASCII (`debian.txt`; Fastfetch-derived)                                                            |
 | `.github/workflows/`   | CI: `master.sh` + quality workflows                                                                                  |
 
+## Dotfiles submodule
+
+`src/dotfiles/` is a **Git submodule** pinned to a commit of
+[garretpatten/dotfiles](https://github.com/garretpatten/dotfiles).
+Never edit files inside `src/dotfiles/` directly in this repository.
+
+If a dotfiles change is needed:
+
+1. Make the change in the `dotfiles` repository and push it.
+2. In this repository, update the submodule:
+   `cd src/dotfiles && git pull origin master && cd ../..`
+3. Commit the submodule pointer change:
+   `git add src/dotfiles && git commit -m "Bump dotfiles submodule"`
+
 ### Orchestration
 
 - **`master.sh`**: `install/pre-install.sh` → `config/system-config.sh` → `config/organizeHome.sh`
@@ -95,7 +109,6 @@ shellcheck -x -P SCRIPTDIR src/scripts/utils.sh \
   src/scripts/run-config.sh \
   src/scripts/install/*.sh \
   src/scripts/config/*.sh
-actionlint
 npx markdownlint-cli2 "**/*.md" "#node_modules" "#src/dotfiles/node_modules"
 yamllint .github .yamllint .markdownlint.yaml
 ```
@@ -103,7 +116,7 @@ yamllint .github .yamllint .markdownlint.yaml
 | If you edited                                                                                     | Run (in addition to **`prettier`** / **`shellcheck`** when applicable)               |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Any **`*.md`** at repo root (not submodule)                                                       | **`markdownlint-cli2`** on those paths or the glob above                             |
-| Workflows, **`ISSUE_TEMPLATE`**, **`dependabot.yaml`**, **`.yamllint`**, **`.markdownlint.yaml`** | **`yamllint`** on the same paths, plus **`actionlint`** for workflow logic |
+| Workflows, **`ISSUE_TEMPLATE`**, **`dependabot.yaml`**, **`.yamllint`**, **`.markdownlint.yaml`** | **`yamllint`** on the same paths |
 
 Install **`yamllint`** locally if missing (for example `pip install yamllint`). CI’s **Quality Checks** workflow already runs **`yamllint`** on YAML and **`markdownlint`** on Markdown in PRs—local runs should pass before you finalize.
 
