@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD033 MD041 -->
+<!-- markdownlint-disable MD013 MD033 MD041 -->
 
 <p align="center">
     <img
@@ -65,7 +65,7 @@ reviews and predictable behavior in a **Debian Bookworm** container CI job.
 - **📝 Comprehensive Logging**: Detailed progress tracking and error reporting
 - **🎯 Modular Design**: Run individual components or orchestrators (`master.sh`)
 - **⚙️ Install vs configuration**: Category automation is split between
-  `src/scripts/install/` (APT/Flatpak, third-party installers, clones) and
+  `src/scripts/install/` (APT, third-party installers, repo clones) and
   `src/scripts/config/` (`gsettings`, home layout, UFW policy, submodule
   dotfiles, default shell). Use `npm run installs`, `npm run config`, or `npm run all`,
   or invoke `run-install.sh` / `run-config.sh` directly.
@@ -104,7 +104,9 @@ git submodule update --init --remote --recursive src/dotfiles/
 ```bash
 chmod +x src/scripts/*.sh \
   src/scripts/install/*.sh \
-  src/scripts/config/*.sh
+  src/scripts/install/**/*.sh \
+  src/scripts/config/*.sh \
+  src/scripts/config/**/*.sh
 ```
 
 1. **Run the complete setup**
@@ -117,19 +119,32 @@ npm run all
 
 ### npm scripts
 
-| Command            | Runs                                                                                                       |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `npm run all`      | Full provisioning (`master.sh`): installs interleaved with configuration (see execution flow below).       |
-| `npm run installs` | Install bundle only (`run-install.sh`): packages and installers—no GNOME/dotfiles/config steps.            |
-| `npm run config`   | Configuration bundle only (`run-config.sh`): defaults, home layout, UFW defaults, submodule copies, shell. |
+| Command               | Runs                                     |
+| --------------------- | ---------------------------------------- |
+| `npm run all`         | Full provisioning (`master.sh`).         |
+| `npm run install:cli` | CLI-only install (`run-install.sh cli`). |
+| `npm run install:all` | Full install (`run-install.sh all`).     |
+| `npm run installs`    | Alias for `npm run install:all`.         |
+| `npm run config`      | Config bundle only (`run-config.sh`).    |
 
 Bash equivalents:
 
 ```bash
-bash src/scripts/run-install.sh
-bash src/scripts/run-config.sh
-bash src/scripts/master.sh
+bash src/scripts/run-install.sh cli # CLI-only install
+bash src/scripts/run-install.sh all # full install (default)
+bash src/scripts/run-config.sh      # config only
+bash src/scripts/master.sh          # install + config
 ```
+
+The `install/all.sh` orchestrator accepts `--cli` to skip desktop apps, media,
+productivity packages, `.deb` GUI installers, and snap installs.
+
+CI runs four jobs in a `debian:bookworm` container:
+
+- `test-cli`: `run-install.sh cli` then `validate-installs-cli.sh`
+- `test-config`: `run-config.sh` then `validate-config-only.sh`
+- `test-full`: `run-install.sh all` then `validate-installs.sh`
+- `test-master`: `master.sh` then `validate.sh`
 
 Use **`npm run config`** when packages are already present but GNOME/dotfiles paths should be refreshed after updating the submodule.
 
@@ -138,17 +153,25 @@ Use **`npm run config`** when packages are already present but GNOME/dotfiles pa
 Each category exists as **install** and/or **configuration** scripts (paths from repo root):
 
 ```bash
+# Install orchestrators and leaf scripts
 bash src/scripts/install/cli.sh
-bash src/scripts/install/dev.sh
+bash src/scripts/install/all.sh
+bash src/scripts/install/all.sh --cli
+bash src/scripts/install/apps/chrome.sh
+bash src/scripts/install/dev/nvm.sh
+bash src/scripts/install/shell/oh-my-posh.sh
 
-bash src/scripts/config/system-config.sh      # GNOME + unattended APT + sysctl (no extra packages besides unattended-upgrades)
-bash src/scripts/config/organizeHome.sh
-bash src/scripts/config/dev.sh               # Editors / XDG subtree + Git identity
-bash src/scripts/config/security.sh           # UFW defaults (requires `install/security.sh` first)
-bash src/scripts/config/shell.sh              # Submodule shell + terminal dotfiles (`~/.config/tmux`, etc.)
+# Config orchestrators and leaf scripts
+bash src/scripts/config/system/all.sh
+bash src/scripts/config/home/organize-home.sh
+bash src/scripts/config/dev/all.sh
+bash src/scripts/config/security/ufw-rules.sh
+bash src/scripts/config/shell/all.sh
 ```
 
-Prefer the orchestrators so ordering stays consistent (for example **`config/security.sh`** after **`install/security.sh`**, **`config/shell.sh`** after **`install/shell.sh`**, and **`install/post-install.sh`** docker/UFW touchpoints ahead of **`config/shell.sh`** when running a full provisioning pass).
+Prefer the orchestrators so ordering stays consistent (for example `config/security/ufw-rules.sh`
+after the install phase has placed `ufw`, and `config/shell/all.sh` after install shell leaf scripts
+have installed zsh and oh-my-posh).
 
 ## Project structure
 
@@ -156,44 +179,113 @@ Prefer the orchestrators so ordering stays consistent (for example **`config/sec
 debian-setup-scripts/
 ├── src/
 │   ├── scripts/
-│   │   ├── utils.sh
-│   │   ├── master.sh          # Full run — interleaved installs + configuration
-│   │   ├── run-install.sh      # APT/Flatpak/installers/post-install hooks only
-│   │   ├── run-config.sh       # GNOME, home layout, firewall policy, dotfiles, shell
+│   │   ├── master.sh              # Full run — installs then configuration
+│   │   ├── run-install.sh          # Install orchestrator entrypoint
+│   │   ├── run-config.sh           # Config orchestrator entrypoint
 │   │   ├── install/
-│   │   │   ├── pre-install.sh
-│   │   │   ├── cli.sh
-│   │   │   ├── media.sh
-│   │   │   ├── productivity.sh
-│   │   │   ├── dev.sh         # Languages, Docker, NeoVim APT, tooling (no submodule copies)
-│   │   │   ├── security.sh    # Packages, Proton/VPN installs, clones (UFW separately)
-│   │   │   ├── shell.sh       # Terminal packages, Ghostty installer, fonts, Oh My Posh
-│   │   │   └── post-install.sh
+│   │   │   ├── all.sh              # Full install orchestrator (`--cli` for CLI-only)
+│   │   │   ├── cli.sh              # Thin wrapper that runs `all.sh --cli`
+│   │   │   ├── apps/
+│   │   │   │   ├── chrome.sh
+│   │   │   │   ├── etcher.sh
+│   │   │   │   ├── hacking-repos.sh
+│   │   │   │   ├── pass-cli.sh
+│   │   │   │   ├── proton-pass.sh
+│   │   │   │   ├── protonvpn-install.sh
+│   │   │   │   ├── snaps.sh
+│   │   │   │   └── ufw-docker.sh
+│   │   │   ├── dev/
+│   │   │   │   ├── cursor-cli.sh
+│   │   │   │   ├── git-credential-libsecret.sh
+│   │   │   │   ├── go.sh
+│   │   │   │   ├── language-servers.sh
+│   │   │   │   ├── nvm.sh
+│   │   │   │   ├── ollama.sh
+│   │   │   │   ├── ruby-gems.sh
+│   │   │   │   ├── rustup.sh
+│   │   │   │   ├── semgrep.sh
+│   │   │   │   └── vue-cli.sh
+│   │   │   ├── packages/
+│   │   │   │   └── *.packages    # One-per-line apt package lists
+│   │   │   ├── post-install/
+│   │   │   │   ├── apt-maintain.sh
+│   │   │   │   ├── completion-banner.sh
+│   │   │   │   ├── docker-service.sh
+│   │   │   │   └── tldr-cache.sh
+│   │   │   ├── preflight/
+│   │   │   │   ├── apt-maintain.sh
+│   │   │   │   ├── essentials.sh
+│   │   │   │   └── timezone.sh
+│   │   │   ├── repos/
+│   │   │   │   ├── manifest
+│   │   │   │   └── setup.sh
+│   │   │   ├── shell/
+│   │   │   │   ├── ghostty.sh
+│   │   │   │   ├── meslo-nerd-font.sh
+│   │   │   │   └── oh-my-posh.sh
+│   │   │   └── snaps.txt
+│   │   ├── lib/
+│   │   │   ├── apt-maintain.sh
+│   │   │   ├── apt-packages.sh
+│   │   │   ├── apt-repo-add.sh
+│   │   │   ├── apt-repos.sh
+│   │   │   ├── dotfiles-install.sh
+│   │   │   ├── env.sh
+│   │   │   ├── git-submodules.sh
+│   │   │   ├── gnome-session.sh
+│   │   │   ├── parallel.sh
+│   │   │   ├── run.sh
+│   │   │   ├── snap-install.sh
+│   │   │   └── zsh-login.sh
 │   │   └── config/
-│   │       ├── system-config.sh
-│   │       ├── organizeHome.sh
-│   │       ├── dev.sh         # submodule `config/*` subsets + Git defaults + Vimrc + VS Code user settings path
-│   │       ├── security.sh    # UFW deny/enable + SSH
-│   │       └── shell.sh       # Ghostty/tmux/modular ~/.config paths, ~/.dotfiles_path, chsh if needed
-│   ├── dotfiles/              # submodule
+│   │       ├── all.sh
+│   │       ├── dev/
+│   │       │   ├── all.sh
+│   │       │   └── gitconfig.sh
+│   │       ├── dotfiles.manifest
+│   │       ├── dotfiles.sh
+│   │       ├── home/
+│   │       │   ├── all.sh
+│   │       │   └── organize-home.sh
+│   │       ├── security/
+│   │       │   ├── all.sh
+│   │       │   └── ufw-rules.sh
+│   │       ├── shell/
+│   │       │   ├── all.sh
+│   │       │   ├── chsh-zsh.sh
+│   │       │   └── dotfiles-zshrc.sh
+│   │       └── system/
+│   │           ├── all.sh
+│   │           ├── gnome-gsettings.sh
+│   │           ├── screenshots-directory.sh
+│   │           ├── system-policy.sh
+│   │           └── unattended-upgrades.sh
+│   ├── dotfiles/                  # submodule
 │   └── assets/
 └── ...
 ```
 
 ### Execution flow (`master.sh`)
 
-1. **`install/pre-install.sh`** — essential APT packages, timezone if still UTC
-2. **`config/system-config.sh`** — GNOME defaults (when schemas/bus exist), unattended upgrades sysctl/guest login tweaks
-3. **`config/organizeHome.sh`** — home folders and permissions
-4. **`install/cli.sh`** — Flatpak, **`btop`**, **`fastfetch`** (APT or backports), other CLI APT packages, Flathub
-5. **`install/media.sh`**, **`install/productivity.sh`**
-6. **`install/dev.sh`** — NodeSource Node, NVM, Docker CE (Debian repo), Neovim APT, Postman Flatpak, `semgrep`, `src` CLI
-7. **`config/dev.sh`** — copy editor/XDG subsets from **`src/dotfiles/config/`**, Git globals, Vimrc path, VS Code `settings.json` when missing
-8. **`install/security.sh`** — UFW/OpenVPN APT, Proton tooling, Signal, pen-test packages, clones under `~/Hacking`
-9. **`config/security.sh`** — **`ufw` defaults** after the package exists
-10. **`install/shell.sh`** — Zsh/Tmux/fonts/Ghostty/Oh My Posh installers
-11. **`install/post-install.sh`** — `apt-get upgrade`/docker group/banner (**UFW `--force enable` stays best-effort here too**)
-12. **`config/shell.sh`** — **`home/`** dotfiles (**`home/.tmux.conf`** pulls in **`~/.config/tmux/includes/base.conf`** once **`config/tmux/`** lands under **`~/.config`**), **`~/.dotfiles_path`** for the Linux zsh snippet in the dotfiles submodule, `chsh` when possible
+1. **`install/preflight/all.sh`** — essential APT packages, timezone if still UTC, contrib/non-free enablement
+2. **`config/system/all.sh`** — GNOME defaults (when schemas/bus exist), screenshots dir, unattended upgrades, sysctl/guest login tweaks
+3. **`config/home/all.sh`** — home folders and permissions
+4. **`install/all.sh`** — package lists, third-party APT repos, dev/shell/app leaf scripts, `.deb` installers, post-install hooks
+5. **`config/dev/all.sh`** — copy `src/dotfiles/config/` subtrees, Git globals, Vimrc path, VS Code `settings.json` when missing
+6. **`config/security/all.sh`** — `ufw` defaults after the package exists
+7. **`config/shell/all.sh`** — `home/` dotfiles, `~/.dotfiles_path` cache, `chsh` when possible
+
+`run-install.sh` runs only the install phase; `run-config.sh` runs only the config phase.
+
+### Validation scripts (`scripts/`)
+
+| Script                     | Use with                                   |
+| -------------------------- | ------------------------------------------ |
+| `validate-installs-cli.sh` | After `run-install.sh cli`                 |
+| `validate-installs.sh`     | After `run-install.sh all` or `master.sh`  |
+| `validate-config-only.sh`  | After `run-config.sh`                      |
+| `validate-config.sh`       | After `master.sh` or full install + config |
+| `validate.sh`              | After `master.sh` (installs + config)      |
 
 ---
 
@@ -203,56 +295,59 @@ The lists below mirror the **`install/`** and **`config/`** split; open each fil
 
 ### **`install/` bundle**
 
-#### 🧰 **Bootstrap** (`install/pre-install.sh`)
+#### 🧰 **Bootstrap** (`install/preflight/all.sh`)
 
-- APT housekeeping; toolchain packages (`git`, `curl`, `wget`, `gnupg`, etc.).
+- APT housekeeping; toolchain packages (`git`, `curl`, `wget`, `gnupg`, `lsb-release`, etc.).
 - Sets timezone away from **`UTC`** toward **`America/New_York`** when still UTC.
+- Enables **`contrib`/`non-free`/`non-free-firmware`** on sources lists when missing.
 
-#### 🛠️ **CLI Tools** (`install/cli.sh`)
+#### 🛠️ **CLI Tools** (`install/packages/base.packages`, `install/packages/shell.packages`)
 
-- Flatpak + Flathub.
-- Essentials: **`bat`**, **`curl`**, **`eza`**, **`fastfetch`** (APT or backports),
-  **`fd-find`**, **`git`**, **`htop`**, **`jq`**, **`ripgrep`**, **`vim`**, **`wget`**.
-- **`btop`**: APT on Debian 12+.
+- Essentials: **`bat`**, **`curl`**, **`eza`**, **`fastfetch`** (main archive or backports),
+  **`fd-find`**, **`git`**, **`htop`**, **`jq`**, **`ripgrep`**, **`vim`**, **`wget`**, **`zoxide`**.
+- **`btop`**, **`tealdeer`**, **`tree-sitter-cli`**.
+- Zsh + plugins, **`tmux`**, Fira Code / Font Awesome fonts.
 
-#### 💻 **Development packages** (`install/dev.sh`)
+#### 💻 **Development packages** (`install/dev/`, `install/packages/`)
 
 - Node.js **`nodejs`** via NodeSource (**24.x** branch), NVM install script when missing,
-  **`@vue/cli`** globally, **`python3`** toolchain, Docker CE repos + Compose plugin,
-  **`neovim`**, **`gh`**, **`shellcheck`**, **`semgrep`** (pip), **`src`** (Sourcegraph), Postman (**Flatpak**).
+  **`@vue/cli`** globally.
+- **`python3`** toolchain, Docker CE repos + Compose plugin, **`golang-go`**.
+- **`neovim`**, **`gh`**, **`shellcheck`**, **`semgrep`** (pip), **`ollama`**, **`rustup`**, **`cursor`**.
+- Language servers: npm LSPs, Lua LS, Ruby **`solargraph`**.
 
-#### 🎬 **Media** (`install/media.sh`)
+#### 🎬 **Media** (`install/packages/media.packages`, `install/packages/optional-desktop.packages`)
 
-Brave, VLC, Spotify (**Flatpak**), multimedia codec packages, **`ttf-mscorefonts-installer`**.
+VLC, multimedia codec packages, **`ttf-mscorefonts-installer`**.
 
-#### 📊 **Productivity** (`install/productivity.sh`)
+#### 📊 **Productivity** (`install/packages/productivity.packages`, `install/apps/`)
 
-LibreOffice, Zoom (`.deb` from zoom.us), Google Chrome, KeePassXC, Redshift,
-Flameshot, Balena Etcher AppImage.
+LibreOffice, Google Chrome (`.deb`), KeePassXC, Redshift, Flameshot, Balena Etcher (`.deb`).
 
-#### 🔒 **Security packages & payloads** (`install/security.sh`)
+#### 🔒 **Security packages & payloads** (`install/apps/`, `install/packages/`)
 
-- **`ufw`** and **`openvpn`** APT packages (rules live in **`config/security.sh`**).
-- Proton VPN desktop meta-package, Signal desktop APT repo, **`nmap`**, **`exiftool`**, **OWASP ZAP** (APT **`zaproxy`**), Proton Pass desktop + CLI installers.
-- Optionally clones **`PayloadsAllTheThings`** / **`SecLists`** into **`~/Hacking`** (directory expected from **`config/organizeHome.sh`** in a typical full run).
+- **`ufw`** and **`openvpn`** APT packages (rules live in **`config/security/ufw-rules.sh`**).
+- Proton VPN desktop meta-package, Signal desktop APT repo, **`nmap`**, **`exiftool`**, **OWASP ZAP** (snap), Proton Pass desktop + CLI installers.
+- Optionally clones **`PayloadsAllTheThings`** / **`SecLists`** into **`~/Hacking`** (directory expected from **`config/home/organize-home.sh`** in a typical full run).
 
-#### 🐚 **Shell tooling** (`install/shell.sh`)
+#### 🐚 **Shell tooling** (`install/shell/`)
 
-Zsh plugins, **`tmux`**, Meslo/Fira/powerline APT fonts plus optional Nerd Font drop, Ghostty via **`debian.griffo.io`** APT repo,
-user Oh My Posh binary + theme stash under **`/usr/share/oh-my-posh/themes`** when empty.
+Zsh plugins, **`tmux`**, Meslo Nerd Font drop, Ghostty via **`debian.griffo.io`** APT repo,
+user Oh My Posh binary.
 
-#### 🏁 **Post maintenance** (`install/post-install.sh`)
+#### 🏁 **Post maintenance** (`install/post-install/all.sh`)
 
-`apt-get upgrade`, Docker systemd + **`docker`** group enrollment, **`ufw`** best-effort enable, and a completion banner (`src/assets/debian.txt`, Debian ASCII derived from [fastfetch](https://github.com/fastfetch-cli/fastfetch) with color tokens removed for plain terminals).
+`apt-get autoremove`/autoclean, Docker systemd + **`docker`** group enrollment, `tldr` cache update,
+and a completion banner (`src/assets/debian.txt`).
 
 ### **`config/` bundle**
 
-#### 🏠 **Home layout** (`config/organizeHome.sh`)
+#### 🏠 **Home layout** (`config/home/organize-home.sh`)
 
 - Drops empty **`Music`/`Public`/`Templates`** where applicable.
 - Creates **`~/Projects`**, **`~/Hacking`**, **`~/AppImages`**, **`~/Projects/opensource`** / **`personal`**, adjusts **`Scripts`/`Hacking`** permissions.
 
-#### ⚙️ **Desktop & unattended APT** (`config/system-config.sh`)
+#### ⚙️ **Desktop & unattended APT** (`config/system/`)
 
 - **GNOME** (logged-in Desktop / D-Bus): dark mode, animations, clocks, scrolling, Nautilus, screenshots, Dash to Dock (**when schema exists**), Night Light, lock/privacy, search providers.
 - Installs **`unattended-upgrades`** and drops **`20auto-upgrades`** when missing.
@@ -260,25 +355,24 @@ user Oh My Posh binary + theme stash under **`/usr/share/oh-my-posh/themes`** wh
 
 Minimal/CI runners without GNOME skip **`gsettings`** safely.
 
-#### 💻 **Editor & Git prefs** (`config/dev.sh`)
+#### 💻 **Editor & Git prefs** (`config/dev/all.sh`)
 
-- Copies a **focused set** from **`src/dotfiles/config/`** into **`~/.config/`**: **`nvim`**, **`btop`**, **`fastfetch`**, **`alacritty`**, **`kitty`**, **`zellij`** (trees skipped when **`~/.config/<app>/`** already exists).
+- Copies **`src/dotfiles/config/`** subtrees into **`~/.config/`** (skipped when **`~/.config/<app>/`** already exists).
 - Copies **`home/.vimrc`** and VS Code **`User/settings.json`** when missing (**`~/.config/Code/User`** on Linux).
-- Seeds **`~/.gitconfig`** **only when absent** with global credential helper + identity defaults matching the legacy script behavior.
+- Seeds **`~/.gitconfig`** **only when absent** with global credential helper + identity defaults.
 
-#### 🔒 **UFW posture** (`config/security.sh`)
+#### 🔒 **UFW posture** (`config/security/ufw-rules.sh`)
 
-`ufw reset`, deny incoming / allow outgoing, allow **`ssh`**, force enable (expects **`install/security.sh`** to have installed \*\*`ufw` first`).
+`ufw reset`, deny incoming / allow outgoing, allow **`ssh`**, force enable (expects the install phase to have installed **`ufw`** first).
 
-#### 🐚 **Shell dotfiles & terminal configs** (`config/shell.sh`)
+#### 🐚 **Shell dotfiles & terminal configs** (`config/shell/`)
 
-- Copies **`Ghostty`**, **`oh-my-posh`**, and the **modular `config/tmux/`** subtree into **`~/.config`** (tmux **`source-file`** layout — see **`src/dotfiles/README.md`**).
 - Copies **`home/.tmux.conf`**, **`home/.zshrc`**, optional **`home/.bashrc`** when missing.
 - Maintains **`~/.dotfiles_path`** so **`home/.zshrc`** resolves **`DOTFILES`**; runs **`chsh`** when possible.
 
-**Full symlink mirror**: from **`src/dotfiles`**, **`./setup.sh --link-xdg-config`** installs every **`config/<app>/`** tree under **`$XDG_CONFIG_HOME`** ([dotfiles README](https://github.com/garretpatten/dotfiles/blob/master/README.md)). Parent **`config/`** scripts still provision the subset above for first-touch machines.
+**Full mirror**: from **`src/dotfiles`**, **`./setup.sh --link-xdg-config`** installs every **`config/<app>/`** tree under **`$XDG_CONFIG_HOME`** ([dotfiles README](https://github.com/garretpatten/dotfiles/blob/master/README.md)). Parent **`config/`** scripts still provision the subset above for first-touch machines.
 
-Other runtime actions people often treat as configuration still live with installs for ordering reasons: **`install/post-install.sh`** enables Docker/`ufw`; **`npm run installs`** omits **`config/`** entirely so run **`npm run config`** afterward for dotfiles parity.
+Other runtime actions people often treat as configuration still live with installs for ordering reasons: `install/post-install/docker-service.sh` enables Docker/`ufw`; `npm run installs` omits `config/` entirely so run `npm run config` afterward for dotfiles parity.
 
 ## 📊 Monitoring & Logs
 
@@ -315,7 +409,9 @@ After installation, check:
 # Ensure scripts are executable
 chmod +x src/scripts/*.sh \
   src/scripts/install/*.sh \
-  src/scripts/config/*.sh
+  src/scripts/install/**/*.sh \
+  src/scripts/config/*.sh \
+  src/scripts/config/**/*.sh
 ```
 
 **Package installation fails:**
