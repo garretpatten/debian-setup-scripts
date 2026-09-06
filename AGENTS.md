@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # Agent guide — debian-setup-scripts
 
 Bash automation for Debian (12+) development machines: modular install scripts,
@@ -6,15 +8,25 @@ shared helpers, and a `src/dotfiles` git submodule. Changes should stay **idempo
 
 ## Repository layout
 
-| Path                   | Purpose                                                                                                              |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `src/scripts/`         | `utils.sh`, `master.sh`, `run-install.sh`, `run-config.sh`                                                           |
-| `src/scripts/install/` | APT/Flatpak, third-party installers, repo clones (no `gsettings`/dotfiles)                                           |
-| `src/scripts/config/`  | GNOME defaults, home layout, UFW policy after packages, targeted dotfile copies into `~`, `~/.dotfiles_path`, `chsh` |
-| `src/scripts/utils.sh` | Helpers, `SCRIPTS_DIR`, paths, logging, safe copy/download                                                           |
-| `src/dotfiles/`        | Submodule — [garretpatten/dotfiles](https://github.com/garretpatten/dotfiles)                                        |
-| `src/assets/`          | Completion banner ASCII (`debian.txt`; Fastfetch-derived)                                                            |
-| `.github/workflows/`   | CI: `master.sh` + quality workflows                                                                                  |
+| Path                                      | Purpose                                                                                                              |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `src/scripts/`                            | `master.sh`, `run-install.sh`, `run-config.sh`                                                                       |
+| `src/scripts/install/`                    | APT, third-party installers, repo clones (no `gsettings`/dotfiles)                                                   |
+| `src/scripts/install/all.sh`              | Full install orchestrator (pass `cli` or `--cli` for CLI-only mode)                                                  |
+| `src/scripts/install/cli.sh`              | Thin wrapper that runs `install/all.sh --cli`                                                                        |
+| `src/scripts/install/packages/*.packages` | Apt package lists (one per line)                                                                                     |
+| `src/scripts/install/apps/`               | Chrome, Etcher, Proton Pass/VPN, Signal, snaps, hacking repos, ufw-docker                                            |
+| `src/scripts/install/dev/`                | Languages, runtimes, LSPs, cursor, ollama, rustup, nvm, etc.                                                         |
+| `src/scripts/install/shell/`              | Ghostty, Meslo Nerd Font, Oh My Posh                                                                                 |
+| `src/scripts/install/preflight/`          | apt update, essential tools, timezone                                                                                |
+| `src/scripts/install/post-install/`       | apt cleanup, docker service, tldr cache, banner                                                                      |
+| `src/scripts/install/repos/`              | APT repository manifest + parallel setup                                                                             |
+| `src/scripts/lib/`                        | Shared helpers: env, run, apt packages/repos, parallel, dotfiles, snap install, zsh login, git submodules            |
+| `src/scripts/config/`                     | GNOME defaults, home layout, UFW policy after packages, targeted dotfile copies into `~`, `~/.dotfiles_path`, `chsh` |
+| `src/dotfiles/`                           | Submodule — [garretpatten/dotfiles](https://github.com/garretpatten/dotfiles)                                        |
+| `src/assets/`                             | Completion banner ASCII (`debian.txt`; Fastfetch-derived)                                                            |
+| `scripts/`                                | Validation scripts for installs, config, and full master runs                                                        |
+| `.github/workflows/`                      | CI: four test jobs + quality workflows                                                                               |
 
 ## Dotfiles submodule
 
@@ -32,64 +44,65 @@ If a dotfiles change is needed:
 
 ### Orchestration
 
-- **`master.sh`**: `install/pre-install.sh` → `config/system-config.sh` → `config/organizeHome.sh`
-  → `install/cli.sh` / `media.sh` / `productivity.sh` → `install/dev.sh` → `config/dev.sh`
-  → `install/security.sh` → `config/security.sh` → `install/shell.sh` → `install/post-install.sh`
-  → `config/shell.sh`.
-- **`run-install.sh`**: `install/` only (`$SCRIPTS_DIR/install`).
-- **`run-config.sh`**: `config/` only (`$SCRIPTS_DIR/config`).
-- **`npm run all`** / **`npm run installs`** / **`npm run config`** delegate to those scripts (**`npm install`** at repo root first).
+- **`master.sh`**: `install/preflight/all.sh` → `config/system/all.sh` → `config/home/all.sh`
+  → `install/all.sh` → `config/dev/all.sh` → `config/security/all.sh` → `config/shell/all.sh`.
+  Initializes/updates the `src/dotfiles` submodule before running config.
+- **`run-install.sh [cli|all]`**: `install/` only. `cli` runs `install/cli.sh`; `all` (default) runs `install/all.sh`.
+- **`run-config.sh`**: `config/` only. Initializes/updates the `src/dotfiles` submodule before running config.
+- **`npm run all`** / **`npm run install:cli`** / **`npm run install:all`** / **`npm run installs`** /
+  **`npm run config`** delegate to those scripts (**`npm install`** at repo root first).
 
 ## Script conventions
 
-Scripts in **`install/`** and **`config/`**:
+Scripts in **`install/`** and **`config/`** leaf directories:
 
-1. `#!/bin/bash`, then `# shellcheck source=../utils.sh` and `source "$(dirname "$0")/../utils.sh"`.
-2. Scripts next to **`utils.sh`** use `# shellcheck source=utils.sh` and `source "$(dirname "$0")/utils.sh"`.
-
-3. Prefer helpers from **`utils.sh`** (`install_apt_packages`, `copy_directory_safe`,
-   `download_file_safe`, `gsettings_ok`, …).
-
-4. Non-fatal style where the rest of the repo does: `|| true`, `2>>"$ERROR_LOG_FILE"`, **`log_error`**
-   from orchestrators only for stage failures.
-
-5. **Headless-safe**: **`gsettings`** only behind **`gsettings_ok`**;
-   **`config/security.sh`** exits quietly if **`ufw`** is not installed (**`npm run config`**
-   alone on a minimal box).
+1. `#!/bin/bash`.
+2. Orchestrators (`master.sh`, `*/all.sh`) source `lib/env.sh`, `lib/run.sh`, and `# shellcheck source=...`
+   for any other `lib/*.sh` they use.
+3. Leaf scripts should be plain commands; avoid sourcing helpers directly when the orchestrator already sourced them.
+4. Non-fatal style: `|| true`, best-effort downloads, `apt-get install` with `--no-install-recommends`.
+5. **Headless-safe**: **`gsettings`** only behind **`gnome_session_active`** and D-Bus checks;
+   **`config/security/ufw-rules.sh`** exits quietly if **`ufw`** is not installed.
 
 Paths:
 
 - **`PROJECT_ROOT`** is the repo root (two levels above **`src/scripts/`**).
-- Dotfiles checkout: **`$PROJECT_ROOT/src/dotfiles`**. **`config/dev.sh`** and **`config/shell.sh`**
-  copy selective **`config/<app>/`** trees (parity with **`macOS-setup-scripts`**). **`home/.tmux.conf`**
-  in the submodule expects **`config/tmux/`** under **`~/.config`**; see **`src/dotfiles/README.md`**.
-  For every app: **`(cd src/dotfiles && ./setup.sh --link-xdg-config)`**.
+- Dotfiles checkout: **`$PROJECT_ROOT/src/dotfiles`**. **`config/dotfiles.sh`** copies
+  **`config/<app>/`** trees into **`~/.config/`** (skipped when the destination already exists).
+  **`home/.tmux.conf`** in the submodule expects **`config/tmux/`** under **`~/.config`**;
+  see **`src/dotfiles/README.md`**.
 
 **Submodule workflow**: **`git submodule update --init --recursive src/dotfiles/`**. Content edits
 belong upstream in **dotfiles**; bump copies here when a new subtree is mandatory for provisioning.
 
 ## Product and safety constraints
 
-- **Night Light** (`config/system-config.sh`) conflicts with **Redshift** (`install/productivity.sh`); pick one policy.
-- **Security**: Verified downloads/keyrings, **`download_file_safe`**, least-privilege dirs, **`config/security.sh`** **`ufw`** defaults.
+- **Night Light** (`config/system/gnome-gsettings.sh`) conflicts with **Redshift** (`install/packages/productivity.packages`); pick one policy.
+- **Security**: Verified downloads/keyrings, least-privilege dirs, **`config/security/ufw-rules.sh`** **`ufw`** defaults.
 - **User impact**: Logout/login for **`docker`** group / default shell / GNOME tweaks.
 - No secrets or machine-local paths committed.
 - **Debian packaging**: prefer official Debian repos, backports, or documented third-party APT sources over PPAs and snaps.
 
 ## Testing and CI
 
-- **Test Runner**: `chmod +x` **`src/scripts/*.sh`**, **`install/*.sh`**, **`config/*.sh`**, then **`bash src/scripts/master.sh`**
-  in a **`debian:bookworm`** container with tolerated failures; **`setup_errors.log`** must pass the workflow filter.
+`.github/workflows/test-runner.yaml` runs four jobs in a **`debian:bookworm`** container:
+
+- `test-cli`: `run-install.sh cli` → `scripts/validate-installs-cli.sh`
+- `test-config`: `run-config.sh` → `scripts/validate-config-only.sh`
+- `test-full`: `run-install.sh all` → `scripts/validate-installs.sh`
+- `test-master`: `master.sh` → `scripts/validate.sh` (full installs + config)
+
+GNOME gsettings scripts no-op without an active GNOME session.
 
 ## Making changes
 
-| Task                          | Edit                                                                                              |
-| ----------------------------- | ------------------------------------------------------------------------------------------------- |
-| Packages/installers/clones    | Matching **`install/*.sh`**                                                                       |
-| GNOME/apt/session/user layout | **`config/system-config.sh`**, **`organizeHome.sh`**, **`install/pre-install.sh`** as appropriate |
-| Firewall                      | `config/security.sh` (policy) plus `install/security.sh` (install `ufw` first)                    |
-| Dotfile deploy                | **`config/dev.sh`** / **`config/shell.sh`**                                                       |
-| Shared logic                  | **`utils.sh`**                                                                                    |
+| Task                          | Edit                                                                                          |
+| ----------------------------- | --------------------------------------------------------------------------------------------- |
+| Packages/installers/clones    | Matching **`install/*/`** scripts or **`install/packages/*.packages`**                        |
+| GNOME/apt/session/user layout | **`config/system/`**, **`config/home/`**, **`install/preflight/`** as appropriate             |
+| Firewall                      | `config/security/ufw-rules.sh` (policy) plus `install/packages/base.packages` (install `ufw`) |
+| Dotfile deploy                | **`config/dotfiles.sh`**, **`config/dotfiles.manifest`**                                      |
+| Shared logic                  | **`src/scripts/lib/*.sh`**                                                                    |
 
 ## Commits and PRs
 
@@ -103,20 +116,18 @@ Run the checks that match what you changed—**all of the following** still need
 npm install
 
 npx prettier --check .
-shellcheck -x -P SCRIPTDIR src/scripts/utils.sh \
-  src/scripts/master.sh \
-  src/scripts/run-install.sh \
-  src/scripts/run-config.sh \
-  src/scripts/install/*.sh \
-  src/scripts/config/*.sh
-npx markdownlint-cli2 "**/*.md" "#node_modules" "#src/dotfiles/node_modules"
-yamllint .github .yamllint .markdownlint.yaml
+shellcheck -x src/scripts/**/*.sh scripts/**/*.sh
+npx markdownlint-cli2 README.md AGENTS.md
+yamllint .github .yamllint
 ```
 
-| If you edited                                                                                     | Run (in addition to **`prettier`** / **`shellcheck`** when applicable)               |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Any **`*.md`** at repo root (not submodule)                                                       | **`markdownlint-cli2`** on those paths or the glob above                             |
-| Workflows, **`ISSUE_TEMPLATE`**, **`dependabot.yaml`**, **`.yamllint`**, **`.markdownlint.yaml`** | **`yamllint`** on the same paths |
+When install or validation logic changes, run the matching validation script locally
+(for example `./scripts/validate-installs-cli.sh` after `bash src/scripts/run-install.sh cli`).
+
+| If you edited                                                                                     | Run (in addition to **`prettier`** / **`shellcheck`** when applicable) |
+| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Any **`*.md`** at repo root (not submodule)                                                       | **`markdownlint-cli2`** on those paths or the glob above               |
+| Workflows, **`ISSUE_TEMPLATE`**, **`dependabot.yaml`**, **`.yamllint`**, **`.markdownlint.yaml`** | **`yamllint`** on the same paths                                       |
 
 Install **`yamllint`** locally if missing (for example `pip install yamllint`). CI’s **Quality Checks** workflow already runs **`yamllint`** on YAML and **`markdownlint`** on Markdown in PRs—local runs should pass before you finalize.
 
