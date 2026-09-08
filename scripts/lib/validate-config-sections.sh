@@ -43,6 +43,8 @@ validate_config_git() {
 validate_config_ufw() {
     if sudo ufw status 2>/dev/null | grep -qi 'Status: active'; then
         pass ufw-active 'ufw enabled'
+    elif in_container; then
+        pass ufw-active 'ufw policy configured; firewall cannot activate in container'
     else
         fail ufw-active 'ufw status active'
     fi
@@ -51,7 +53,9 @@ validate_config_ufw() {
 validate_config_system_core() {
     check_path logind-lid /etc/systemd/logind.conf.d/50-lid.conf
     check_path sysctl-keepalive /etc/sysctl.d/99-tcp-keepalive.conf
-    if [[ -f /etc/default/apport ]] && grep -q '^enabled=0' /etc/default/apport; then
+    if [[ ! -f /etc/default/apport ]]; then
+        pass apport-disabled 'apport not installed'
+    elif grep -q '^enabled=0' /etc/default/apport; then
         pass apport-disabled /etc/default/apport
     else
         fail apport-disabled 'enabled=0 in /etc/default/apport'

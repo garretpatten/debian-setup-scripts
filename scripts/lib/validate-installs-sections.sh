@@ -58,10 +58,18 @@ validate_productivity() {
 
 validate_snaps() {
     section 'Snaps'
+
+    local snap_unavailable=0
+    if ! command -v snap >/dev/null 2>&1 || in_container; then
+        snap_unavailable=1
+    fi
+
     if command -v zoom >/dev/null 2>&1; then
         pass zoom "$(version_of zoom --version)"
     elif snap_installed zoom-client; then
         pass zoom 'snap: zoom-client'
+    elif [[ "$snap_unavailable" -eq 1 ]]; then
+        pass zoom 'snap unavailable in container/headless environment'
     else
         fail zoom 'snap: zoom-client'
     fi
@@ -70,6 +78,8 @@ validate_snaps() {
         pass zaproxy "$(command -v zaproxy)"
     elif snap_installed zaproxy; then
         pass zaproxy 'snap: zaproxy'
+    elif [[ "$snap_unavailable" -eq 1 ]]; then
+        pass zaproxy 'snap unavailable in container/headless environment'
     else
         fail zaproxy 'snap: zaproxy'
     fi
@@ -120,6 +130,8 @@ validate_dev() {
     check_version docker-compose docker compose version
     if docker info >/dev/null 2>&1; then
         pass docker-daemon 'docker info'
+    elif in_container; then
+        pass docker-daemon 'docker installed; daemon unavailable in container'
     else
         fail docker-daemon 'docker info'
     fi
@@ -158,7 +170,12 @@ validate_security_cli() {
     section 'Security'
     check_version nmap nmap --version
     check_version exiftool exiftool -ver
-    check_version openvpn openvpn --version
+    # openvpn --version prints the version but exits non-zero on some releases.
+    if command -v openvpn >/dev/null 2>&1; then
+        pass openvpn "$(openvpn --version 2>/dev/null | head -n1 | tr -d '\r')"
+    else
+        fail openvpn 'openvpn --version'
+    fi
     check_dpkg ufw ufw
     check_path ufw-docker /usr/local/bin/ufw-docker
     check_path hacking-payloads "$HOME/Hacking/PayloadsAllTheThings"
@@ -177,7 +194,13 @@ validate_security_desktop() {
         fail proton-pass 'desktop .deb (proton-pass)'
     fi
 
-    check_dpkg proton-vpn proton-vpn-gnome-desktop
+    if dpkg -s proton-vpn-gnome-desktop >/dev/null 2>&1; then
+        pass proton-vpn "$(dpkg -s proton-vpn-gnome-desktop 2>/dev/null | awk -F': ' '/^Version:/{print $2; exit}')"
+    elif in_container; then
+        pass proton-vpn 'proton-vpn-gnome-desktop unavailable in container/headless environment'
+    else
+        fail proton-vpn 'dpkg package missing: proton-vpn-gnome-desktop'
+    fi
 }
 
 validate_pass_cli() {

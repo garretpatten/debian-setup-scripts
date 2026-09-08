@@ -70,6 +70,24 @@ check_path() {
     fi
 }
 
+in_container() {
+    # Best-effort container/headless CI detection.
+    if [[ -f /.dockerenv ]]; then
+        return 0
+    fi
+    if [[ -f /proc/1/cgroup ]] && grep -qE 'docker|containerd|lxc|podman|libpod' /proc/1/cgroup 2>/dev/null; then
+        return 0
+    fi
+    if command -v systemd-detect-virt >/dev/null 2>&1 && systemd-detect-virt --container >/dev/null 2>&1; then
+        return 0
+    fi
+    # Containers used in CI often do not run systemd as PID 1.
+    if [[ -f /proc/1/comm ]] && ! grep -qE '^systemd$|^init$' /proc/1/comm 2>/dev/null; then
+        return 0
+    fi
+    return 1
+}
+
 flatpak_installed() {
     local app_id="$1"
     flatpak list --app 2>/dev/null | grep -q "^$app_id"

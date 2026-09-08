@@ -35,6 +35,8 @@ ASYNC_SCRIPTS=(
     dev/cursor-cli.sh
     dev/ollama.sh
     dev/semgrep.sh
+    dev/eza.sh
+    dev/tree-sitter-cli.sh
     dev/ruby-gems.sh
     dev/vue-cli.sh
     dev/language-servers.sh

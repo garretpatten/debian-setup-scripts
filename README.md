@@ -196,6 +196,7 @@ debian-setup-scripts/
 │   │   │   │   └── ufw-docker.sh
 │   │   │   ├── dev/
 │   │   │   │   ├── cursor-cli.sh
+│   │   │   │   ├── eza.sh
 │   │   │   │   ├── git-credential-libsecret.sh
 │   │   │   │   ├── go.sh
 │   │   │   │   ├── language-servers.sh
@@ -204,6 +205,7 @@ debian-setup-scripts/
 │   │   │   │   ├── ruby-gems.sh
 │   │   │   │   ├── rustup.sh
 │   │   │   │   ├── semgrep.sh
+│   │   │   │   ├── tree-sitter-cli.sh
 │   │   │   │   └── vue-cli.sh
 │   │   │   ├── packages/
 │   │   │   │   └── *.packages    # One-per-line apt package lists
