@@ -34,6 +34,7 @@ if [[ "$RESTART_LOGIND" == 1 ]]; then
 fi
 sysctl_conf="/etc/sysctl.d/99-tcp-keepalive.conf"
 if [[ ! -f "$sysctl_conf" ]]; then
+    mkdir -p "$(dirname "$sysctl_conf")"
     printf "%s\n" \
         "net.ipv4.tcp_keepalive_time = 600" \
         "net.ipv4.tcp_keepalive_intvl = 30" \

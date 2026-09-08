@@ -29,8 +29,10 @@ if [[ ! -f "$download_path" ]] || [[ ! -s "$download_path" ]]; then
     exit 0
 fi
 
-tar -xzf "$download_path" -C "${TEMP_DIR:-/tmp}" eza 2>/dev/null || exit 0
+extract_dir="${TEMP_DIR:-/tmp}/eza-extract"
+mkdir -p "$extract_dir"
+tar -xzf "$download_path" -C "$extract_dir" 2>/dev/null || exit 0
 
-if [[ -x "${TEMP_DIR:-/tmp}/eza" ]]; then
-    sudo install -m 755 "${TEMP_DIR:-/tmp}/eza" /usr/local/bin/eza || true
+if [[ -x "$extract_dir/eza" ]]; then
+    sudo install -m 755 "$extract_dir/eza" /usr/local/bin/eza || true
 fi
