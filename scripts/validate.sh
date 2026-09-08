@@ -3,7 +3,7 @@
 set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
-export PATH="${HOME}/.cargo/bin:${HOME}/.local/bin:/usr/local/bin:${PATH}"
+export PATH="${HOME}/.cargo/bin:${HOME}/.local/bin:/usr/local/bin:/usr/sbin:/sbin:${PATH}"
 
 failures=0
 chmod +x scripts/validate-installs.sh scripts/validate-config.sh
