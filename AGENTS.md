@@ -133,6 +133,12 @@ Install **`yamllint`** locally if missing (for example `pip install yamllint`). 
 
 If you change **`src/dotfiles/`**, run the submodule’s tooling as well.
 
+## GitHub Actions
+
+Whenever a GitHub workflow is added, all GitHub Action pins in that workflow
+should be updated to point to the full-length commit SHA of the most recent
+release.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
