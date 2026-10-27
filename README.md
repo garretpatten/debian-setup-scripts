@@ -305,7 +305,8 @@ The lists below mirror the **`install/`** and **`config/`** split; open each fil
 
 #### 🛠️ **CLI Tools** (`install/packages/base.packages`, `install/packages/shell.packages`)
 
-- Essentials: **`bat`**, **`curl`**, **`eza`**, **`fastfetch`** (main archive or backports),
+- Essentials: **`bat`**, **`curl`**, **`eza`**, **`fastfetch`** (main archive, backports,
+  or GitHub release when absent),
   **`fd-find`**, **`git`**, **`htop`**, **`jq`**, **`ripgrep`**, **`vim`**, **`wget`**, **`zoxide`**.
 - **`btop`**, **`tealdeer`**, **`tree-sitter-cli`**.
 - Zsh + plugins, **`tmux`**, Fira Code / Font Awesome fonts.
@@ -334,7 +335,8 @@ LibreOffice, Google Chrome (`.deb`), KeePassXC, Redshift, Flameshot, Balena Etch
 
 #### 🐚 **Shell tooling** (`install/shell/`)
 
-Zsh plugins, **`tmux`**, Meslo Nerd Font drop, Ghostty via **`debian.griffo.io`** APT repo,
+Zsh plugins, **`tmux`**, Meslo Nerd Font drop, Ghostty via the community `.deb` packages
+linked from **ghostty.org**,
 user Oh My Posh binary.
 
 #### 🏁 **Post maintenance** (`install/post-install/all.sh`)
