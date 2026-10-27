@@ -41,6 +41,11 @@ ASYNC_SCRIPTS=(
     dev/vue-cli.sh
     dev/language-servers.sh
     dev/go.sh
+    dev/neovim.sh
+    dev/fastfetch.sh
+    dev/lazygit.sh
+    dev/lazydocker.sh
+    dev/yazi.sh
     shell/ghostty.sh
     shell/meslo-nerd-font.sh
     shell/oh-my-posh.sh
@@ -85,16 +90,6 @@ if is_desktop; then
     run_script "$DIR/apps/protonvpn-install.sh"
 fi
 
-# Enable backports for fastfetch on Debian releases where it is not in the main archive.
-debian_codename="$(lsb_release -sc 2>/dev/null || echo "")"
-if [[ -n "$debian_codename" ]] && ! apt-cache show fastfetch >/dev/null 2>&1; then
-    backports_list="/etc/apt/sources.list.d/${debian_codename}-backports.list"
-    if [[ ! -f "$backports_list" ]]; then
-        echo "deb http://deb.debian.org/debian ${debian_codename}-backports main contrib non-free non-free-firmware" | \
-            sudo tee "$backports_list" >/dev/null || true
-    fi
-fi
-
 add_ppas_parallel
 sudo apt-get update -y || true
 
@@ -112,11 +107,6 @@ fi
 echo "==> Installing dev and language packages..."
 install_apt_packages_from_file "$DIR/packages/lsp.packages"
 install_apt_packages_from_file "$DIR/packages/dev.packages"
-
-echo "==> Installing griffo and fastfetch packages..."
-install_apt_packages_from_files optional \
-    "$DIR/packages/griffo.packages" \
-    "$DIR/packages/fastfetch.packages"
 
 if is_desktop; then
     echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections || true
