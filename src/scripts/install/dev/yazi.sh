@@ -1,15 +1,16 @@
 #!/bin/bash
 # Yazi file manager binary install for Debian releases where the apt package is unavailable.
+# Uses the static musl build; the gnu build requires a newer glibc than bookworm ships.
 
 command -v yazi >/dev/null 2>&1 && exit 0
 
 arch="$(uname -m)"
 case "$arch" in
     x86_64)
-        target="x86_64-unknown-linux-gnu"
+        target="x86_64-unknown-linux-musl"
         ;;
     aarch64 | arm64)
-        target="aarch64-unknown-linux-gnu"
+        target="aarch64-unknown-linux-musl"
         ;;
     *)
         echo "Unsupported architecture for yazi binary install: $arch" >&2
