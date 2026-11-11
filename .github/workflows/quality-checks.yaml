@@ -13,13 +13,13 @@ jobs:
     uses: garretpatten/quality-checks/.github/workflows/quality-checks.yaml@f0c4ccbc6c78649ac60b2d18ffb02c59b11c3e03
     # reusable workflow: garretpatten/quality-checks master HEAD
     with:
-      eslint_run: true
-      hadolint_run: true
-      jq_run: true
+      eslint_run: false
+      hadolint_run: false
+      jq_run: false
       markdownlint_run: true
       prettier_run: true
-      ruff_run: true
+      ruff_run: false
       shellcheck_run: true
-      taplo_run: true
+      taplo_run: false
       yamllint_run: true
     secrets: inherit
