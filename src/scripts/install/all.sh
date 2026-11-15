@@ -23,7 +23,6 @@ is_desktop() {
 PACKAGES=()
 REPO_PIDS=()
 ASYNC_PIDS=()
-DEB_PIDS=()
 
 REPO_SCRIPTS=(
     repos/setup.sh
@@ -40,13 +39,11 @@ ASYNC_SCRIPTS=(
     dev/ruby-gems.sh
     dev/vue-cli.sh
     dev/language-servers.sh
-    dev/go.sh
     dev/neovim.sh
     dev/fastfetch.sh
     dev/lazygit.sh
     dev/lazydocker.sh
     dev/yazi.sh
-    shell/ghostty.sh
     shell/meslo-nerd-font.sh
     shell/oh-my-posh.sh
     apps/hacking-repos.sh
@@ -135,13 +132,17 @@ done
 parallel_wait_pids_best_effort "asynchronous tasks" "${ASYNC_PIDS[@]}"
 echo "==> Asynchronous tasks completed."
 
+# Go (apt), Ghostty, and the .deb installers need apt/dpkg; keep them out of the
+# async phase so only one apt user runs at a time (concurrent apt hard-fails on
+# the dpkg lock).
+run_script "$DIR/dev/go.sh"
+run_script "$DIR/shell/ghostty.sh"
+
 if is_desktop; then
     echo "==> Installing .deb packages..."
     for script in "${DEB_SCRIPTS[@]}"; do
-        parallel_run_best_effort "$DIR/$script"
-        DEB_PIDS+=("$!")
+        run_script "$DIR/$script"
     done
-    parallel_wait_pids_best_effort ".deb package install" "${DEB_PIDS[@]}"
 fi
 
 run_script "$DIR/apps/pass-cli.sh"
