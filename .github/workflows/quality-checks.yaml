@@ -12,4 +12,3 @@ jobs:
     # yamllint disable-line rule:line-length
     uses: garretpatten/quality-checks/.github/workflows/quality-checks.yaml@78294799f20fc78703fe62488a7d11a6903214b5 # v2
     # reusable workflow: garretpatten/quality-checks master HEAD
-    secrets: inherit

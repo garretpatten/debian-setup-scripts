@@ -32,7 +32,7 @@ install_snaps_from_file() {
         [[ "$line" =~ ^[[:space:]]*# ]] && continue
         [[ -z "${line// /}" ]] && continue
 
-        read -r snap_name arg1 arg2 <<< "$line"
+        read -r snap_name arg1 arg2 <<<"$line"
         classic=""
         binary="$snap_name"
         if [[ "$arg1" == classic ]]; then
@@ -42,5 +42,5 @@ install_snaps_from_file() {
             fi
         fi
         install_snap_if_missing "$snap_name" "$classic" "$binary"
-    done < "$snaps_file"
+    done <"$snaps_file"
 }

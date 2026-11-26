@@ -7,16 +7,16 @@ NVIM_VERSION="0.12.6"
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="x86_64"
-        ;;
-    aarch64 | arm64)
-        target="arm64"
-        ;;
-    *)
-        echo "Unsupported architecture for neovim binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="x86_64"
+    ;;
+aarch64 | arm64)
+    target="arm64"
+    ;;
+*)
+    echo "Unsupported architecture for neovim binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 tarball="nvim-linux-${target}.tar.gz"

@@ -11,9 +11,9 @@ gnome_session_active() {
     fi
 
     case "$session" in
-        gnome | gnome-xorg | gnome-wayland | gnome-classic | ubuntu | ubuntu-wayland)
-            return 0
-            ;;
+    gnome | gnome-xorg | gnome-wayland | gnome-classic | ubuntu | ubuntu-wayland)
+        return 0
+        ;;
     esac
 
     [[ -n "${GNOME_SHELL_SESSION_MODE:-}" ]] && return 0

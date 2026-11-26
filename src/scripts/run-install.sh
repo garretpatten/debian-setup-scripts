@@ -11,14 +11,14 @@ MODE="${MODE#-}"
 MODE="${MODE#-}"
 
 case "$MODE" in
-    cli)
-        run_script "$DIR/install/cli.sh"
-        ;;
-    all | installs)
-        run_script "$DIR/install/all.sh"
-        ;;
-    *)
-        echo "Usage: $0 {cli|all}" >&2
-        exit 1
-        ;;
+cli)
+    run_script "$DIR/install/cli.sh"
+    ;;
+all | installs)
+    run_script "$DIR/install/all.sh"
+    ;;
+*)
+    echo "Usage: $0 {cli|all}" >&2
+    exit 1
+    ;;
 esac

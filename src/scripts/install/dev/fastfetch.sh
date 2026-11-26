@@ -5,16 +5,16 @@ command -v fastfetch >/dev/null 2>&1 && exit 0
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="amd64"
-        ;;
-    aarch64 | arm64)
-        target="aarch64"
-        ;;
-    *)
-        echo "Unsupported architecture for fastfetch binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="amd64"
+    ;;
+aarch64 | arm64)
+    target="aarch64"
+    ;;
+*)
+    echo "Unsupported architecture for fastfetch binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 tarball="fastfetch-linux-${target}.tar.gz"

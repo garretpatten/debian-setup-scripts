@@ -145,9 +145,24 @@ npm install
 
 npx prettier --check .
 shellcheck -x src/scripts/**/*.sh scripts/**/*.sh
+shfmt -d src/scripts/**/*.sh scripts/**/*.sh
 npx markdownlint-cli2 README.md AGENTS.md
 yamllint .github .yamllint
 ```
+
+Shell style comes from **`.editorconfig`** (4-space indent), which **`shfmt`** reads
+automatically—format with **`shfmt -w`**, never by hand. Install **`shfmt`** at the
+version CI pins (3.10.0) if missing:
+
+```bash
+go install mvdan.cc/sh/v3/cmd/shfmt@v3.10.0
+```
+
+CI's **Quality Checks** lint **changed files only**: any file you touch gets the
+full treatment (**`prettier`**, **`shellcheck`**, **`shfmt`**, **`yamllint`**, and
+the **OpenGrep SAST** scan). A formatting-only touch to an old file can surface
+pre-existing findings in it—make sure the file passes **every** changed-file
+gate, not just the one you were aiming for, before you finalize.
 
 When install or validation logic changes, run the matching validation script locally
 (for example `./scripts/validate-installs-cli.sh` after `bash src/scripts/run-install.sh cli`).
@@ -166,6 +181,11 @@ If you change **`src/dotfiles/`**, run the submodule’s tooling as well.
 Whenever a GitHub workflow is added, all GitHub Action pins in that workflow
 should be updated to point to the full-length commit SHA of the most recent
 release.
+
+Never pass **`secrets: inherit`** to a reusable workflow—**OpenGrep's SAST scan
+fails the PR on it** (least privilege). Pass only the specific secrets the
+called workflow needs, or drop the **`secrets:`** line entirely when it needs
+none (verify by grepping the reusable workflow for **`secrets.`**).
 
 ## License
 

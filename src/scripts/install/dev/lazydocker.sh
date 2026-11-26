@@ -7,16 +7,16 @@ LAZYDOCKER_VERSION="0.25.2"
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="x86_64"
-        ;;
-    aarch64 | arm64)
-        target="arm64"
-        ;;
-    *)
-        echo "Unsupported architecture for lazydocker binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="x86_64"
+    ;;
+aarch64 | arm64)
+    target="arm64"
+    ;;
+*)
+    echo "Unsupported architecture for lazydocker binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 tarball="lazydocker_${LAZYDOCKER_VERSION}_Linux_${target}.tar.gz"

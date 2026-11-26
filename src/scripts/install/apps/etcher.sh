@@ -8,7 +8,7 @@ if dpkg -s balena-etcher >/dev/null 2>&1; then
 fi
 
 etcher_deb="$TEMP_DIR/balena-etcher.deb"
-etcher_tag=$(curl -fsSL https://api.github.com/repos/balena-io/etcher/releases/latest 2>/dev/null | \
+etcher_tag=$(curl -fsSL https://api.github.com/repos/balena-io/etcher/releases/latest 2>/dev/null |
     grep '"tag_name"' | head -1 | cut -d '"' -f 4)
 etcher_tag="${etcher_tag:-v2.1.6}"
 etcher_version="${etcher_tag#v}"
