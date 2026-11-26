@@ -19,7 +19,7 @@ add_repo_keyring_from_wget() {
     if [[ ! -f "$keyring_path" ]]; then
         wget -qO "$key_file" "$key_url" || true
         if [[ -f "$key_file" ]]; then
-            gpg --dearmor < "$key_file" | sudo tee "$keyring_path" >/dev/null || true
+            gpg --dearmor <"$key_file" | sudo tee "$keyring_path" >/dev/null || true
         fi
     fi
 }
@@ -48,7 +48,7 @@ setup_bruno_repo() {
 
     local bruno_keyring="/etc/apt/keyrings/bruno.gpg"
     if [[ ! -f "$bruno_keyring" ]]; then
-        curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x9FA6017ECABE0266" | \
+        curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x9FA6017ECABE0266" |
             sudo gpg --dearmor -o "$bruno_keyring" || true
         sudo chmod 644 "$bruno_keyring" 2>/dev/null || true
     fi
@@ -78,30 +78,30 @@ setup_repo_from_manifest_line() {
     shift
 
     case "$kind" in
-        repo)
-            local key_url="$1"
-            local keyring_path="$2"
-            local list_path="$3"
-            local grep_pattern="$4"
-            local deb_line
-            deb_line="$(expand_repo_deb_line "$5")"
-            add_repo_keyring_from_curl "$key_url" "$keyring_path"
-            add_repo_list_if_missing "$list_path" "$grep_pattern" "$deb_line"
-            ;;
-        wget)
-            local key_url="$1"
-            local keyring_path="$2"
-            local list_path="$3"
-            local grep_pattern="$4"
-            local deb_line="$5"
-            add_repo_keyring_from_wget "$key_url" "$keyring_path"
-            add_repo_list_if_missing "$list_path" "$grep_pattern" "$deb_line"
-            ;;
-        bruno)
-            setup_bruno_repo
-            ;;
-        nodesource)
-            setup_nodesource_repo
-            ;;
+    repo)
+        local key_url="$1"
+        local keyring_path="$2"
+        local list_path="$3"
+        local grep_pattern="$4"
+        local deb_line
+        deb_line="$(expand_repo_deb_line "$5")"
+        add_repo_keyring_from_curl "$key_url" "$keyring_path"
+        add_repo_list_if_missing "$list_path" "$grep_pattern" "$deb_line"
+        ;;
+    wget)
+        local key_url="$1"
+        local keyring_path="$2"
+        local list_path="$3"
+        local grep_pattern="$4"
+        local deb_line="$5"
+        add_repo_keyring_from_wget "$key_url" "$keyring_path"
+        add_repo_list_if_missing "$list_path" "$grep_pattern" "$deb_line"
+        ;;
+    bruno)
+        setup_bruno_repo
+        ;;
+    nodesource)
+        setup_nodesource_repo
+        ;;
     esac
 }

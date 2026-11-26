@@ -16,7 +16,7 @@ if ! command -v lua-language-server >/dev/null 2>&1; then
             tar -xzf "$lls_tar" -C "$lls_install_dir" || true
             if [[ -f "$lls_install_dir/bin/lua-language-server" ]]; then
                 mkdir -p "$HOME/.local/bin"
-                cat > "$HOME/.local/bin/lua-language-server" <<EOF
+                cat >"$HOME/.local/bin/lua-language-server" <<EOF
 #!/bin/bash
 exec "$lls_install_dir/bin/lua-language-server" "\$@"
 EOF

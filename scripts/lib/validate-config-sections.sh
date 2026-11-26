@@ -57,6 +57,24 @@ validate_config_ufw() {
     fi
 }
 
+validate_config_cooldowns() {
+    section 'Package cooldowns'
+    check_grep npm-cooldown "$HOME/.npmrc" '^min-release-age=7$'
+    check_grep cargo-cooldown "$HOME/.cargo/config.toml" 'global-min-publish-age'
+    check_grep pip-cooldown "$HOME/.config/pip/pip.conf" '^uploaded-prior-to = P7D$'
+    check_grep uv-cooldown "$HOME/.config/uv/uv.toml" '^exclude-newer'
+    check_path apt-cooldown-script /usr/local/sbin/apt-cooldown-snapshot
+    check_path apt-cooldown-service /etc/systemd/system/apt-cooldown-snapshot.service
+    check_path apt-cooldown-timer /etc/systemd/system/apt-cooldown-snapshot.timer
+    if systemctl is-enabled apt-cooldown-snapshot.timer >/dev/null 2>&1; then
+        pass apt-cooldown-timer-enabled 'timer enabled'
+    elif in_container; then
+        pass apt-cooldown-timer-enabled 'timer installed; systemd cannot activate in container'
+    else
+        fail apt-cooldown-timer-enabled 'systemctl is-enabled apt-cooldown-snapshot.timer'
+    fi
+}
+
 validate_config_system_core() {
     check_path logind-lid /etc/systemd/logind.conf.d/50-lid.conf
     check_path sysctl-keepalive /etc/sysctl.d/99-tcp-keepalive.conf
@@ -73,4 +91,5 @@ validate_config_system() {
     section 'System'
     validate_config_ufw
     validate_config_system_core
+    validate_config_cooldowns
 }

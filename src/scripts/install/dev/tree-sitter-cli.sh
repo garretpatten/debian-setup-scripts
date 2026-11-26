@@ -7,16 +7,16 @@ TREE_SITTER_VERSION="0.24.3"
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="x64"
-        ;;
-    aarch64 | arm64)
-        target="arm64"
-        ;;
-    *)
-        echo "Unsupported architecture for tree-sitter binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="x64"
+    ;;
+aarch64 | arm64)
+    target="arm64"
+    ;;
+*)
+    echo "Unsupported architecture for tree-sitter binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 archive="tree-sitter-linux-${target}.gz"

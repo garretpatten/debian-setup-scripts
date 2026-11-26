@@ -258,6 +258,7 @@ debian-setup-scripts/
 │   │       │   └── dotfiles-zshrc.sh
 │   │       └── system/
 │   │           ├── all.sh
+│   │           ├── apt-cooldown.sh
 │   │           ├── gnome-gsettings.sh
 │   │           ├── screenshots-directory.sh
 │   │           ├── system-policy.sh
@@ -270,7 +271,7 @@ debian-setup-scripts/
 ### Execution flow (`master.sh`)
 
 1. **`install/preflight/all.sh`** — essential APT packages, timezone if still UTC, contrib/non-free enablement
-2. **`config/system/all.sh`** — GNOME defaults (when schemas/bus exist), screenshots dir, unattended upgrades, sysctl/guest login tweaks
+2. **`config/system/all.sh`** — GNOME defaults (when schemas/bus exist), screenshots dir, unattended upgrades, apt cooldown timer, sysctl/guest login tweaks
 3. **`config/home/all.sh`** — home folders and permissions
 4. **`install/all.sh`** — package lists, third-party APT repos, dev/shell/app leaf scripts, `.deb` installers, post-install hooks
 5. **`config/dev/all.sh`** — copy `src/dotfiles/config/` subtrees, Git globals, Vimrc path, VS Code `settings.json` when missing
@@ -355,6 +356,7 @@ and a completion banner (`src/assets/debian.txt`).
 
 - **GNOME** (logged-in Desktop / D-Bus): dark mode, animations, clocks, scrolling, Nautilus, screenshots, Dash to Dock (**when schema exists**), Night Light, lock/privacy, search providers.
 - Installs **`unattended-upgrades`** and drops **`20auto-upgrades`** when missing.
+- **7-day apt package cooldown** (`apt-cooldown.sh`): installs the canonical `src/dotfiles/system/apt-cooldown` kit (script + systemd timer at 04:45) so `apt`/`unattended-upgrades` only see packages published at least 7 days ago. On **Ubuntu 24.04+** and **Debian 13+** (`apt` ≥ 2.7) it freezes the archive snapshot; on **Debian 12** (`apt` 2.6, no snapshot support) a rewrite adaptation freezes the main archive via `snapshot.debian.org` and keeps the security pocket live.
 - **sudo**: **`AllowGuest=false`** hint in **`gdm3`**, tame Apport, **`logind`** lid snippet, sysctl TCP keepalive drop-in.
 
 Minimal/CI runners without GNOME skip **`gsettings`** safely.
@@ -362,7 +364,7 @@ Minimal/CI runners without GNOME skip **`gsettings`** safely.
 #### 💻 **Editor & Git prefs** (`config/dev/all.sh`)
 
 - Copies **`src/dotfiles/config/`** subtrees into **`~/.config/`** (skipped when **`~/.config/<app>/`** already exists).
-- Copies **`home/.vimrc`** and VS Code **`User/settings.json`** when missing (**`~/.config/Code/User`** on Linux).
+- Copies **`home/.vimrc`**, **`home/.npmrc`**, **`home/.cargo/config.toml`** (per file — never the whole `.cargo` tree), and VS Code **`User/settings.json`** when missing (**`~/.config/Code/User`** on Linux).
 - Seeds **`~/.gitconfig`** **only when absent** with global credential helper + identity defaults.
 
 #### 🔒 **UFW posture** (`config/security/ufw-rules.sh`)

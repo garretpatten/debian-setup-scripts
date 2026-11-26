@@ -6,16 +6,16 @@ command -v yazi >/dev/null 2>&1 && exit 0
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="x86_64-unknown-linux-musl"
-        ;;
-    aarch64 | arm64)
-        target="aarch64-unknown-linux-musl"
-        ;;
-    *)
-        echo "Unsupported architecture for yazi binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="x86_64-unknown-linux-musl"
+    ;;
+aarch64 | arm64)
+    target="aarch64-unknown-linux-musl"
+    ;;
+*)
+    echo "Unsupported architecture for yazi binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 zip_file="yazi-${target}.zip"

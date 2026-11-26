@@ -14,16 +14,16 @@ OLLAMA_VERSION="0.5.7"
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="amd64"
-        ;;
-    aarch64 | arm64)
-        target="arm64"
-        ;;
-    *)
-        echo "Unsupported architecture for ollama binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="amd64"
+    ;;
+aarch64 | arm64)
+    target="arm64"
+    ;;
+*)
+    echo "Unsupported architecture for ollama binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 archive="ollama-linux-${target}.tgz"

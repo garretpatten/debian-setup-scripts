@@ -7,16 +7,16 @@ EZA_VERSION="0.20.9"
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="x86_64-unknown-linux-gnu"
-        ;;
-    aarch64 | arm64)
-        target="aarch64-unknown-linux-gnu"
-        ;;
-    *)
-        echo "Unsupported architecture for eza binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="x86_64-unknown-linux-gnu"
+    ;;
+aarch64 | arm64)
+    target="aarch64-unknown-linux-gnu"
+    ;;
+*)
+    echo "Unsupported architecture for eza binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 tarball="eza_${target}.tar.gz"

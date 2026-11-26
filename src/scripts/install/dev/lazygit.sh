@@ -7,16 +7,16 @@ LAZYGIT_VERSION="0.66.2"
 
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)
-        target="x86_64"
-        ;;
-    aarch64 | arm64)
-        target="arm64"
-        ;;
-    *)
-        echo "Unsupported architecture for lazygit binary install: $arch" >&2
-        exit 0
-        ;;
+x86_64)
+    target="x86_64"
+    ;;
+aarch64 | arm64)
+    target="arm64"
+    ;;
+*)
+    echo "Unsupported architecture for lazygit binary install: $arch" >&2
+    exit 0
+    ;;
 esac
 
 tarball="lazygit_${LAZYGIT_VERSION}_linux_${target}.tar.gz"
