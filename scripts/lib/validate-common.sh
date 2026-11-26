@@ -70,6 +70,19 @@ check_path() {
     fi
 }
 
+check_grep() {
+    local name="$1"
+    local path="$2"
+    local pattern="$3"
+    if [[ ! -f "$path" ]]; then
+        fail "$name" "missing file: $path"
+    elif grep -qE "$pattern" "$path"; then
+        pass "$name" "$path"
+    else
+        fail "$name" "/$pattern/ not found in $path"
+    fi
+}
+
 in_container() {
     # Best-effort container/headless CI detection.
     if [[ -f /.dockerenv ]]; then

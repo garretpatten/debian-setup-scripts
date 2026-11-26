@@ -1,4 +1,6 @@
 # File copies only; XDG config dirs are copied via copy_dotfiles_xdg_config_dirs in dotfiles.sh
 
 file home/.vimrc ~/.vimrc
+file home/.npmrc ~/.npmrc
+file home/.cargo/config.toml ~/.cargo/config.toml
 file vs-code/settings.json ~/.config/Code/User/settings.json

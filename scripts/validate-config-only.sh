@@ -15,6 +15,7 @@ validate_config_home
 
 section 'System'
 validate_config_system_core
+validate_config_cooldowns
 # UFW is skipped in config-only runs because ufw is installed by the install scripts.
 
 # Git credential helper is skipped: it depends on install/dev.sh building git-credential-libsecret.
